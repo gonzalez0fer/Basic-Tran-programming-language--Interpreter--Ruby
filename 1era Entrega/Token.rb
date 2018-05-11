@@ -55,7 +55,7 @@ tokens = {
 }
 
 #Escribimos las palabras reservadas del lenguaje
-palabras_reservadas = %w(with true false var begin end int while if else bool char array read)
+palabras_reservadas = %w(with true false var begin end int while if else bool char array read of)
 
 #Procedemos a meter dentro de nuestro diccionario de tokens, los
 #tokens relacionados a nuestras palabras reservadas.
