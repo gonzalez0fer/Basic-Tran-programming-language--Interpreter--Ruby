@@ -9,13 +9,13 @@ def main
 
 	#creamos un Lexer que analice la entrada
 	lexer = Lexer::new archivo
-
-	aux = false
-	while (!aux) do
-		aux = lexer.yylex.nill?
-	end
+	lexer.leer(archivo)
+	#aux = false
+	#while (!aux) do
+	#	aux = lexer.yylex.nill?
+	#end
 	
-	puts lexer 
+	#puts lexer 
 end
 
 main

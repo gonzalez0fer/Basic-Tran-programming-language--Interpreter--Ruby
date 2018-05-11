@@ -2,35 +2,35 @@
 #Fernando Gonzalez 08-10464 
 
 class ObjetoDeTexto
-	attr_accesor :linea, :columna, :contenido
+	attr_accessor :linea, :columna, :contenido
 end
 
 #Como la mayoria de las clases tienen un contenido vacio, pondremos en la clase Token contenido vacio,
 #mas adelante modificaremos el contenido a aquellas que lo requieran
 class Token < ObjetoDeTexto
 	class << self
-		attr_accesor :basicTran
+		attr_accessor :basicTran
 	end
-	attr_accesor :linea, :columna
+	attr_accessor :linea, :columna
 
+end
 class ErrorLexicografico < ObjetoDeTexto
   def initialize(linea, columna, contenido)
     @linea   = linea
     @columna = columna
     @contenido   = contenido
   end
+   def imprimir
     "Error: caracter inesperado \"#{@contenido}\" en línea #{@linea}, columna #{@columna}."
   end
 end
 
-	def to_s
-    	"#{self.class.name} #{if [TkString].include? self.class then @contenido + ' ' else '' end} #{if [TkId, TkNum].include? self.class then @contenido.inspect + ' ' else '' end}(Línea #{@linea}, Columna #{@columna})"
-
-end
-
 #definimos el Diccionario de las ER para los tokens existentes
 
-tokens = {
+dicTokens = {
+	'Num' => /\A[0-9]+/                   ,
+	'Id' => /\A([a-zA-Z_][a-z0-9A-Z_]*)/  ,
+	'Caracter' => /\A'([^"\\]|\\[n\\"])*'/,
 	'Coma' => /\A,/		       ,
 	'Punto' => /\A./           ,
 	'DosPuntos' => /\A:/       ,
@@ -60,9 +60,7 @@ tokens = {
 	'ValorAscii' => /\A#/                 ,
 	'Concatenacion' => /\A::/             ,
 	'Shift' => /\A\$/                     ,
-	'Num' => /\A[0-9]+/                   ,
-	'Id' => /\A([a-zA-Z_][a-z0-9A-Z_]*)/  ,
-	'Caracter' => /\A'([^"\\]|\\[n\\"])*'/,
+	
 }
 
 #Escribimos las palabras reservadas del lenguaje
@@ -71,14 +69,14 @@ palabras_reservadas = %w(with true false var begin end int while if else bool ch
 #Procedemos a meter dentro de nuestro diccionario de tokens, los
 #tokens relacionados a nuestras palabras reservadas.
 palabras_reservadas.each do |tpr|
-	tokens[tpr.capitalize] = /\A#{tpr}\b/
+	dicTokens[tpr.capitalize] = /\A#{tpr}\b/
 end
 
 #Creamos las clases para cada tipo de token que poseemos en nuestro diccionario de tokens,
 #(las cuales pertenecen a la clase Token) , las mismas se inicializan para tener el contexto
 #del token esto incluye: linea y columna donde es encontrado el texto y el posible contenido
 #que tenga el token, luego procedemos a renombrar cada clase como TK + nombre del token
-tokens.each do |name, basicTran|
+dicTokens.each do |name, basicTran|
 	nuevaClase = Class::new(Token) do
 		@basicTran = basicTran
 
@@ -87,11 +85,25 @@ tokens.each do |name, basicTran|
 			@columna = columna
 			@contenido = contenido
 		end
+
 	end
 
 	Object::const_set "Tk#{name}", nuevaClase
 end
 
+$dicTokens = []
+ObjectSpace.each_object(Class) do |obj|
+	$dicTokens << obj if obj.ancestors.include? Token and obj!=TkId and obj!=Token
+end
+
+class Token
+	def cont
+		''
+	end
+	def imprimir
+		puts "#{self.class.name} #{cont} #{@linea},#{@columna}"
+	end
+end
 #como TkNum, TkId, TkCaracter deben almacenar algun tipo de contenido vamos a modificar directamente
 #esas clases
 
@@ -101,7 +113,7 @@ class TkNum
 		@contenido.inspect
 	end
 	def imprimir
-		"#{self.class.name} (#{cont}) #{@linea},#{@columna}"
+		puts "#{self.class.name} (#{cont}) #{@linea},#{@columna}"
 	end
 end
 
@@ -111,7 +123,8 @@ class TkId
 		@contenido.inspect
 	end
 	def imprimir
-		"#{self.class.name} ('"'#{cont}'"') #{@linea},#{@columna}"
+		puts "#{self.class.name} (#{cont}) #{@linea},#{@columna}"
+	end
 end
 
 class TkCaracter
@@ -137,3 +150,84 @@ class TkChar
 		Rangex::char 
 	end
 end
+
+class Lexer
+	attr_reader :tokens, :errores
+
+	def to_exception
+		ExcepcionLexer::new self
+	end
+
+	def initialize(archivo)
+		@errores = []
+		@tokens = []
+		@linea = 1
+		@columna = 1
+		@archivo = archivo
+	end
+
+	def buscar(p)
+		if @tokens.last.class.name =="TkVar"
+			nuevo = TkId.new(@linea,@colInicio, p)
+			@tokens << nuevo
+			@var << p
+			return
+		end
+		@var.each do |v|
+			if p == v
+				nuevo = TkId.new(@linea,@colInicio, p)
+				@tokens << nuevo
+				return
+			end
+		end
+		$dicTokens.each do |t|
+			if p =~ t.basicTran 
+			#falta ver el contenido
+				nuevo = t.new(@linea,@colInicio,' ')
+				@tokens << nuevo
+				break
+			else
+				error = ErrorLexicografico.new(@linea,@colInicio,' ')
+				@errores << error
+			end
+		end
+	end
+
+	def leer()
+		p = ''
+		@var = []
+		@colInicio= @columna
+		@archivo.each_char do |simbolo|
+			#puts "ahora la columna es #{@columna}"
+			if (simbolo == ' ') or (simbolo == '	')
+				#puts "estoy espacio #{p}"
+				buscar(p)
+				@columna += 1
+				@colInicio= @columna
+				p = ''
+			elsif (simbolo =="\n")
+				#puts "estoy slach #{p} #{@columna}"
+				buscar(p)
+				@linea += 1
+				@columna = 1
+				@colInicio= @columna
+				p = ''
+			else
+				p = p + simbolo
+				@columna += 1
+			end
+		end
+		@tokens.each do |l|
+			l.imprimir
+		end
+	end
+end
+
+if ARGV.length != 1
+    puts "We need exactly one parameter. The name of a file."
+    exit;
+end
+archivo = File::read(ARGV[0])
+#creamos un Lexer que analice la entrada
+lexer = Lexer::new archivo
+lexer.leer()
