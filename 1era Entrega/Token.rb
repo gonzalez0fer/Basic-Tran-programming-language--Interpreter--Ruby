@@ -1,20 +1,31 @@
 #Irina Marcano 13-10805
 #Fernando Gonzalez 08-10464 
 
+class ObjetoDeTexto
+	attr_accesor :linea, :columna, :contenido
+end
+
 #Como la mayoria de las clases tienen un contenido vacio, pondremos en la clase Token contenido vacio,
 #mas adelante modificaremos el contenido a aquellas que lo requieran
 class Token < ObjetoDeTexto
 	class << self
-		attr_accesor :regex
+		attr_accesor :basicTran
 	end
-	attr_accesor :linea, :columna, :contenido
+	attr_accesor :linea, :columna
 
-	def cont
-		''
-	end
+class ErrorLexicografico < ObjetoDeTexto
+  def initialize(linea, columna, contenido)
+    @linea   = linea
+    @columna = columna
+    @contenido   = contenido
+  end
+    "Error: caracter inesperado \"#{@contenido}\" en línea #{@linea}, columna #{@columna}."
+  end
+end
 
-	def imprimir
-		 "#{self.class.name} #{cont} #{@linea},#{@columna}"
+	def to_s
+    	"#{self.class.name} #{if [TkString].include? self.class then @contenido + ' ' else '' end} #{if [TkId, TkNum].include? self.class then @contenido.inspect + ' ' else '' end}(Línea #{@linea}, Columna #{@columna})"
+
 end
 
 #definimos el Diccionario de las ER para los tokens existentes
@@ -67,9 +78,9 @@ end
 #(las cuales pertenecen a la clase Token) , las mismas se inicializan para tener el contexto
 #del token esto incluye: linea y columna donde es encontrado el texto y el posible contenido
 #que tenga el token, luego procedemos a renombrar cada clase como TK + nombre del token
-tokens.each do |name, regex|
+tokens.each do |name, basicTran|
 	nuevaClase = Class::new(Token) do
-		@regex = regex
+		@basicTran = basicTran
 
 		def initialize(linea, columna, contenido)
 			@linea = linea
