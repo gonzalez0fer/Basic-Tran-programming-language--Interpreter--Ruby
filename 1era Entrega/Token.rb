@@ -197,6 +197,7 @@ class Lexer
 		p = ''
 		@var = []
 		@colInicio= @columna
+		return nil if @archivo.empty?
 		@archivo.each_char do |simbolo|
 			#puts "ahora la columna es #{@columna}"
 			if (simbolo == ' ') or (simbolo == '	')
