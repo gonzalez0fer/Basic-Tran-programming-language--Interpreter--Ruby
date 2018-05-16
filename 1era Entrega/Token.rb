@@ -15,45 +15,47 @@ class Token < ObjetoDeTexto
 
 end
 class ErrorLexicografico < ObjetoDeTexto
-  def initialize(linea, columna, contenido)
-    @linea   = linea
-    @columna = columna
-    @contenido   = contenido
-  end
-   def imprimir
-    "Error: caracter inesperado \"#{@contenido}\" en línea #{@linea}, columna #{@columna}."
-  end
+	def initialize(linea, columna, contenido)
+    	@linea   = linea
+    	@columna = columna
+    	@contenido   = contenido
+  	end
+   	def imprimir()
+   		puts "Error: caracter inesperado \"#{@contenido}\" en línea #{@linea}, columna #{@columna}."
+  	end
 end
 
 #definimos el Diccionario de las ER para los tokens existentes
 
 dicTokens = {
-	'Num' => /\A[0-9]+/                   ,
-	'Id' => /\A([a-zA-Z_][a-z0-9A-Z_]*)/  ,
-	'Caracter' => /\A'([^"\\]|\\[n\\"])*'/,
+	'Num' => /^[0-9]*$/                   ,
+	'Caracter' => /^".*"$/,
+	'Id' => /^[a-z][a-zA-Z0-9_]*/,
+	'Punto' => /\A.$/           ,
 	'Coma' => /\A,/		       ,
-	'Punto' => /\A./           ,
 	'DosPuntos' => /\A:/       ,
-	'ParAbre' => /\A\( /       ,
+	'ParAbre' => /\A\(/       ,
 	'ParCierra' => /\A\)/      ,
 	'CorcheteAbre' => /\A\[/   ,
 	'CorcheteCierre' => /\A\]/ ,
 	'LlaveAbre' => /\A\{/      ,
 	'LlaveCierra' => /\A\}/	   ,
+	'Resta' =>/\A-(?!>)$/ 		,
 	'Hacer' =>/\A->(?!>)/         ,
 	'Asignacion' => /\A<-(?!-)/   ,
 	'Suma' => /\A\+/              ,
-	'Resta' =>/\A-(?!>)/          ,
+	'Desigualdad' => /\A\/=/	,
+	'PuntoYComa' => /\A;/ ,
 	'Mult' => /\A\*/              ,
 	'Div' => /\A\/(?!=)/          ,
 	'Mod' => /\A%(?!=)/           ,
 	'Conjuncion' => /\A\/\\/      ,
 	'Disyuncion' => /\A\\\//      ,
 	'Negacion' => /\Anot/         ,
-	'Menor' => /\A</              ,
+	'Menor' => /\A<$/              ,
 	'MenorIgual' => /\A<=/        ,
-	'Mayor' => /\A>/              ,
-	'MayorIgual' => /\A=>/        ,
+	'Mayor' => /\A>$/              ,
+	'MayorIgual' => /\A>=/        ,
 	'Igual' => /\A=/              ,
 	'SiguienteCar' => /\A\+\+/    ,
 	'AnteriorCar' => /\A--/       ,
@@ -132,6 +134,9 @@ class TkCaracter
 	def cont
 		@contenido.inspect
 	end
+	def imprimir
+		puts "#{self.class.name} #{cont} #{@linea},#{@columna}"
+	end
 end
 
 #procedemos a asignar los tipos a las clases que lo requieran
@@ -167,28 +172,33 @@ class Lexer
 	end
 
 	def buscar(p)
-		if @tokens.last.class.name =="TkVar"
-			nuevo = TkId.new(@linea,@colInicio, p)
-			@tokens << nuevo
-			@var << p
-			return
-		end
-		@var.each do |v|
-			if p == v
-				nuevo = TkId.new(@linea,@colInicio, p)
+		puts p
+			$dicTokens.each do |t|
+				if p =~ t.basicTran 
+					nuevo = t.new(@linea,@colInicio,p)
+					@tokens << nuevo
+					return
+				end
+			end
+			if p =~ /^[a-z][a-zA-Z0-9_]*/
+				nuevo = TkId.new(@linea,@colInicio,p)
 				@tokens << nuevo
 				return
-			end
-		end
-		$dicTokens.each do |t|
-			if p =~ t.basicTran 
-			#falta ver el contenido
-				nuevo = t.new(@linea,@colInicio,' ')
-				@tokens << nuevo
-				break
 			else
-				error = ErrorLexicografico.new(@linea,@colInicio,' ')
+				error = ErrorLexicografico.new(@linea,@colInicio,p)
 				@errores << error
+				return
+			end
+	end
+
+	def mostrarResultado()
+		if @errores.empty?
+			@tokens.each do |l|
+				l.imprimir
+			end
+		else
+			@errores.each do |imp|
+				imp.imprimir()
 			end
 		end
 	end
@@ -199,28 +209,29 @@ class Lexer
 		@colInicio= @columna
 		return nil if @archivo.empty?
 		@archivo.each_char do |simbolo|
-			#puts "ahora la columna es #{@columna}"
-			if (simbolo == ' ') or (simbolo == '	')
-				#puts "estoy espacio #{p}"
-				buscar(p)
-				@columna += 1
-				@colInicio= @columna
-				p = ''
+			if (simbolo == " ") or (simbolo == "\t")
+				if p!= ''
+			#		puts "estoy espacio #{p}"
+					buscar(p)
+					@columna += 1
+					@colInicio= @columna
+					p = ''
+				end
 			elsif (simbolo =="\n")
-				#puts "estoy slach #{p} #{@columna}"
-				buscar(p)
-				@linea += 1
-				@columna = 1
-				@colInicio= @columna
-				p = ''
+				#puts "estoy slach:  #{p}"
+				if p!= ''
+					buscar(p)
+					@linea += 1
+					@columna = 1
+					@colInicio= @columna
+					p = ''
+				end
 			else
 				p = p + simbolo
 				@columna += 1
 			end
 		end
-		@tokens.each do |l|
-			l.imprimir
-		end
+		mostrarResultado()
 	end
 end
 
