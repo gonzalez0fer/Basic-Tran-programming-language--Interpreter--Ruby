@@ -28,10 +28,11 @@ end
 #definimos el Diccionario de las ER para los tokens existentes
 
 dicTokens = {
+	'Punto' => /^\.$/           ,
 	'Num' => /^[0-9]*$/                   ,
 	'Caracter' => /^".*"$/,
 	'Id' => /^[a-z][a-zA-Z0-9_]*/,
-	'Punto' => /\A.$/           ,
+	
 	'Coma' => /\A,/		       ,
 	'DosPuntos' => /\A:/       ,
 	'ParAbre' => /\A\(/       ,
@@ -132,11 +133,14 @@ end
 class TkCaracter
 	#debe devolver el string que se encuentra entre comillas simples o dobles
 	def cont
-		@contenido.inspect
+		a = @contenido.inspect
+		real = a[2..-4] + '"'
+		return real
 	end
 	def imprimir
 		puts "#{self.class.name} #{cont} #{@linea},#{@columna}"
 	end
+
 end
 
 #procedemos a asignar los tipos a las clases que lo requieran
@@ -172,12 +176,13 @@ class Lexer
 	end
 
 	def buscar(p)
-		puts p
+			
 			$dicTokens.each do |t|
-				if p =~ t.basicTran 
-					nuevo = t.new(@linea,@colInicio,p)
-					@tokens << nuevo
-					return
+				if p =~ t.basicTran
+					#puts "hizo match #{t}"
+						nuevo = t.new(@linea,@colInicio,p)
+						@tokens << nuevo
+						return
 				end
 			end
 			if p =~ /^[a-z][a-zA-Z0-9_]*/
@@ -185,6 +190,7 @@ class Lexer
 				@tokens << nuevo
 				return
 			else
+				
 				error = ErrorLexicografico.new(@linea,@colInicio,p)
 				@errores << error
 				return
@@ -206,15 +212,30 @@ class Lexer
 	def leer()
 		p = ''
 		@var = []
+		str = 0
 		@colInicio= @columna
 		return nil if @archivo.empty?
 		@archivo.each_char do |simbolo|
-			if (simbolo == " ") or (simbolo == "\t")
+			if ((simbolo == " ") or (simbolo == "\t")) && str == 0
+
 				if p!= ''
-			#		puts "estoy espacio #{p}"
+					
 					buscar(p)
 					@columna += 1
 					@colInicio= @columna
+					p = ''
+				else
+					@columna += 1
+					@colInicio= @columna
+				end
+			elsif (simbolo == '"')
+				str += 1
+				p = p + simbolo
+				@columna += 1
+				if str == 2
+					buscar(p)
+					@colInicio= @columna
+					str = 0
 					p = ''
 				end
 			elsif (simbolo =="\n")
@@ -225,11 +246,14 @@ class Lexer
 					@columna = 1
 					@colInicio= @columna
 					p = ''
+				else
+					@columna += 1
 				end
 			else
 				p = p + simbolo
 				@columna += 1
 			end
+
 		end
 		mostrarResultado()
 	end
