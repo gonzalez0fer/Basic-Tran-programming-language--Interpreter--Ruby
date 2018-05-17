@@ -82,7 +82,7 @@ end
 #(las cuales pertenecen a la clase Token) , las mismas se inicializan para tener el contexto
 #del token esto incluye: linea y columna donde es encontrado el texto y el posible contenido
 #que tenga el token, luego procedemos a renombrar cada clase como TK + nombre del token
-dicTokens.each do |name, basicTran|
+dicTokens.each do |tok_nombre, basicTran|
 	nuevaClase = Class::new(Token) do
 		@basicTran = basicTran
 
@@ -94,7 +94,7 @@ dicTokens.each do |name, basicTran|
 
 	end
 
-	Object::const_set "Tk#{name}", nuevaClase
+	Object::const_set "Tk#{tok_nombre}", nuevaClase
 end
 
 $dicTokens = []
