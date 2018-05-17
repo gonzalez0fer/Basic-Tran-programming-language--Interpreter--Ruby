@@ -97,11 +97,14 @@ dicTokens.each do |tok_nombre, basicTran|
 	Object::const_set "Tk#{tok_nombre}", nuevaClase
 end
 
+
+
 $dicTokens = []
-ObjectSpace.each_object(Class) do |obj|
-	$dicTokens << obj if obj.ancestors.include? Token and obj!=TkId and obj!=Token
+ObjectSpace.each_object(Class) do |objeto|
+	$dicTokens << objeto if objeto.ancestors.include? Token and objeto!=TkId and objeto!=Token
 end
 
+#en la clase token agregamos un metodo de impresion segun el formato necesitado
 class Token
 	def cont
 		''
@@ -110,9 +113,9 @@ class Token
 		puts "#{self.class.name} #{cont} #{@linea},#{@columna}"
 	end
 end
+
 #como TkNum, TkId, TkCaracter deben almacenar algun tipo de contenido vamos a modificar directamente
 #esas clases
-
 class TkNum
 	#debe devolver el numero para poder imprimirlo por pantalla
 	def cont
@@ -146,6 +149,11 @@ class TkCaracter
 
 end
 
+#clase lexer que se encargara de llevar la data de la salida mientras
+#es recorrida la entrada de texto, se inicializa con listas vacias de
+#tokens y errores para ser almacenados alli, ademas de los indices de
+#filas y columnas quienes posteriormente daran la situacion de los dos
+#elementos de texto definidos (tokens o errores)
 class Lexer
 	attr_reader :tokens, :errores
 
@@ -182,6 +190,8 @@ class Lexer
 			end
 	end
 
+	#metodo de la clase lexer que se encarga de llamar a la impresion
+	#de la salida según sea el caso requerido, (errores o tokens)
 	def mostrarResultado()
 		if @errores.empty?
 			@tokens.each do |l|
