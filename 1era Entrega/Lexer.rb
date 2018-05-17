@@ -6,69 +6,66 @@
 #
 #
 
-class ObjetoDeTexto
+
+#clase denominada ElementoTexto, que reprecenta cada elemento en una posicion determinada
+#de un texto, de ella se desprenderan la clase Token y la clase Error
+class ElementoTexto
 	attr_accessor :linea, :columna, :contenido
 end
 
+
+
+#la clase Token es una instancia de de la clase ElementoTexto, el cual contiene un contexto y una 
+#RegExp que permitira la identificacion del token dentro del texto. 
 #Como la mayoria de las clases tienen un contenido vacio, pondremos en la clase Token contenido vacio,
 #mas adelante modificaremos el contenido a aquellas que lo requieran
-class Token < ObjetoDeTexto
+class Token < ElementoTexto
 	class << self
 		attr_accessor :basicTran
 	end
 	attr_accessor :linea, :columna
 
 end
-class ErrorLexicografico < ObjetoDeTexto
+
+#la clase Error tabien es una instancia de la clase Elementotexto la cual se encarga de almacenar
+#los elementos mal estructurados del texto, indicanco la posicion en la que se encuentra y
+#el fragmento de texto del cual esta conformado
+class Error < ElementoTexto
 	def initialize(linea, columna, contenido)
     	@linea   = linea
     	@columna = columna
     	@contenido   = contenido
-  	end
+	  end
+	
+	#este metodo se encarga de imprimir por pantalla el error en el formato requerido por el enunciado
    	def imprimir()
    		puts "Error: caracter inesperado \"#{@contenido}\" en línea #{@linea}, columna #{@columna}."
-  	end
+	  end
+	  
 end
 
-#definimos el Diccionario de las ER para los tokens existentes
 
+
+#A continuacion se procede a definir el diccionario que se encarga de asociar las RegExp con los
+#Tokens y palabras reservadas señaladas en el enunciado
 dicTokens = {
-	'Punto' => /\A\./           ,
-	'Num' => /^[0-9]*$/                   ,
-	'Caracter' => /^\'.*\'$/,
-	'Id' => /^[a-z][a-zA-Z0-9_]*/,
-	
-	'Coma' => /\A,/		       ,
-	'DosPuntos' => /\A:/       ,
-	'ParAbre' => /\A\(/       ,
-	'ParCierra' => /\A\)/      ,
-	'CorcheteAbre' => /\A\[/   ,
-	'CorcheteCierre' => /\A\]/ ,
-	'LlaveAbre' => /\A\{/      ,
-	'LlaveCierra' => /\A\}/	   ,
-	'Resta' =>/\A-(?!>)$/ 		,
-	'Hacer' =>/\A->(?!>)/         ,
-	'Asignacion' => /\A<-(?!-)/   ,
-	'Suma' => /\A\+/              ,
-	'Desigualdad' => /\A\/=/	,
-	'PuntoYComa' => /\A;/ ,
-	'Mult' => /\A\*/              ,
-	'Div' => /\A\/(?!=)/          ,
-	'Mod' => /\A%(?!=)/           ,
-	'Conjuncion' => /\A\/\\/      ,
-	'Disyuncion' => /\A\\\//      ,
-	'Negacion' => /\Anot/         ,
-	'Menor' => /\A<$/              ,
-	'MenorIgual' => /\A<=/        ,
-	'Mayor' => /\A>$/              ,
-	'MayorIgual' => /\A>=/        ,
-	'Igual' => /\A=/              ,
-	'SiguienteCar' => /\A\+\+/    ,
-	'AnteriorCar' => /\A--/       ,
-	'ValorAscii' => /\A#/                 ,
-	'Concatenacion' => /\A::/             ,
-	'Shift' => /\A\$/                     ,
-	
+	'Punto' => /\A\./,				'Num' => /^[0-9]*$/,
+	'Caracter' => /^\'.*\'$/,		'Id' => /^[a-z][a-zA-Z0-9_]*/,
+	'Coma' => /\A,/,				'DosPuntos' => /\A:/,
+	'ParAbre' => /\A\(/,			'ParCierra' => /\A\)/,
+	'CorcheteAbre' => /\A\[/,		'CorcheteCierre' => /\A\]/,
+	'LlaveAbre' => /\A\{/,			'LlaveCierra' => /\A\}/,
+	'Resta' =>/\A-(?!>)$/,			'Hacer' =>/\A->(?!>)/,
+	'Asignacion' => /\A<-(?!-)/,	'Suma' => /\A\+/,
+	'Desigualdad' => /\A\/=/,		'PuntoYComa' => /\A;/,
+	'Mult' => /\A\*/,				'Div' => /\A\/(?!=)/,
+	'Mod' => /\A%(?!=)/,			'Conjuncion' => /\A\/\\/,
+	'Disyuncion' => /\A\\\//,		'Negacion' => /\Anot/,
+	'Menor' => /\A<$/,				'MenorIgual' => /\A<=/,
+	'Mayor' => /\A>$/,				'MayorIgual' => /\A>=/,
+	'Igual' => /\A=/,				'SiguienteCar' => /\A\+\+/,
+	'AnteriorCar' => /\A--/,		'ValorAscii' => /\A#/,
+	'Concatenacion' => /\A::/,		'Shift' => /\A\$/,
 }
 
 #Escribimos las palabras reservadas del lenguaje
@@ -76,9 +73,10 @@ palabras_reservadas = %w(with true false var begin end int while if else bool ch
 
 #Procedemos a meter dentro de nuestro diccionario de tokens, los
 #tokens relacionados a nuestras palabras reservadas.
-palabras_reservadas.each do |tpr|
-	dicTokens[tpr.capitalize] = /\A#{tpr}\b/
+palabras_reservadas.each do |palabra|
+	dicTokens[palabra.capitalize] = /\A#{palabra}\b/
 end
+
 
 #Creamos las clases para cada tipo de token que poseemos en nuestro diccionario de tokens,
 #(las cuales pertenecen a la clase Token) , las mismas se inicializan para tener el contexto
@@ -178,7 +176,7 @@ class Lexer
 				return
 			else
 				
-				error = ErrorLexicografico.new(@linea,@colInicio,p)
+				error = Error.new(@linea,@colInicio,p)
 				@errores << error
 				return
 			end
@@ -220,7 +218,7 @@ class Lexer
 					@colInicio= @columna
 				end
 			elsif (simbolo =="\n")
-				puts "estoy slach:  #{p}"
+				#puts "estoy slach:  #{p}"
 				if p!= ''
 					buscar(p)
 					@linea += 1
@@ -287,7 +285,7 @@ class Lexer
 					p =p +simbolo
 					@columna += 1
 					ltr = 1
-					puts "hola #{p}"
+					#puts "hola #{p}"
 			elsif simbolo=~ TkNum.basicTran && ltr == 1
 					p =p +simbolo
 					@columna += 1
@@ -299,12 +297,12 @@ class Lexer
 				p =p +simbolo
 				@colInicio= @columna
 				@columna += 1
-				puts "entre: soy #{p}"
+				#puts "entre: soy #{p}"
 			elsif !(simbolo=~ TkId.basicTran)
 				sim = 1
 				p =p +simbolo
 				@columna += 1 
-				puts "entre: soy #{p}"
+				#puts "entre: soy #{p}"
 			elsif (simbolo == '\'')
 				str += 1
 				p = p + simbolo
@@ -319,7 +317,7 @@ class Lexer
 			else
 				p = p + simbolo
 				@columna += 1
-									puts "default: soy #{p}"
+									#puts "default: soy #{p}"
 			end
 
 		end
