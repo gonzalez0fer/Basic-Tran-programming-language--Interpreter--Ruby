@@ -1,5 +1,10 @@
-#Irina Marcano 13-10805
-#Fernando Gonzalez 08-10464 
+#!/usr/bin/ruby
+# = Lexer.rb
+#
+#	Irina Marcano 13-10805
+#	Fernando Gonzalez 08-10464 
+#
+#
 
 class ObjetoDeTexto
 	attr_accessor :linea, :columna, :contenido
@@ -28,7 +33,7 @@ end
 #definimos el Diccionario de las ER para los tokens existentes
 
 dicTokens = {
-	'Punto' => /^\.$/           ,
+	'Punto' => /./           ,
 	'Num' => /^[0-9]*$/                   ,
 	'Caracter' => /^".*"$/,
 	'Id' => /^[a-z][a-zA-Z0-9_]*/,
