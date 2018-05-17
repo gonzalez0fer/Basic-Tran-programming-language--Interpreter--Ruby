@@ -96,15 +96,13 @@ dicTokens.each do |tok_nombre, basicTran|
 
 	Object::const_set "Tk#{tok_nombre}", nuevaClase
 end
-
-
-
 $dicTokens = []
 ObjectSpace.each_object(Class) do |objeto|
 	$dicTokens << objeto if objeto.ancestors.include? Token and objeto!=TkId and objeto!=Token
 end
 
-#en la clase token agregamos un metodo de impresion segun el formato necesitado
+#en la clase token agregamos un metodo de impresion segun el formato necesitado en el cual
+#algunos tokens tendran un string vacio por contenido ya que carecen de argumentos.
 class Token
 	def cont
 		''
@@ -114,8 +112,8 @@ class Token
 	end
 end
 
-#como TkNum, TkId, TkCaracter deben almacenar algun tipo de contenido vamos a modificar directamente
-#esas clases
+#Las TkNum, TkId, TkCaracter deben almacenar algun tipo de contenido en un formato
+#determinado, por ende son modificadas de igual forma
 class TkNum
 	#debe devolver el numero para poder imprimirlo por pantalla
 	def cont
@@ -157,10 +155,6 @@ end
 class Lexer
 	attr_reader :tokens, :errores
 
-	def to_exception
-		ExcepcionLexer::new self
-	end
-
 	def initialize(archivo)
 		@errores = []
 		@tokens = []
@@ -169,6 +163,9 @@ class Lexer
 		@archivo = archivo
 	end
 
+	#metodo que se encarga de revisar la entrada y clasificarlo en error
+	#o token y los agrega a su respectiva lista del lexer con su situacion
+	#indicada por la fila y la columna.
 	def buscar(p)
 			$dicTokens.each do |t|
 				if p =~ t.basicTran
