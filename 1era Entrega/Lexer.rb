@@ -103,9 +103,6 @@ ObjectSpace.each_object(Class) do |objeto|
 	$dicTokens << objeto if objeto.ancestors.include? Token and objeto!=TkId and objeto!=Token
 end
 
-$dicTokens.each do |l|
-			puts	l.basicTran
-			end
 #en la clase token agregamos un metodo de impresion segun el formato necesitado en el cual
 #algunos tokens tendran un string vacio por contenido ya que carecen de argumentos.
 class Token
@@ -172,10 +169,10 @@ class Lexer
 	#o token y los agrega a su respectiva lista del lexer con su situacion
 	#indicada por la fila y la columna.
 	def buscar(p)
-		puts "llego a buscar"
+		
 			$dicTokens.each do |t|
 				if p =~ t.basicTran
-					puts "hizo match #{t}"
+					
 						nuevo1 = t.new(@linea,@colInicio,p)
 						@tokens << nuevo1
 						#mostrarResultado()
@@ -204,8 +201,6 @@ class Lexer
 			end
 		elsif p.length == 4
 			nuevo = p[1,2]
-			puts nuevo
-			puts p
 			#if nuevo == '\n'|| nuevo =='\t' || nuevo == '\''|| nuevo == '\\'
 			if nuevo =~ /"'\\"[n,t]"'"|"'\\""'"|/ 
 				nuevo = TkCaracter.new(@linea,@colInicio,p)
@@ -245,7 +240,6 @@ class Lexer
 		return nil if @archivo.empty?
 		@archivo.each_char do |simbolo|
 			if ((simbolo == " ") or (simbolo == "\t"))
-				puts "blanco :#{p}:"
 				if p!= ''
 					buscar(p)
 					@columna += 1
@@ -276,7 +270,6 @@ class Lexer
 					@columna += 1
 					num = 1
 					p = p + simbolo
-					puts "entre #{p}"
 										
 			elsif simbolo=~ TkNum.basicTran && sim ==1
 					buscar(p)
@@ -287,7 +280,7 @@ class Lexer
 					@columna += 1
 					@colInicio= @columna
 					p = p + simbolo
-					puts p
+					
 			elsif simbolo=~ TkNum.basicTran && num == 1
 					@columna += 1
 					p = p + simbolo
@@ -326,7 +319,7 @@ class Lexer
 					p =p +simbolo
 					@columna += 1
 					ltr = 1
-					puts "hola #{p}"
+					
 			elsif simbolo=~ TkNum.basicTran && ltr == 1
 					p =p +simbolo
 					@columna += 1
@@ -343,12 +336,11 @@ class Lexer
 				
 				str += 1
 				p = p + simbolo
-				puts "entre #{p}"
 				@columna += 1
 			elsif (simbolo == "\'") && str == 1
 				
 				p = p + simbolo
-				puts "por aqui #{p}"
+				
 				str = 0
 				buscarCar(p)
 				@columna += 1
@@ -363,7 +355,6 @@ class Lexer
 			else
 				
 				p = p + simbolo
-				puts "entre por aqui #{p}"
 				@columna += 1
 									#puts "default: soy #{p}"
 			end

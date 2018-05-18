@@ -1,5 +1,6 @@
+8 '0' '\n'
 with
     var contador : int
 begin
-    begin443 <- 35   .
+    443begin <- 35.
 end
