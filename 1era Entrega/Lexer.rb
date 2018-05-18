@@ -50,7 +50,7 @@ end
 #Tokens y palabras reservadas señaladas en el enunciado
 dicTokens = {
 	'Punto' => /\A\./,				'Num' => /^[0-9]*$/,
-	'Caracter' => /^\'.*\'$/,		'Id' => /^[a-z][a-zA-Z0-9_]*/,
+	'Caracter' => /^"'"."'"$/,		'Id' => /^[a-z][a-zA-Z0-9_]*/,
 	'Coma' => /\A,/,				'DosPuntos' => /\A:/,
 	'ParAbre' => /\A\(/,			'ParCierra' => /\A\)/,
 	'CorcheteAbre' => /\A\[/,		'CorcheteCierre' => /\A\]/,
@@ -68,8 +68,10 @@ dicTokens = {
 	'Concatenacion' => /\A::/,		'Shift' => /\A\$/,
 }
 
+$caracteres = /=|>|<|\+|-|\*|%|;|,|\(|\)|\.|\[|\{|:|\$|#|\/|\}|\]|\)|[a-zA-Z0-9]/
+
 #Escribimos las palabras reservadas del lenguaje
-palabras_reservadas = %w(with true false var begin end int while if else bool char array read of)
+palabras_reservadas = %w(with true false var begin end int while if else bool char array read of print for step from to)
 
 #Procedemos a meter dentro de nuestro diccionario de tokens, los
 #tokens relacionados a nuestras palabras reservadas.
@@ -101,6 +103,9 @@ ObjectSpace.each_object(Class) do |objeto|
 	$dicTokens << objeto if objeto.ancestors.include? Token and objeto!=TkId and objeto!=Token
 end
 
+$dicTokens.each do |l|
+			puts	l.basicTran
+			end
 #en la clase token agregamos un metodo de impresion segun el formato necesitado en el cual
 #algunos tokens tendran un string vacio por contenido ya que carecen de argumentos.
 class Token
@@ -167,11 +172,13 @@ class Lexer
 	#o token y los agrega a su respectiva lista del lexer con su situacion
 	#indicada por la fila y la columna.
 	def buscar(p)
+		puts "llego a buscar"
 			$dicTokens.each do |t|
 				if p =~ t.basicTran
-					#puts "hizo match #{t}"
-						nuevo = t.new(@linea,@colInicio,p)
-						@tokens << nuevo
+					puts "hizo match #{t}"
+						nuevo1 = t.new(@linea,@colInicio,p)
+						@tokens << nuevo1
+						#mostrarResultado()
 						return
 				end
 			end
@@ -180,13 +187,39 @@ class Lexer
 				@tokens << nuevo
 				return
 			else
-				
+				puts "NO hizo match #{p}"
 				error = Error.new(@linea,@colInicio,p)
 				@errores << error
 				return
 			end
 	end
+	def buscarCar(p)
+		if p.length == 3
+			nuevo = p[1]		
+			if nuevo =~ $caracteres
+					#puts "hizo match #{t}"
+						nuevo = TkCaracter.new(@linea,@colInicio,p)
+						@tokens << nuevo
+						return
+			end
+		elsif p.length == 4
+			nuevo = p[1,2]
+			puts nuevo
+			puts p
+			#if nuevo == '\n'|| nuevo =='\t' || nuevo == '\''|| nuevo == '\\'
+			if nuevo =~ /"'\\"[n,t]"'"|"'\\""'"|/ 
+				nuevo = TkCaracter.new(@linea,@colInicio,p)
+						@tokens << nuevo
+						return
+			end
 
+		end
+			error = Error.new(@linea,@colInicio,p)
+			@errores << error
+			return
+			
+
+	end
 	#metodo de la clase lexer que se encarga de llamar a la impresion
 	#de la salida según sea el caso requerido, (errores o tokens)
 	def mostrarResultado()
@@ -204,14 +237,15 @@ class Lexer
 	def leer()
 		p = ''
 		@var = []
-		str = 0 	#semaforo para detectar cadena de caracteres de mas de una palabra
+		str = 0 	#semaforo para detectar los caracteres
 		num = 0 	#semaforo para detectar numeros pegados a otras cosas
 		sim = 0 	#semaforo para detectar simbolos pegados a otras cosas
-		ltr = 0 
+		ltr = 0  	#semaforo para detectar los TkId
 		@colInicio= @columna
 		return nil if @archivo.empty?
 		@archivo.each_char do |simbolo|
-			if ((simbolo == " ") or (simbolo == "\t")) && str == 0
+			if ((simbolo == " ") or (simbolo == "\t"))
+				puts "blanco :#{p}:"
 				if p!= ''
 					buscar(p)
 					@columna += 1
@@ -242,6 +276,7 @@ class Lexer
 					@columna += 1
 					num = 1
 					p = p + simbolo
+					puts "entre #{p}"
 										
 			elsif simbolo=~ TkNum.basicTran && sim ==1
 					buscar(p)
@@ -271,7 +306,6 @@ class Lexer
 					elsif simbolo == "-"|| simbolo=="+"|| simbolo == "<" || simbolo =="=" || simbolo =="."|| simbolo ==","|| simbolo ==";"|| simbolo ==":" || simbolo ==">" || simbolo =="/" || simbolo =="\\"
 						sim = 1
 						p =p +simbolo
-						puts p
 					end
 			elsif simbolo=~ TkId.basicTran && sim == 1
 					sim = 0
@@ -288,11 +322,11 @@ class Lexer
 					@columna += 1
 					@colInicio= @columna
 					p = ''
-			elsif simbolo=~ TkId.basicTran
+			elsif simbolo=~ TkId.basicTran && str == 0
 					p =p +simbolo
 					@columna += 1
 					ltr = 1
-					#puts "hola #{p}"
+					puts "hola #{p}"
 			elsif simbolo=~ TkNum.basicTran && ltr == 1
 					p =p +simbolo
 					@columna += 1
@@ -305,24 +339,31 @@ class Lexer
 				@colInicio= @columna
 				@columna += 1
 				#puts "entre: soy #{p}"
-			elsif !(simbolo=~ TkId.basicTran)
+			elsif (simbolo == "\'") && str == 0
+				
+				str += 1
+				p = p + simbolo
+				puts "entre #{p}"
+				@columna += 1
+			elsif (simbolo == "\'") && str == 1
+				
+				p = p + simbolo
+				puts "por aqui #{p}"
+				str = 0
+				buscarCar(p)
+				@columna += 1
+				@colInicio= @columna
+				p = ''	
+			elsif !(simbolo=~ TkId.basicTran) && str == 0
+				
 				sim = 1
 				p =p +simbolo
 				@columna += 1 
 				#puts "entre: soy #{p}"
-			elsif (simbolo == '\'')
-				str += 1
-				p = p + simbolo
-				@columna += 1
-				if str == 2
-					buscar(p)
-					@colInicio= @columna
-					str = 0
-					p = ''
-				end
-			
 			else
+				
 				p = p + simbolo
+				puts "entre por aqui #{p}"
 				@columna += 1
 									#puts "default: soy #{p}"
 			end
