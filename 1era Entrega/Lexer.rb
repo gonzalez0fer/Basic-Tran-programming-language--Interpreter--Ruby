@@ -28,7 +28,7 @@ class Token < ElementoTexto
 end
 
 #la clase Error tabien es una instancia de la clase Elementotexto la cual se encarga de almacenar
-#los elementos mal estructurados del texto, indicanco la posicion en la que se encuentra y
+#los elementos @mal estructurados del texto, indicanco la posicion en la que se encuentra y
 #el fragmento de texto del cual esta conformado
 class Error < ElementoTexto
 	def initialize(linea, columna, contenido)
@@ -100,7 +100,7 @@ dicTokens.each do |tok_nombre, basicTran|
 end
 $dicTokens = []
 ObjectSpace.each_object(Class) do |objeto|
-	$dicTokens << objeto if objeto.ancestors.include? Token and objeto!=TkId and objeto!=Token
+	$dicTokens << objeto if objeto.ancestors.include? Token  and objeto!=Token
 end
 
 #en la clase token agregamos un metodo de impresion segun el formato necesitado en el cual
@@ -179,16 +179,14 @@ class Lexer
 						return
 				end
 			end
-			if p =~ /^[a-z][a-zA-Z0-9_]*/
-				nuevo = TkId.new(@linea,@colInicio,p)
-				@tokens << nuevo
-				return
-			else
-				puts "NO hizo match #{p}"
+
+				#puts "NO hizo match #{p}"
 				error = Error.new(@linea,@colInicio,p)
 				@errores << error
+				if @mal == 1
+					@mal = 0
+				end
 				return
-			end
 	end
 	def buscarCar(p)
 		if p.length == 3
@@ -200,9 +198,11 @@ class Lexer
 						return
 			end
 		elsif p.length == 4
-			nuevo = p[1,2]
-			#if nuevo == '\n'|| nuevo =='\t' || nuevo == '\''|| nuevo == '\\'
-			if nuevo =~ /"'\\"[n,t]"'"|"'\\""'"|/ 
+			#puts "hizo match: #{p}"
+			p1 = p[1,2]
+			#puts "evaluamos: #{p1}"
+
+			if p1 =~ /\\[n,t] || \\''' || \\\\ / 
 				nuevo = TkCaracter.new(@linea,@colInicio,p)
 						@tokens << nuevo
 						return
@@ -236,25 +236,44 @@ class Lexer
 		num = 0 	#semaforo para detectar numeros pegados a otras cosas
 		sim = 0 	#semaforo para detectar simbolos pegados a otras cosas
 		ltr = 0  	#semaforo para detectar los TkId
+		@mal = 0 	#semaforo para detectar los TkId que inician con mayusculas
 		@colInicio= @columna
 		return nil if @archivo.empty?
 		@archivo.each_char do |simbolo|
 			if ((simbolo == " ") or (simbolo == "\t"))
-				if p!= ''
+				if str ==1 || str==2
+					#puts "soy #{p}"
+					str = 0
+					buscarCar(p)
+				
+				elsif @mal == 1
+					#puts "entre"
+					error = Error.new(@linea,@colInicio,p)
+					@errores << error
+					@mal = 0
+				#	puts "soy/era #{p} #{@mal}"
+
+				elsif p!= ''
+				#	puts "soy: #{p}"
 					buscar(p)
-					@columna += 1
-					@colInicio= @columna
 					num = 0
 					sim = 0
 					ltr=0
-					p = ''
-				else
-					@columna += 1
-					@colInicio= @columna
+
+
+				
 				end
+				@columna += 1
+				@colInicio= @columna
+				p = ''
+				#puts "soy espacio"
 			elsif (simbolo =="\n")
-				#puts "estoy slach:  #{p}"
-				if p!= ''
+				if str==1 || str == 2
+					error = Error.new(@linea,@colInicio,p)
+					@errores << error
+					str = 0
+					p = ''
+				elsif p!= ''
 					buscar(p)
 					@linea += 1
 					@columna = 1
@@ -263,15 +282,17 @@ class Lexer
 					num = 0
 					sim = 0
 					ltr=0
+				
 				else
-					@columna += 1
+					@linea += 1
+					@columna = 1
 				end
-			elsif simbolo=~ TkNum.basicTran && p==''
+			elsif simbolo=~ TkNum.basicTran && p==''												#Detecta numeros empezando en el vacio
 					@columna += 1
 					num = 1
 					p = p + simbolo
 										
-			elsif simbolo=~ TkNum.basicTran && sim ==1
+			elsif simbolo=~ TkNum.basicTran && sim ==1 											#detecta numeros despues de tener tener un simbolo
 					buscar(p)
 					num = 1
 					sim = 0
@@ -281,11 +302,11 @@ class Lexer
 					@colInicio= @columna
 					p = p + simbolo
 					
-			elsif simbolo=~ TkNum.basicTran && num == 1
+			elsif simbolo=~ TkNum.basicTran && num == 1 										#detecta numeros despues de ya tener numeros
 					@columna += 1
 					p = p + simbolo
 										
-			elsif !(simbolo=~ TkNum.basicTran) && num == 1
+			elsif !(simbolo=~ TkNum.basicTran) && num == 1 									#tienes numeros pero lo siguiente no lo es
 										
 					num = 0
 					buscar(p)
@@ -300,30 +321,41 @@ class Lexer
 						sim = 1
 						p =p +simbolo
 					end
-			elsif simbolo=~ TkId.basicTran && sim == 1
+			elsif simbolo=~ TkId.basicTran && sim == 1 				#el anterior es un simbolo mientras que el actual es un ID
+
 					sim = 0
 					buscar(p)
 					@columna += 1
 					@colInicio= @columna
 					p=''
 					p =p +simbolo
+				
+					ltr = 1
 
-			elsif not(simbolo=~ TkId.basicTran) && sim ==1
+			elsif not(simbolo=~ TkId.basicTran) && sim ==1 		#anterior es un simbolo mientras que el actual es un numero
 					sim = 0
 					p =p +simbolo
+					#puts "entre aqui y soy: #{p}"
+
+					#puts "simbolo completo: #{p} "
 					buscar(p)
 					@columna += 1
 					@colInicio= @columna
 					p = ''
 			elsif simbolo=~ TkId.basicTran && str == 0
+					#puts "entre en un ID #{simbolo}"
 					p =p +simbolo
 					@columna += 1
 					ltr = 1
 					
-			elsif simbolo=~ TkNum.basicTran && ltr == 1
+			elsif (simbolo=~ TkNum.basicTran || simbolo=~ /[a-zA-Z0-9_]/ ) && ltr == 1
 					p =p +simbolo
+					#puts "entre ID: #{p}"
 					@columna += 1
+
 			elsif !(simbolo=~ TkId.basicTran) && ltr == 1
+					#puts "entre aca #{p} #{simbolo}"
+
 				buscar(p)
 				ltr =0
 				p=''
@@ -333,33 +365,69 @@ class Lexer
 				@columna += 1
 				#puts "entre: soy #{p}"
 			elsif (simbolo == "\'") && str == 0
-				
+				#puts "primera comita"
 				str += 1
 				p = p + simbolo
 				@columna += 1
 			elsif (simbolo == "\'") && str == 1
-				
+				#puts "obtuve #{simbolo}"
 				p = p + simbolo
-				
+				if p.length== 4
+					str = 0
+				  buscarCar(p)
+				  @columna += 1
+				  @colInicio= @columna
+				  p = ''
+				else
+					str = 2
+					@columna += 1
+				end
+
+			elsif (simbolo == "\'") && str == 2							#caso que detecta la comilla simple
+
+				p = p + simbolo
 				str = 0
 				buscarCar(p)
 				@columna += 1
 				@colInicio= @columna
-				p = ''	
+				p = ''
+
+			elsif !(simbolo == "\'") && str == 2							#caso que detecta la comilla simple
+				buscarCar(p)
+				#puts "listo llegue"
+				@columna += 1
+				@colInicio= @columna
+				p = ''
+				p = p + simbolo
+				str = 0
+				if simbolo=~ TkId.basicTran
+					p = p + simbolo
+					ltr = 1
+				elsif simbolo=~ TkNum.basicTran
+					p = p + simbolo
+					num = 1
+				elsif simbolo == "-"|| simbolo=="+"|| simbolo == "<" || simbolo =="=" || simbolo =="."|| simbolo ==","|| simbolo ==";"|| simbolo ==":" || simbolo ==">" || simbolo =="/" || simbolo =="\\"
+					sim = 1
+					p =p +simbolo
+				end
 			elsif !(simbolo=~ TkId.basicTran) && str == 0
-				
-				sim = 1
+				if simbolo.downcase =~ TkId.basicTran
+					@mal = 1
+				else
+					sim = 1
+				end
 				p =p +simbolo
-				@columna += 1 
-				#puts "entre: soy #{p}"
+				@columna += 1
 			else
-				
 				p = p + simbolo
 				@columna += 1
-									#puts "default: soy #{p}"
+				#puts "hizo match #{p}"
+
+										#puts "default: soy #{p}"
 			end
 
 		end
+		
 		mostrarResultado()
 	end
 end

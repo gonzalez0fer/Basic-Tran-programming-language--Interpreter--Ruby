@@ -1,6 +1,5 @@
-8 '0' '\n'
-with
-    var contador : int
+
 begin
-    443begin <- 35.
+ __Hola;
+ a = 'a2''
 end
