@@ -33,7 +33,7 @@ class Parser
 
     #Procedemos a indicar las equivalencia de los Tokens con los signos
     convert
-        '.'         'TkPunto'
+        '.'         'TkPunto' #Falta
         'num'       'TkNum'
         'char'      'TkCaracter'
         'id'        'TkId'
@@ -50,7 +50,7 @@ class Parser
         '<-'        'TkAsignacion'
         '+'         'TkSuma'
         '/='        'TkDesigual'
-        ';'         'TkPuntoYComa'
+        ';'         'TkPuntoYComa' #falta
         '*'         'TkMult'
         '/'         'TkDiv'
         '%'         'TkMod'
@@ -65,11 +65,11 @@ class Parser
         '--'        'TkAnteriorCar'
         '#'         'TkValorAscii'
         '::'        'TkConcatenacion'
-        '$'         'TkShift'
+        '$'         'TkShift'       #falta
         'with'      'Tkwith' 
         'true'      'Tktrue' 
         'false'     'Tkfalse' 
-        'var'       'Tkvar' 
+        'var'       'Tkvar'     #falta
         'begin'     'Tkbegin' 
         'end'       'Tkend' 
         'int'       'Tkint' 
@@ -80,10 +80,10 @@ class Parser
         'char'      'Tkchar' 
         'array'     'Tkarray' 
         'read'      'Tkread' 
-        'of'        'Tkof' 
+        'of'        'Tkof' #falta
         'print'     'Tkprint' 
         'for'       'Tkfor' 
-        'step'      'Tkstep' 
+        'step'      'Tkstep' #falta
         'from'      'Tkfrom' 
         'to'        'Tkto'
     end
@@ -115,30 +115,49 @@ rule
 
            Tipo: 'int'                                                                  { result = val[0]                                        }
                 | 'bool'                                                                { result = val[0]                                        }
+                | 'array'                                                               { result = val[0]                                        }
                 ;
 
-      Variables: Variables ',' 'id'                                                     { result = val[0] + [val[2]]                             }
+        Variables: Variables ',' 'id'                                                   { result = val[0] + [val[2]]                             }
                | 'id'                                                                   { result = [val[0]]                                      }
+               ;
+
+  Instrucciones: Instruccion                                                            { result = [val[0]]                                      }
+               | Instrucciones ';' Instruccion                                          { result = val[0] + [val[2]]                             }
+               ;
+
+ElementosSalida: ElementoSalida                                                         { result = [val[0]]                                      }
+               | ElementosSalida ',' ElementoSalida                                     { result = val[0] + [val[2]]                             }
+               ;
+
+ ElementoSalida: 'char'                                                                 { result = val[0]                                        }
+               | Expresion                                                              { result = val[0]                                        }
                ;
 
       Expresion:    'num'                                                               { result = Entero::new(val[0])                           }
                |    'true'                                                              { result = True::new()                                   }
                |    'false'                                                             { result = False::new()                                  }
                |    'id'                                                                { result = Variable::new(val[0])                         }
+               |    '#'                                                                 { result = ValorAscii::new(val[0])                       }
                |    Expresion '%'   Expresion                                           { result = Modulo::new(val[0], val[2])                   }
+               |    Expresion '++'                                                      { result = SiguienteCar::new(val[0])                     }
+               |    Expresion '--'                                                      { result = AnteriorCar::new(val[0])                      }
+               |    Expresion '::'  Expresion                                           { result = Concatenacion::new(val[0], val[2])            }
                |    Expresion '*'   Expresion                                           { result = Multiplicacion::new(val[0], val[2])           }
                |    Expresion '+'   Expresion                                           { result = Suma::new(val[0], val[2])                     }
                |    Expresion '-'   Expresion                                           { result = Resta::new(val[0], val[2])                    }
                |    Expresion '/'   Expresion                                           { result = Division::new(val[0], val[2])                 }
                |    Expresion '/='  Expresion                                           { result = Desigual::new(val[0], val[2])                 }
-               |    Expresion '<'   Expresion                                           { result = Menor_Que::new(val[0], val[2])                }
-               |    Expresion '<='  Expresion                                           { result = Menor_Igual_Que::new(val[0], val[2])          }
+               |    Expresion '<'   Expresion                                           { result = Menor::new(val[0], val[2])                    }
+               |    Expresion '<='  Expresion                                           { result = MenorIgual::new(val[0], val[2])               }
                |    Expresion '='   Expresion                                           { result = Igual::new(val[0], val[2])                    }
-               |    Expresion '>'   Expresion                                           { result = Mayor_Que::new(val[0], val[2])                }
-               |    Expresion '>='  Expresion                                           { result = Mayor_Igual_Que::new(val[0], val[2])          }
+               |    Expresion '>'   Expresion                                           { result = Mayor::new(val[0], val[2])                    }
+               |    Expresion '>='  Expresion                                           { result = MayorIgual::new(val[0], val[2])               }
                |    Expresion '/\'  Expresion                                           { result = And::new(val[0], val[2])                      }
                |    Expresion '\/'  Expresion                                           { result = Or::new(val[0], val[2])                       }
                |    'not' Expresion                                                     { result = Not::new(val[1])                              }
                |    '-'   Expresion = UMINUS                                            { result = Menos_Unario::new(val[1])                     }
                |    '(' Expresion ')'                                                   { result = val[1]                                        }
+               |    '[' Expresion ']'                                                   { result = val[1]                                        }
+               |    '{' Expresion '}'                                                   { result = val[1]                                        }
                ;
