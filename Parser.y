@@ -94,14 +94,33 @@ class Parser
 rule
 
     Instruccion:    'id' '<-' Expresion                                                 {  result = Asignacion::new(val[0], val[2])              } 
-                |   'begin' Declaraciones Instrucciones 'end'                           {  result = Bloque::new(val[1], val[2])                  }
+                |   'begin' Instrucciones 'end'                                         {  result = Bloque::new(val[1])                          }
                 |   'read' 'id'                                                         {  result = Read::new(val[1])                            }
                 |   'print' ElementoSalida                                              {  result = Print::new(val[1])                           }
                 |   'if' Expresion 'else' Instruccion                                   { result = Condicional_Else::new(val[1], val[3])         }
                 |   'for' 'id' 'from' Expresion 'to' Expresion '->' Instruccion         { result = Iteracion_Det::new(val[1], val[3], val[5])    }
                 |   'while' Expresion '->' Instruccion                                  { result = Iteracion_Indet::new(val[1], val[3])          }
                 ;
-    
+  
+    Declaraciones: 'with' LDeclaraciones                                                { result = Declaraciones::new(val[1])                    }
+                |                                                                       { result = Declaraciones::new([])                        }
+                ;
+
+    LDeclaraciones: Declaracion                                                         { result = [val[0]]                                      }
+                | LDeclaraciones ';' Declaracion                                        { result = val[0] + [val[2]]                             }
+                ;
+
+    Declaracion: Variables ':' Tipo                                                     { result = Declaracion::new(val[0], val[2])              }
+                ;
+
+           Tipo: 'int'                                                                  { result = val[0]                                        }
+                | 'bool'                                                                { result = val[0]                                        }
+                ;
+
+      Variables: Variables ',' 'id'                                                     { result = val[0] + [val[2]]                             }
+               | 'id'                                                                   { result = [val[0]]                                      }
+               ;
+
       Expresion:    'num'                                                               { result = Entero::new(val[0])                           }
                |    'true'                                                              { result = True::new()                                   }
                |    'false'                                                             { result = False::new()                                  }
