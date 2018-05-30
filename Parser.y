@@ -31,7 +31,7 @@ class Parser
         left        '::'   
     preclow
 
-
+    #Procedemos a indicar las equivalencia de los Tokens con los signos
     convert
         '.'         'TkPunto'
         'num'       'TkNum'
@@ -89,4 +89,37 @@ class Parser
     end
 
 
+#declarando la gramatica
+
+rule
+
+    Instruccion:    'id' '<-' Expresion                                                 {  result = Asignacion::new(val[0], val[2])              } 
+                |   'begin' Declaraciones Instrucciones 'end'                           {  result = Bloque::new(val[1], val[2])                  }
+                |   'read' 'id'                                                         {  result = Read::new(val[1])                            }
+                |   'print' ElementoSalida                                              {  result = Print::new(val[1])                           }
+                |   'if' Expresion 'else' Instruccion                                   { result = Condicional_Else::new(val[1], val[3])         }
+                |   'for' 'id' 'from' Expresion 'to' Expresion '->' Instruccion         { result = Iteracion_Det::new(val[1], val[3], val[5])    }
+                |   'while' Expresion '->' Instruccion                                  { result = Iteracion_Indet::new(val[1], val[3])          }
+                ;
     
+      Expresion:    'num'                                                               { result = Entero::new(val[0])                           }
+               |    'true'                                                              { result = True::new()                                   }
+               |    'false'                                                             { result = False::new()                                  }
+               |    'id'                                                                { result = Variable::new(val[0])                         }
+               |    Expresion '%'   Expresion                                           { result = Modulo::new(val[0], val[2])                   }
+               |    Expresion '*'   Expresion                                           { result = Multiplicacion::new(val[0], val[2])           }
+               |    Expresion '+'   Expresion                                           { result = Suma::new(val[0], val[2])                     }
+               |    Expresion '-'   Expresion                                           { result = Resta::new(val[0], val[2])                    }
+               |    Expresion '/'   Expresion                                           { result = Division::new(val[0], val[2])                 }
+               |    Expresion '/='  Expresion                                           { result = Desigual::new(val[0], val[2])                 }
+               |    Expresion '<'   Expresion                                           { result = Menor_Que::new(val[0], val[2])                }
+               |    Expresion '<='  Expresion                                           { result = Menor_Igual_Que::new(val[0], val[2])          }
+               |    Expresion '='   Expresion                                           { result = Igual::new(val[0], val[2])                    }
+               |    Expresion '>'   Expresion                                           { result = Mayor_Que::new(val[0], val[2])                }
+               |    Expresion '>='  Expresion                                           { result = Mayor_Igual_Que::new(val[0], val[2])          }
+               |    Expresion '/\'  Expresion                                           { result = And::new(val[0], val[2])                      }
+               |    Expresion '\/'  Expresion                                           { result = Or::new(val[0], val[2])                       }
+               |    'not' Expresion                                                     { result = Not::new(val[1])                              }
+               |    '-'   Expresion = UMINUS                                            { result = Menos_Unario::new(val[1])                     }
+               |    '(' Expresion ')'                                                   { result = val[1]                                        }
+               ;
