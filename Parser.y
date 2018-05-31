@@ -121,9 +121,9 @@ rule
                 | LDeclaraciones ';' Declaracion                                        { result = val[0] + [val[2]] }
                 ;
 
-    Declaracion: 'var' Variables ':' Tipo                           { result = Declaracion::new(val[0], val[2]) }
+    Declaracion: 'var' Variables ':' Tipo                           { result = Declaracion::new(val[1], val[3]) }
                 | 'var' Variables ':' 'array' '[' Paso ']' 'of' Tipo 
-                                                          { result = Declaracion::new(val[0], val[2], val[4], val[7])}
+                                                          { result = Declaracion::new(val[1], val[3], val[5], val[8])}
                 ;
 
            Tipo: 'int'                                                                  { result = val[0] }
