@@ -1,7 +1,6 @@
 #	Irina Marcano 13-10805
 #	Fernando Gonzalez 08-10464 
 
-
 class Parser
 
     #Procedemos a declarar los tokens de BasicTran
@@ -100,7 +99,7 @@ rule
 
                 |   'read' 'id'                                                         {  result = Read::new(val[1])  }
 
-                |   'print' ElementoSalida                                              {  result = Print::new(val[1]) }
+                |   'print' ElementosSalida                                              {  result = Print::new(val[1]) }
 
                 |   'if' Expresion 'else' Instruccion                           { result = Condicional_Else::new(val[1], val[3])}
 
@@ -110,12 +109,10 @@ rule
                 |'for' 'id' 'from' Expresion 'to' Expresion '[' 'step' Paso ']' '->' Instruccion              
                                           {result = Iteracion_Det::new(val[1],val[3], val[5], val[8], val[11])}
 
-                |   'while' Expresion '->' Instruccion                        { result = Iteracion_Indet::new(val[1], val[3]) }
+                |   'while' Expresion '->' Instruccion                         { result = Iteracion_Indet::new(val[1], val[3]) }
+                |'with' LDeclaraciones                                         { result = Declaraciones::new(val[1]) }
+                |                                                              { result = Declaraciones::new([])     }
 
-                ;
-  
-    Declaraciones: 'with' LDeclaraciones                                           { result = Declaraciones::new(val[1]) }
-                |                                                                  { result = Declaraciones::new([])     }
                 ;
 
     LDeclaraciones: Declaracion                                                         { result = [val[0]] }
@@ -180,3 +177,9 @@ ElementosSalida: ElementoSalida                                                 
                |    '[' Expresion ']'                                                   { result = val[1]                       }
                |    '{' Expresion '}'                                                   { result = val[1]                       }
                ;
+
+
+---- inner ----
+    def parse(lexer)
+          @yydebug = true # DEBUG
+    end
