@@ -116,15 +116,14 @@ rule
                 | Instrucciones ';' Instruccion                                          { result = val[0] + [val[2]]  }
                 ;
 
-    LDeclaraciones: 'var' ModoDeclaraciones                                         { result =Declaraciones::new [val[1]] }
+    LDeclaraciones: 'var' ModoDeclaraciones                                         { result =Declaraciones::new val[1] }
                 ;
 
 ModoDeclaraciones: Declaracion                                                      { result = val[0] }
                  | ModoDeclaraciones ';' Declaracion                                { result = val[0] + [val[2]] }
                  ;               
 
-    Declaracion: 
-                | Variables ':' Tipo                           { result = Declaracion::new(val[0], val[2]) }
+    Declaracion: Variables ':' Tipo                           { result = Declaracion::new(val[0], val[2]) }
                 | Variables ':' 'array' '[' Paso ']' 'of' Tipo 
                                                           { result = Declaracion::new(val[0], val[2], val[4], val[7])}
                 ;

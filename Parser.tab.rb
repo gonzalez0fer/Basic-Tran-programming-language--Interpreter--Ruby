@@ -7,7 +7,7 @@
 require 'racc/parser.rb'
 class Parser < Racc::Parser
 
-module_eval(<<'...end Parser.y/module_eval...', 'Parser.y', 185)
+module_eval(<<'...end Parser.y/module_eval...', 'Parser.y', 184)
     def parse(lexer)
           @yydebug = true # DEBUG
     end
@@ -120,12 +120,12 @@ racc_action_table = [
     37,    51,    52,   nil,    45,    46,    47,    49,    50,    48,
     38,    39,    42,    43,    41,    44,    37,    51,    52,   nil,
     45,    46,    47,    49,    50,    48,    38,    39,    42,    43,
-    41,    44,    37,    51,    52,   nil,    45,   -56,   -56,   -56,
-   -56,    48,    42,    43,    41,    44,    37,    51,    52,   nil,
-    45,   -56,   -56,   -56,   -56,    48,    42,    43,    41,    44,
-    37,    51,    52,   nil,    45,   -56,   -56,   -56,   -56,    48,
-    42,    43,    41,    44,    37,    51,    52,   nil,    45,   -56,
-   -56,   -56,   -56,    48 ]
+    41,    44,    37,    51,    52,   nil,    45,   -55,   -55,   -55,
+   -55,    48,    42,    43,    41,    44,    37,    51,    52,   nil,
+    45,   -55,   -55,   -55,   -55,    48,    42,    43,    41,    44,
+    37,    51,    52,   nil,    45,   -55,   -55,   -55,   -55,    48,
+    42,    43,    41,    44,    37,    51,    52,   nil,    45,   -55,
+   -55,   -55,   -55,    48 ]
 
 racc_action_check = [
      0,    95,     0,    69,     0,    95,    69,    95,   114,     0,
@@ -255,18 +255,18 @@ racc_action_pointer = [
    nil,     6,    15,    58,   -31,    58,   nil,   465,   nil ]
 
 racc_action_default = [
-   -56,   -56,   -32,   -56,   -56,   -56,   -56,   -56,   -56,   -10,
-   -56,   -29,   -30,   -31,   -33,   -56,   -56,   -56,   -56,   -56,
-   -56,   -56,   -56,   -56,   -12,    -3,    -4,   -24,   -26,   -27,
-   -32,   -56,   -56,   -56,    -9,   -17,   -56,   -56,   -35,   -36,
-   -56,   -56,   -56,   -56,   -56,   -56,   -56,   -56,   -56,   -56,
-   -56,   -56,   -56,   -50,   -51,   -52,   -56,   -56,   -56,   119,
-    -1,    -2,   -56,   -56,   -56,   -56,   -56,   -14,   -15,   -56,
-   -23,   -11,   -34,   -37,   -38,   -39,   -40,   -41,   -42,   -43,
-   -44,   -45,   -46,   -47,   -48,   -49,   -53,   -54,   -55,   -13,
-   -25,    -5,   -56,    -8,   -17,   -56,   -56,   -56,   -16,   -18,
-   -56,   -20,   -21,   -22,   -56,   -56,   -56,   -56,   -56,   -28,
-    -6,   -56,   -56,   -56,   -56,   -56,   -19,   -56,    -7 ]
+   -55,   -55,   -31,   -55,   -55,   -55,   -55,   -55,   -55,   -10,
+   -55,   -28,   -29,   -30,   -32,   -55,   -55,   -55,   -55,   -55,
+   -55,   -55,   -55,   -55,   -12,    -3,    -4,   -23,   -25,   -26,
+   -31,   -55,   -55,   -55,    -9,   -55,   -55,   -55,   -34,   -35,
+   -55,   -55,   -55,   -55,   -55,   -55,   -55,   -55,   -55,   -55,
+   -55,   -55,   -55,   -49,   -50,   -51,   -55,   -55,   -55,   119,
+    -1,    -2,   -55,   -55,   -55,   -55,   -55,   -14,   -15,   -55,
+   -22,   -11,   -33,   -36,   -37,   -38,   -39,   -40,   -41,   -42,
+   -43,   -44,   -45,   -46,   -47,   -48,   -52,   -53,   -54,   -13,
+   -24,    -5,   -55,    -8,   -55,   -55,   -55,   -55,   -16,   -17,
+   -55,   -19,   -20,   -21,   -55,   -55,   -55,   -55,   -55,   -27,
+    -6,   -55,   -55,   -55,   -55,   -55,   -18,   -55,    -7 ]
 
 racc_goto_table = [
      1,    29,    31,    24,    33,    27,    68,    99,    23,    67,
@@ -322,26 +322,26 @@ racc_reduce_table = [
   2, 62, :_reduce_14,
   1, 63, :_reduce_15,
   3, 63, :_reduce_16,
-  0, 64, :_reduce_none,
-  3, 64, :_reduce_18,
-  8, 64, :_reduce_19,
+  3, 64, :_reduce_17,
+  8, 64, :_reduce_18,
+  1, 66, :_reduce_19,
   1, 66, :_reduce_20,
-  1, 66, :_reduce_21,
-  3, 65, :_reduce_22,
-  1, 65, :_reduce_23,
-  1, 60, :_reduce_24,
-  3, 60, :_reduce_25,
+  3, 65, :_reduce_21,
+  1, 65, :_reduce_22,
+  1, 60, :_reduce_23,
+  3, 60, :_reduce_24,
+  1, 67, :_reduce_25,
   1, 67, :_reduce_26,
-  1, 67, :_reduce_27,
-  1, 61, :_reduce_28,
+  1, 61, :_reduce_27,
+  1, 58, :_reduce_28,
   1, 58, :_reduce_29,
   1, 58, :_reduce_30,
   1, 58, :_reduce_31,
   1, 58, :_reduce_32,
-  1, 58, :_reduce_33,
-  3, 58, :_reduce_34,
+  3, 58, :_reduce_33,
+  2, 58, :_reduce_34,
   2, 58, :_reduce_35,
-  2, 58, :_reduce_36,
+  3, 58, :_reduce_36,
   3, 58, :_reduce_37,
   3, 58, :_reduce_38,
   3, 58, :_reduce_39,
@@ -354,15 +354,14 @@ racc_reduce_table = [
   3, 58, :_reduce_46,
   3, 58, :_reduce_47,
   3, 58, :_reduce_48,
-  3, 58, :_reduce_49,
+  2, 58, :_reduce_49,
   2, 58, :_reduce_50,
   2, 58, :_reduce_51,
-  2, 58, :_reduce_52,
+  3, 58, :_reduce_52,
   3, 58, :_reduce_53,
-  3, 58, :_reduce_54,
-  3, 58, :_reduce_55 ]
+  3, 58, :_reduce_54 ]
 
-racc_reduce_n = 56
+racc_reduce_n = 55
 
 racc_shift_n = 119
 
@@ -613,7 +612,7 @@ module_eval(<<'.,.,', 'Parser.y', 115)
 
 module_eval(<<'.,.,', 'Parser.y', 118)
   def _reduce_14(val, _values, result)
-     result =Declaraciones::new [val[1]] 
+     result =Declaraciones::new val[1] 
     result
   end
 .,.,
@@ -627,23 +626,28 @@ module_eval(<<'.,.,', 'Parser.y', 121)
 
 module_eval(<<'.,.,', 'Parser.y', 122)
   def _reduce_16(val, _values, result)
-     result = [val[0]] + val[2] 
+     result = val[0] + [val[2]] 
     result
   end
 .,.,
 
-# reduce 17 omitted
-
-module_eval(<<'.,.,', 'Parser.y', 126)
-  def _reduce_18(val, _values, result)
+module_eval(<<'.,.,', 'Parser.y', 125)
+  def _reduce_17(val, _values, result)
      result = Declaracion::new(val[0], val[2]) 
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'Parser.y', 128)
-  def _reduce_19(val, _values, result)
+module_eval(<<'.,.,', 'Parser.y', 127)
+  def _reduce_18(val, _values, result)
      result = Declaracion::new(val[0], val[2], val[4], val[7])
+    result
+  end
+.,.,
+
+module_eval(<<'.,.,', 'Parser.y', 130)
+  def _reduce_19(val, _values, result)
+     result = val[0] 
     result
   end
 .,.,
@@ -655,21 +659,21 @@ module_eval(<<'.,.,', 'Parser.y', 131)
   end
 .,.,
 
-module_eval(<<'.,.,', 'Parser.y', 132)
+module_eval(<<'.,.,', 'Parser.y', 134)
   def _reduce_21(val, _values, result)
-     result = val[0] 
+     result = val[0] + [val[2]]  
     result
   end
 .,.,
 
 module_eval(<<'.,.,', 'Parser.y', 135)
   def _reduce_22(val, _values, result)
-     result = val[0] + [val[2]]  
+     result = [val[0]]           
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'Parser.y', 136)
+module_eval(<<'.,.,', 'Parser.y', 140)
   def _reduce_23(val, _values, result)
      result = [val[0]]           
     result
@@ -678,14 +682,14 @@ module_eval(<<'.,.,', 'Parser.y', 136)
 
 module_eval(<<'.,.,', 'Parser.y', 141)
   def _reduce_24(val, _values, result)
-     result = [val[0]]           
+     result = val[0] + [val[2]]  
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'Parser.y', 142)
+module_eval(<<'.,.,', 'Parser.y', 144)
   def _reduce_25(val, _values, result)
-     result = val[0] + [val[2]]  
+     result = val[0]             
     result
   end
 .,.,
@@ -697,184 +701,184 @@ module_eval(<<'.,.,', 'Parser.y', 145)
   end
 .,.,
 
-module_eval(<<'.,.,', 'Parser.y', 146)
+module_eval(<<'.,.,', 'Parser.y', 148)
   def _reduce_27(val, _values, result)
-     result = val[0]             
+    result = Entero::new(val[0])
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'Parser.y', 149)
+module_eval(<<'.,.,', 'Parser.y', 152)
   def _reduce_28(val, _values, result)
-    result = Entero::new(val[0])
+     result = Entero::new(val[0])         
     result
   end
 .,.,
 
 module_eval(<<'.,.,', 'Parser.y', 153)
   def _reduce_29(val, _values, result)
-     result = Entero::new(val[0])         
+     result = True::new()                 
     result
   end
 .,.,
 
 module_eval(<<'.,.,', 'Parser.y', 154)
   def _reduce_30(val, _values, result)
-     result = True::new()                 
+     result = False::new()                
     result
   end
 .,.,
 
 module_eval(<<'.,.,', 'Parser.y', 155)
   def _reduce_31(val, _values, result)
-     result = False::new()                
+     result = Variable::new(val[0])       
     result
   end
 .,.,
 
 module_eval(<<'.,.,', 'Parser.y', 156)
   def _reduce_32(val, _values, result)
-     result = Variable::new(val[0])       
+     result = ValorAscii::new(val[0])     
     result
   end
 .,.,
 
 module_eval(<<'.,.,', 'Parser.y', 157)
   def _reduce_33(val, _values, result)
-     result = ValorAscii::new(val[0])     
+     result = Modulo::new(val[0], val[2]) 
     result
   end
 .,.,
 
 module_eval(<<'.,.,', 'Parser.y', 158)
   def _reduce_34(val, _values, result)
-     result = Modulo::new(val[0], val[2]) 
+     result = SiguienteCar::new(val[0])   
     result
   end
 .,.,
 
 module_eval(<<'.,.,', 'Parser.y', 159)
   def _reduce_35(val, _values, result)
-     result = SiguienteCar::new(val[0])   
+     result = AnteriorCar::new(val[0])    
     result
   end
 .,.,
 
 module_eval(<<'.,.,', 'Parser.y', 160)
   def _reduce_36(val, _values, result)
-     result = AnteriorCar::new(val[0])    
+     result = Concatenacion::new(val[0], val[2])   
     result
   end
 .,.,
 
 module_eval(<<'.,.,', 'Parser.y', 161)
   def _reduce_37(val, _values, result)
-     result = Concatenacion::new(val[0], val[2])   
+     result = Multiplicacion::new(val[0], val[2])  
     result
   end
 .,.,
 
 module_eval(<<'.,.,', 'Parser.y', 162)
   def _reduce_38(val, _values, result)
-     result = Multiplicacion::new(val[0], val[2])  
+     result = Suma::new(val[0], val[2])            
     result
   end
 .,.,
 
 module_eval(<<'.,.,', 'Parser.y', 163)
   def _reduce_39(val, _values, result)
-     result = Suma::new(val[0], val[2])            
+     result = Resta::new(val[0], val[2])           
     result
   end
 .,.,
 
 module_eval(<<'.,.,', 'Parser.y', 164)
   def _reduce_40(val, _values, result)
-     result = Resta::new(val[0], val[2])           
+     result = Division::new(val[0], val[2])        
     result
   end
 .,.,
 
 module_eval(<<'.,.,', 'Parser.y', 165)
   def _reduce_41(val, _values, result)
-     result = Division::new(val[0], val[2])        
+     result = Desigual::new(val[0], val[2])        
     result
   end
 .,.,
 
 module_eval(<<'.,.,', 'Parser.y', 166)
   def _reduce_42(val, _values, result)
-     result = Desigual::new(val[0], val[2])        
+     result = Menor::new(val[0], val[2])           
     result
   end
 .,.,
 
 module_eval(<<'.,.,', 'Parser.y', 167)
   def _reduce_43(val, _values, result)
-     result = Menor::new(val[0], val[2])           
+     result = MenorIgual::new(val[0], val[2])      
     result
   end
 .,.,
 
 module_eval(<<'.,.,', 'Parser.y', 168)
   def _reduce_44(val, _values, result)
-     result = MenorIgual::new(val[0], val[2])      
+     result = Igual::new(val[0], val[2])           
     result
   end
 .,.,
 
 module_eval(<<'.,.,', 'Parser.y', 169)
   def _reduce_45(val, _values, result)
-     result = Igual::new(val[0], val[2])           
+     result = Mayor::new(val[0], val[2])           
     result
   end
 .,.,
 
 module_eval(<<'.,.,', 'Parser.y', 170)
   def _reduce_46(val, _values, result)
-     result = Mayor::new(val[0], val[2])           
+     result = MayorIgual::new(val[0], val[2])      
     result
   end
 .,.,
 
 module_eval(<<'.,.,', 'Parser.y', 171)
   def _reduce_47(val, _values, result)
-     result = MayorIgual::new(val[0], val[2])      
+     result = And::new(val[0], val[2])     
     result
   end
 .,.,
 
 module_eval(<<'.,.,', 'Parser.y', 172)
   def _reduce_48(val, _values, result)
-     result = And::new(val[0], val[2])     
+     result = Or::new(val[0], val[2])      
     result
   end
 .,.,
 
 module_eval(<<'.,.,', 'Parser.y', 173)
   def _reduce_49(val, _values, result)
-     result = Or::new(val[0], val[2])      
+     result = Not::new(val[1])             
     result
   end
 .,.,
 
 module_eval(<<'.,.,', 'Parser.y', 174)
   def _reduce_50(val, _values, result)
-     result = Not::new(val[1])             
+     result = Shift::new(val[1])           
     result
   end
 .,.,
 
 module_eval(<<'.,.,', 'Parser.y', 175)
   def _reduce_51(val, _values, result)
-     result = Shift::new(val[1])           
+     result = Menos_Unario::new(val[1])    
     result
   end
 .,.,
 
 module_eval(<<'.,.,', 'Parser.y', 176)
   def _reduce_52(val, _values, result)
-     result = Menos_Unario::new(val[1])    
+     result = val[1]                       
     result
   end
 .,.,
@@ -888,13 +892,6 @@ module_eval(<<'.,.,', 'Parser.y', 177)
 
 module_eval(<<'.,.,', 'Parser.y', 178)
   def _reduce_54(val, _values, result)
-     result = val[1]                       
-    result
-  end
-.,.,
-
-module_eval(<<'.,.,', 'Parser.y', 179)
-  def _reduce_55(val, _values, result)
      result = val[1]                       
     result
   end
