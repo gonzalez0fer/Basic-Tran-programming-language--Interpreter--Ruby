@@ -7,7 +7,7 @@ class Parser
     #Procedemos a declarar los tokens de BasicTran
 
     token   ',' '.' ';' ':' '(' ')' '[' ']' '{' '}' '->' '<-'
-            '+' '-' '*' '/' '%' '/\' '\/' 'not' '/=' '<' '<='
+            '+' '-' '*' '/' '%' '/\\' '\\/' 'not' '/=' '<' '<='
             '>' '>=' '=' '++' '--' '#' '::' '$' 'with' 'true' 
             'false' 'var' 'begin' 'end' 'int' 'while' 'if' 
             'else' 'bool' 'char' 'array' 'read' 'of' 'print' 
@@ -21,8 +21,8 @@ class Parser
         left        '*' '/' '%'            
         left        '+' '-'   
         left        'not'   
-        left        '/\'            
-        left        '\/'   
+        left        '/\\'            
+        left        '\\/'   
         left        '#'   
         left        '--'   
         left        '++'   
@@ -54,8 +54,8 @@ class Parser
         '*'         'TkMult'
         '/'         'TkDiv'
         '%'         'TkMod'
-        '/\'        'TkConjuncion'
-        '\/'        'TkDisyuncion'
+        '/\\'        'TkConjuncion'
+        '\\/'        'TkDisyuncion'
         'not'       'TkNegacion'
         '<'         'TkMenor'
         '<='        'TkMenorIgual'
@@ -169,8 +169,8 @@ ElementosSalida: ElementoSalida                                                 
                |    Expresion '='   Expresion                                   { result = Igual::new(val[0], val[2])           }
                |    Expresion '>'   Expresion                                   { result = Mayor::new(val[0], val[2])           }
                |    Expresion '>='  Expresion                                   { result = MayorIgual::new(val[0], val[2])      }
-               |    Expresion '/\'  Expresion                                           { result = And::new(val[0], val[2])     }
-               |    Expresion '\/'  Expresion                                           { result = Or::new(val[0], val[2])      }
+               |    Expresion '/\\'  Expresion                                           { result = And::new(val[0], val[2])     }
+               |    Expresion '\\/'  Expresion                                           { result = Or::new(val[0], val[2])      }
                |    'not' Expresion                                                     { result = Not::new(val[1])             }
                |    '$' Expresion                                                       { result = Shift::new(val[1])           }
                |    Expresion '.' Expresion                                             { result = Punto::new(val[0], val[2])   }
