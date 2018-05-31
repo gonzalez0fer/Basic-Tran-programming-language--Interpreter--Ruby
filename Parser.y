@@ -33,7 +33,7 @@ class Parser
 
     #Procedemos a indicar las equivalencia de los Tokens con los signos
     convert
-        '.'         'TkPunto' #Falta
+        '.'         'TkPunto' 
         'num'       'TkNum'
         'char'      'TkCaracter'
         'id'        'TkId'
@@ -50,7 +50,7 @@ class Parser
         '<-'        'TkAsignacion'
         '+'         'TkSuma'
         '/='        'TkDesigual'
-        ';'         'TkPuntoYComa' #falta
+        ';'         'TkPuntoYComa'
         '*'         'TkMult'
         '/'         'TkDiv'
         '%'         'TkMod'
@@ -65,7 +65,7 @@ class Parser
         '--'        'TkAnteriorCar'
         '#'         'TkValorAscii'
         '::'        'TkConcatenacion'
-        '$'         'TkShift'       #falta
+        '$'         'TkShift'     
         'with'      'Tkwith' 
         'true'      'Tktrue' 
         'false'     'Tkfalse' 
@@ -80,7 +80,7 @@ class Parser
         'char'      'Tkchar' 
         'array'     'Tkarray' 
         'read'      'Tkread' 
-        'of'        'Tkof' #falta
+        'of'        'Tkof' 
         'print'     'Tkprint' 
         'for'       'Tkfor' 
         'step'      'Tkstep'
@@ -103,10 +103,11 @@ rule
 
                 |   'if' Expresion 'else' Instruccion                           { result = Condicional_Else::new(val[1], val[3])}
 
-                |'for' 'id' 'from' Expresion 'to' Expresion '->'Instruccion  {result = Iteracion_Det::new(val[1],val[3], val[5])}
+                |'for' 'id' 'from' Expresion 'to' Expresion '->'Instruccion  
+                                          {result = Iteracion_Det::new(val[1],val[3], val[5]), val[7]}
 
-                |'for' 'id' 'from' Expresion 'to' Expresion '[' 'step' Paso ']' '->'Instruccion              
-                                          {result = Iteracion_Det::new(val[1],val[3], val[5])}
+                |'for' 'id' 'from' Expresion 'to' Expresion '[' 'step' Paso ']' '->' Instruccion              
+                                          {result = Iteracion_Det::new(val[1],val[3], val[5], val[8], val[11])}
 
                 |   'while' Expresion '->' Instruccion                        { result = Iteracion_Indet::new(val[1], val[3]) }
 
@@ -121,11 +122,11 @@ rule
                 ;
 
     Declaracion: Variables ':' Tipo                                                { result = Declaracion::new(val[0], val[2]) }
+                | Variables ':' 'array' '[' Paso ']' 'of' Tipo      { result = Declaracion::new(val[0], val[2], val[4], val[7]) }
                 ;
 
            Tipo: 'int'                                                                  { result = val[0] }
                 | 'bool'                                                                { result = val[0] }
-                | 'array'                                                               { result = val[0] }
                 ;
 
         Variables: Variables ',' 'id'                                                   { result = val[0] + [val[2]]  }
@@ -144,7 +145,8 @@ ElementosSalida: ElementoSalida                                                 
                | Expresion                                                              { result = val[0]             }
                ;
 
-           Paso: 'num'                                                      {result = Entero::new(val[0])} ;
+           Paso: 'num'                                                      {result = Entero::new(val[0])} 
+               ;
 
 
       Expresion:    'num'                                                       { result = Entero::new(val[0])         }
@@ -169,6 +171,8 @@ ElementosSalida: ElementoSalida                                                 
                |    Expresion '/\'  Expresion                                           { result = And::new(val[0], val[2])     }
                |    Expresion '\/'  Expresion                                           { result = Or::new(val[0], val[2])      }
                |    'not' Expresion                                                     { result = Not::new(val[1])             }
+               |    '$' Expresion                                                       { result = Shift::new(val[1])           }
+               |    Expresion '.' Expresion                                             { result = Punto::new(val[0], val[2])   }
                |    '-'   Expresion = UMINUS                                            { result = Menos_Unario::new(val[1])    }
                |    '(' Expresion ')'                                                   { result = val[1]                       }
                |    '[' Expresion ']'                                                   { result = val[1]                       }
