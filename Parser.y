@@ -69,7 +69,7 @@ class Parser
         'with'      'Tkwith' 
         'true'      'Tktrue' 
         'false'     'Tkfalse' 
-        'var'       'Tkvar'     #falta
+        'var'       'Tkvar'   
         'begin'     'Tkbegin' 
         'end'       'Tkend' 
         'int'       'Tkint' 
@@ -121,8 +121,9 @@ rule
                 | LDeclaraciones ';' Declaracion                                        { result = val[0] + [val[2]] }
                 ;
 
-    Declaracion: Variables ':' Tipo                                                { result = Declaracion::new(val[0], val[2]) }
-                | Variables ':' 'array' '[' Paso ']' 'of' Tipo      { result = Declaracion::new(val[0], val[2], val[4], val[7]) }
+    Declaracion: 'var' Variables ':' Tipo                           { result = Declaracion::new(val[0], val[2]) }
+                | 'var' Variables ':' 'array' '[' Paso ']' 'of' Tipo 
+                                                          { result = Declaracion::new(val[0], val[2], val[4], val[7])}
                 ;
 
            Tipo: 'int'                                                                  { result = val[0] }
