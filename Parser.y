@@ -117,17 +117,20 @@ rule
                 | Instrucciones ';' Instruccion                                          { result = val[0] + val[2]  }
                 ;
 
-  LDeclaraciones: 'var' Declaracion                                            { result = LDeclaracion::new ([val[1]]) }
-                | 'var' LDeclaraciones Declaracion                             { result = LDeclaracion :: new (val[1], [val[2]])}
+  LDeclaraciones: 'var' Declaracion                                    { result = LDeclaracion::new ([val[1]]) }
+                | 'var' LDeclaraciones Declaracion                     { result = LDeclaracion :: new (val[1], [val[2]])}
+                | 'var' 'id' ':' Tipo                                  { result = LDeclaracion :: new (val[1], val[3]) }
                 ;          
 
     Declaracion: Argumentos ':' Tipo                             { result = Declaracion::new([val[0]], val[2]) }
-                |'id' ':' 'array' '[' 'num' ']' 'of' Tipo   { result = DeclaracionArray::new(val[0], val[4], val[7])}
+                |'id' ':' 'array' '[' 'num' ']' 'of' Tipo        { result = DeclaracionArray::new(val[0], val[4], val[6])}
                 ;
 
-      Argumentos:'id'                                            { result = val[0] }
-                |'id' '<-' Expresion ',' Argumentos              { result = val[0] + val[2] + [val[4]] }
+      Argumentos:
+                'id' '<-' Expresion ',' Argumentos              { result = val[0] + val[2] + [val[4]] }
+                | 'id' ',' Argumentos                           { result = val[0] + val[2] }
                 |'id' '<-' Expresion                            { result = val[0] + val[2] }
+                |                                               { result = [] }
                 ;
 
            Tipo:  'int'                                                                 { result = val[0] }
