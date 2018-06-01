@@ -95,66 +95,62 @@ class Parser
 
 rule
 
-    Instruccion:    'id' '<-' Expresion                                            {  result = Asignacion::new(val[0], val[2]) }
-                |   'begin' Instrucciones 'end'                                         {  result = Bloque::new(val[1])}
-                |   'read' 'id'                                                         {  result = Read::new(val[1])  }
-                |   'print' ElementosSalida                                              {  result = Print::new(val[1]) }
+    Instruccion:    'id' '<-' Expresion                                         {  result = Asignacion::new(val[0], val[2]) }
+                |   'begin' Instrucciones 'end'                                 {  result = Bloque::new(val[1])}
+                |   'read' 'id'                                                 {  result = Read::new(val[1])  }
+                |   'print' ElementosSalida                                     {  result = Print::new(val[1]) }
                 |   'if' Expresion 'else' Instruccion                           { result = Condicional_Else::new(val[1], val[3])}
                 |'for' 'id' 'from' Expresion 'to' Expresion '->'Instruccion  
-                                          {result = Iteracion_Det::new(val[1],val[3], val[5]), val[7]}
+                                                               {result = Iteracion_Det::new(val[1],val[3], val[5]), val[7]}
 
-                |'for' 'id' 'from' Expresion 'to' Expresion '[' 'step' Paso ']' '->' Instruccion              
-                                          {result = Iteracion_Det::new(val[1],val[3], val[5], val[8], val[11])}
+                |'for' 'id' 'from' Expresion 'to' Expresion '[' 'step' 'num' ']' '->' Instruccion              
+                                                         {result = Iteracion_Det::new(val[1],val[3], val[5], val[8], val[11])}
 
                 | 'while' Expresion '->' Instruccion                            { result = Iteracion_Indet::new(val[1], val[3]) }
-                | 'with' LDeclaraciones                                         { result = LDeclaraciones::new(val[1]) }
-                | 'with'                                                        { result = LDeclaraciones::new([])     }
+                | 'with' LDeclaraciones                                         { result = WDeclaraciones::new(val[1]) }
+                | 'with'                                                        { result = WDeclaraciones::new([])     }
                 | Expresion '.' Expresion                                       { result = Punto::new(val[0], val[2])   }
+                | Expresion '->'  Expresion                                   { result = Hacer::new(val[0], val[2])           }
+                | Expresion '<-'  Expresion                                   { result = Asignacion::new(val[0], val[2])      }
                 ;
 
-     Instrucciones: Instruccion                                                            { result = [val[0]]           }
-                | Instrucciones ';' Instruccion                                          { result = val[0] + [val[2]]  }
+     Instrucciones: Instruccion                                                          { result = val[0]           }
+                | Instrucciones ';' Instruccion                                          { result = val[0] + val[2]  }
                 ;
 
-    LDeclaraciones: 'var' ModoDeclaraciones                                         { result =Declaraciones::new val[1] }
+  LDeclaraciones: 'var' Declaracion                                            { result = LDeclaracion::new ([val[1]]) }
+                | 'var' LDeclaraciones Declaracion                             { result = LDeclaracion :: new (val[1], [val[2]])}
+                ;          
+
+    Declaracion: Argumentos ':' Tipo                             { result = Declaracion::new([val[0]], val[2]) }
+                | 'id' ':' 'array' '[' 'num' ']' 'of' Tipo   { result = Declaracion::new([val[0]], val[2], [val[4]], val[7])}
                 ;
 
-ModoDeclaraciones: Declaracion                                                      { result = val[0] }
-                 | ModoDeclaraciones ';' Declaracion                                { result = val[0] + [val[2]] }
-                 ;               
-
-    Declaracion: Variables ':' Tipo                           { result = Declaracion::new(val[0], val[2]) }
-                | Variables ':' 'array' '[' Paso ']' 'of' Tipo 
-                                                          { result = Declaracion::new(val[0], val[2], val[4], val[7])}
+      Argumentos: Variable                                            { result = val[0] }
+                |Variable '<-' Expresion ',' Argumentos              { result = val[0] + val[2] + [val[4]] }
+                | Variable  '<-' Expresion                            { result = val[0] + val[2] }
                 ;
 
-           Tipo: 'int'                                                                  { result = val[0] }
+           Tipo:  'int'                                                                 { result = val[0] }
                 | 'bool'                                                                { result = val[0] }
                 ;
 
-        Variables: Variables ',' 'id'                                                   { result = val[0] + [val[2]]  }
-               | 'id'                                                                   { result = [val[0]]           }
-               ;
-
- 
+        Variable: 'id'                                                                  { result = val[0] } 
+                ;
 
 ElementosSalida: ElementoSalida                                                         { result = [val[0]]           }
                | ElementosSalida ',' ElementoSalida                                     { result = val[0] + [val[2]]  }
                ;
 
- ElementoSalida: 'char'                                                                 { result = val[0]             }
+ ElementoSalida: 'caracter'                                                             { result = val[0]             }
                | Expresion                                                              { result = val[0]             }
                ;
-
-           Paso: 'num'                                                      {result = Entero::new(val[0])} 
-               ;
-
 
       Expresion:    'num'                                                       { result = Entero::new(val[0])         }
                |    'true'                                                      { result = True::new()                 }
                |    'false'                                                     { result = False::new()                }
                |    'id'                                                        { result = Variable::new(val[0])       }
-               |    '#'                                                         { result = ValorAscii::new(val[0])     }
+               |    '#' 'caracter'                                              { result = ValorAscii::new(val[0])     }
                |    Expresion '%'   Expresion                                   { result = Modulo::new(val[0], val[2]) }
                |    Expresion '++'                                              { result = SiguienteCar::new(val[0])   }
                |    Expresion '--'                                              { result = AnteriorCar::new(val[0])    }
@@ -162,8 +158,8 @@ ElementosSalida: ElementoSalida                                                 
                |    Expresion '*'   Expresion                                   { result = Multiplicacion::new(val[0], val[2])  }
                |    Expresion '+'   Expresion                                   { result = Suma::new(val[0], val[2])            }
                |    Expresion '-'   Expresion                                   { result = Resta::new(val[0], val[2])           }
-               |    Expresion '\/'   Expresion                                   { result = Division::new(val[0], val[2])        }
-               |    Expresion '/='  Expresion                                  { result = Desigual::new(val[0], val[2])        }
+               |    Expresion '\/'   Expresion                                  { result = Division::new(val[0], val[2])        }
+               |    Expresion '/='  Expresion                                   { result = Desigual::new(val[0], val[2])        }
                |    Expresion '<'   Expresion                                   { result = Menor::new(val[0], val[2])           }
                |    Expresion '<='  Expresion                                   { result = MenorIgual::new(val[0], val[2])      }
                |    Expresion '='   Expresion                                   { result = Igual::new(val[0], val[2])           }
