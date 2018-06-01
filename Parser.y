@@ -95,23 +95,22 @@ class Parser
 
 rule
 
-    Instruccion:    'id' '<-' Expresion                                         {  result = Asignacion::new(val[0], val[2]) }
-                |   'begin' Instrucciones 'end'                                 {  result = Bloque::new(val[1])}
-                |   'read' 'id'                                                 {  result = Read::new(val[1])  }
-                |   'print' ElementosSalida                                     {  result = Print::new(val[1]) }
-                |   'if' Expresion 'else' Instruccion                           { result = Condicional_Else::new(val[1], val[3])}
+    Instruccion: 'id' '<-' Expresion                                         {  result = Asignacion::new(val[0], val[2]) }
+                |'begin' Instrucciones 'end'                                 {  result = Bloque::new(val[1])}
+                |'with' LDeclaraciones 'begin' Instrucciones 'end'           { result = WBloque::new(val[1], val[3]) }
+                |'read' 'id'                                                 {  result = Read::new(val[1])  }
+                |'print' ElementosSalida                                     {  result = Print::new(val[1]) }
+                |'if' Expresion '->' Instruccion 'end'                       { result = Condicional_IfEnd::new(val[1], val[3])}
+                |'if' Expresion '->' Instruccion 'otherwise' '->' Instruccion 'end'                       
+                                                                          { result = Condicional_IfOtherEnd::new(val[1], val[3])}
                 |'for' 'id' 'from' Expresion 'to' Expresion '->'Instruccion  
                                                                {result = Iteracion_Det::new(val[1],val[3], val[5]), val[7]}
 
                 |'for' 'id' 'from' Expresion 'to' Expresion '[' 'step' 'num' ']' '->' Instruccion              
-                                                         {result = Iteracion_Det::new(val[1],val[3], val[5], val[8], val[11])}
+                                                        {result = Iteracion_DetStep::new(val[1],val[3], val[5], val[8], val[11])}
 
-                | 'while' Expresion '->' Instruccion                            { result = Iteracion_Indet::new(val[1], val[3]) }
-                | 'with' LDeclaraciones                                         { result = WDeclaraciones::new(val[1]) }
-                | 'with'                                                        { result = WDeclaraciones::new([])     }
+                | 'while' Expresion '->' Instruccion  'end'                    { result = Iteracion_Indet::new(val[1], val[3]) }
                 | Expresion '.' Expresion                                       { result = Punto::new(val[0], val[2])   }
-                | Expresion '->'  Expresion                                   { result = Hacer::new(val[0], val[2])           }
-                | Expresion '<-'  Expresion                                   { result = Asignacion::new(val[0], val[2])      }
                 ;
 
      Instrucciones: Instruccion                                                          { result = val[0]           }
@@ -123,19 +122,16 @@ rule
                 ;          
 
     Declaracion: Argumentos ':' Tipo                             { result = Declaracion::new([val[0]], val[2]) }
-                | 'id' ':' 'array' '[' 'num' ']' 'of' Tipo   { result = Declaracion::new([val[0]], val[2], [val[4]], val[7])}
+                |'id' ':' 'array' '[' 'num' ']' 'of' Tipo   { result = DeclaracionArray::new(val[0], val[4], val[7])}
                 ;
 
-      Argumentos: Variable                                            { result = val[0] }
-                |Variable '<-' Expresion ',' Argumentos              { result = val[0] + val[2] + [val[4]] }
-                | Variable  '<-' Expresion                            { result = val[0] + val[2] }
+      Argumentos:'id'                                            { result = val[0] }
+                |'id' '<-' Expresion ',' Argumentos              { result = val[0] + val[2] + [val[4]] }
+                |'id' '<-' Expresion                            { result = val[0] + val[2] }
                 ;
 
            Tipo:  'int'                                                                 { result = val[0] }
                 | 'bool'                                                                { result = val[0] }
-                ;
-
-        Variable: 'id'                                                                  { result = val[0] } 
                 ;
 
 ElementosSalida: ElementoSalida                                                         { result = [val[0]]           }
