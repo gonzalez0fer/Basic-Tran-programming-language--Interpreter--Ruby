@@ -43,14 +43,14 @@ class Parser
         '('         'TkParAbre'
         ')'         'TkParCierra'
         '['         'TkCorcheteAbre'
-        ']'         'TkCorcheteCierra'
+        ']'         'TkCorcheteCierre'
         '{'         'TkLlaveAbre'
         '}'         'TkLlaveCierra'
         '-'         'TkResta'
         '->'        'TkHacer'
         '<-'        'TkAsignacion'
         '+'         'TkSuma'
-        '/='        'TkDesigual'
+        '/='        'TkDesigualdad'
         ';'         'TkPuntoYComa'
         '*'         'TkMult'
         '\/'         'TkDiv'
@@ -62,32 +62,32 @@ class Parser
         '<='        'TkMenorIgual'
         '>'        'TkMayor'
         '>='         'TkMayorIgual'
-        '='         'Tkigual'
+        '='         'TkIgual'
         '++'        'TkSiguienteCar'
         '--'        'TkAnteriorCar'
         '#'         'TkValorAscii'
         '::'        'TkConcatenacion'
         '$'         'TkShift'     
-        'with'      'Tkwith' 
-        'true'      'Tktrue' 
-        'false'     'Tkfalse' 
-        'var'       'Tkvar'   
-        'begin'     'Tkbegin' 
-        'end'       'Tkend' 
-        'int'       'Tkint' 
-        'while'     'Tkwhile' 
-        'if'        'Tkif' 
-        'else'      'Tkelse' 
-        'bool'      'Tkbool' 
-        'char'      'Tkchar' 
-        'array'     'Tkarray' 
-        'read'      'Tkread' 
-        'of'        'Tkof' 
-        'print'     'Tkprint' 
-        'for'       'Tkfor' 
-        'step'      'Tkstep'
-        'from'      'Tkfrom' 
-        'to'        'Tkto'
+        'with'      'TkWith' 
+        'true'      'TkTrue' 
+        'false'     'TkFalse' 
+        'var'       'TkVar'   
+        'begin'     'TkBegin' 
+        'end'       'TkEnd' 
+        'int'       'TkInt' 
+        'while'     'TkWhile' 
+        'if'        'TkIf' 
+        'else'      'TkElse' 
+        'bool'      'TkBool' 
+        'char'      'TkChar' 
+        'array'     'TkArray' 
+        'read'      'TkRead' 
+        'of'        'TkOf' 
+        'print'     'TkPrint' 
+        'for'       'TkFor' 
+        'step'      'TkStep'
+        'from'      'TkFrom' 
+        'to'        'TkTo'
     end
 
 
@@ -158,7 +158,7 @@ ElementosSalida: ElementoSalida                                                 
                |    Expresion '+'   Expresion                                   { result = Suma::new(val[0], val[2])            }
                |    Expresion '-'   Expresion                                   { result = Resta::new(val[0], val[2])           }
                |    Expresion '\/'   Expresion                                  { result = Division::new(val[0], val[2])        }
-               |    Expresion '/='  Expresion                                   { result = Desigual::new(val[0], val[2])        }
+               |    Expresion '/='  Expresion                                   { result = Desigualdad::new(val[0], val[2])        }
                |    Expresion '<'   Expresion                                   { result = Menor::new(val[0], val[2])           }
                |    Expresion '<='  Expresion                                   { result = MenorIgual::new(val[0], val[2])      }
                |    Expresion '='   Expresion                                   { result = Igual::new(val[0], val[2])           }
@@ -168,14 +168,54 @@ ElementosSalida: ElementoSalida                                                 
                |    Expresion '\\\/'  Expresion                                         { result = Or::new(val[0], val[2])      }
                |    'not' Expresion                                                     { result = Not::new(val[1])             }
                |    '$' Expresion                                                      { result = Shift::new(val[1])           }
-               |    '-'   Expresion = UMINUS                                            { result = Menos_Unario::new(val[1])    }
+               |    '-'   Expresion = UMINUS                                            { result = MenosUnario::new(val[1])    }
                |    '(' Expresion ')'                                                 { result = val[1]                       }
                |    '[' Expresion ']'                                                 { result = val[1]                       }
                |    '{' Expresion '}'                                                 { result = val[1]                       }
                ;
 
+---- header ----
 
+require_relative 'Lexer'
+require_relative 'AST'
+
+
+class ErrorSintactico < RuntimeError
+  def initialize(token)
+    @token = token
+  end
+
+  def to_s
+    "Error de sintaxis en linea #{@token.linea}, columna #{@token.columna}, token '#{@token.texto}' inesperado."
+  end
+end
 ---- inner ----
+
+    def on_error(id, token, stack)
+      raise ErrorSintactico::new(token)
+    end
+
+    def next_token
+      token = @lexer.yylex
+      return [false, false] unless token
+      return [token.class, token]
+    end
+
     def parse(lexer)
-          @yydebug = true # DEBUG
+      @yydebug = true # DEBUG
+      @lexer  = lexer
+      @tokens = []
+      begin
+        ast = do_parse
+      rescue ErrorLexicografico => error
+        t = false
+        while (!t) do
+          begin
+            t = lexer.yylex.nil?
+          rescue ErrorLexicografico => error
+          end
+        end
+        puts lexer
+      end
+      return ast
     end

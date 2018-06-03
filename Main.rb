@@ -8,6 +8,7 @@
 #
 
 require_relative 'Lexer'
+require_relative 'Parser'
 
 def main
     if ARGV.length != 1
@@ -15,11 +16,17 @@ def main
     exit;
     end
     archivo = File::read(ARGV[0])
+    begin
 
-    
     #creamos un Lexer que analice la entrada
-    lexer = Lexer::new archivo
-    lexer.leer()
+    #lexer = Lexer::new archivo
+    #lexer.leer()
+        ast = Parser::new.parse(Lexer::new archivo)
+        if (nil != ast) then puts ast end
+    rescue ErrorSintactico => e
+        puts e
+    end
+
 end
 
 main
