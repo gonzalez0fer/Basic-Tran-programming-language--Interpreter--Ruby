@@ -19,9 +19,9 @@ def main
     begin
 
     #creamos un Lexer que analice la entrada
-    #lexer = Lexer::new archivo
-    #lexer.leer()
-        ast = Parser::new.parse(Lexer::new archivo)
+    lexer = Lexer::new archivo
+    tokens = lexer.leer()
+        ast = Parser::new.parse(tokens)
         if (nil != ast) then puts ast end
     rescue ErrorSintactico => e
         puts e

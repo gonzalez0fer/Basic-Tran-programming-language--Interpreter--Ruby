@@ -682,12 +682,12 @@ module_eval(<<'...end Parser.y/module_eval...', 'Parser.y', 197)
       @tokens = []
       begin
         ast = do_parse
-      rescue ErrorLexicografico => error
+      rescue Error => error
         t = false
         while (!t) do
           begin
             t = lexer.yylex.nil?
-          rescue ErrorLexicografico => error
+          rescue Error => error
           end
         end
         puts lexer

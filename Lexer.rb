@@ -216,9 +216,7 @@ class Lexer
 	#de la salida según sea el caso requerido, (errores o tokens)
 	def mostrarResultado()
 		if @errores.empty?
-			@tokens.each do |l|
-				l.imprimir
-			end
+			return @tokens
 		else
 			@errores.each do |imp|
 				imp.imprimir()
