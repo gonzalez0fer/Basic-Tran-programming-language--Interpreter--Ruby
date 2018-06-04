@@ -110,16 +110,16 @@ rule
                                                         {result = Iteracion_DetStep::new(val[1],val[3], val[5], val[8], val[11])}
 
                 | 'while' Expresion '->' Instruccion  'end'                    { result = Iteracion_Indet::new(val[1], val[3]) }
-                | Expresion '.' Expresion                                       { result = Punto::new(val[0], val[2])   }
+                | Expresion '.' Expresion                                      { result = Punto::new(val[0], val[2])   }
                 ;
 
      Instrucciones: Instruccion                                                          { result = val[0]           }
                 | Instrucciones ';' Instruccion                                          { result = val[0] + val[2]  }
                 ;
 
-  LDeclaraciones: 'var' Declaracion                                    { result = LDeclaracion::new ([val[1]]) }
-                | 'var' LDeclaraciones Declaracion                     { result = LDeclaracionRec :: new (val[1], [val[2]] )}
-                | 'var' 'id' ':' Tipo                                  { result = LDeclaracionId :: new (val[1], val[3]) }
+  LDeclaraciones: 'var' Declaracion                                    { result = LDeclaracion::new([val[1]]) }
+                | 'var' LDeclaraciones Declaracion                     { result = LDeclaracionRec::new(val[1], [val[2]] )}
+                | 'var' 'id' ':' Tipo                                  { result = LDeclaracionId::new(val[1], val[3]) }
                 ;          
 
     Declaracion: Argumentos ':' Tipo                             { result = Declaracion::new([val[0]], val[2]) }

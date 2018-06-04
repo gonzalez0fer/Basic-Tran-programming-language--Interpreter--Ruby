@@ -1337,21 +1337,21 @@ module_eval(<<'.,.,', 'Parser.y', 116)
 
 module_eval(<<'.,.,', 'Parser.y', 119)
   def _reduce_14(val, _values, result)
-     result = LDeclaracion::new ([val[1]]) 
+     result = LDeclaracion::new([val[1]]) 
     result
   end
 .,.,
 
 module_eval(<<'.,.,', 'Parser.y', 120)
   def _reduce_15(val, _values, result)
-     result = LDeclaracionRec :: new (val[1], [val[2]] )
+     result = LDeclaracionRec::new(val[1], [val[2]] )
     result
   end
 .,.,
 
 module_eval(<<'.,.,', 'Parser.y', 121)
   def _reduce_16(val, _values, result)
-     result = LDeclaracionId :: new (val[1], val[3]) 
+     result = LDeclaracionId::new(val[1], val[3]) 
     result
   end
 .,.,
