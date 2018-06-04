@@ -95,13 +95,13 @@ class Parser
 
 rule
 
-    Instruccion: 'id' '<-' Expresion                                         {  result = Asignacion::new(val[0], val[2]) }
-                |'begin' Instrucciones 'end'                                 {  result = Bloque::new(val[1])}
-                |'with' LDeclaraciones 'begin' Instrucciones 'end'           { result = WBloque::new(val[1], val[3]) }
-                |'read' 'id'                                                 {  result = Read::new(val[1])  }
-                |'print' ElementosSalida                                     {  result = Print::new(val[1]) }
-                |'if' Expresion '->' Instruccion 'end'                       { result = Condicional_IfEnd::new(val[1], val[3])}
-                |'if' Expresion '->' Instruccion 'otherwise' '->' Instruccion 'end'                       
+    Instruccion: 'id' '<-' Expresion  ';'                                    {  result = Asignacion::new(val[0], val[2]) }
+                |'begin' Instrucciones 'end' ';'                             {  result = Bloque::new(val[1])}
+                |'with' LDeclaraciones 'begin' Instrucciones 'end' ';'      { result = WBloque::new(val[1], val[3]) }
+                |'read' 'id' ';'                                             {  result = Read::new(val[1])  }
+                |'print' ElementosSalida  ';'                                {  result = Print::new(val[1]) }
+                |'if' Expresion '->' Instruccion 'end'                    { result = Condicional_IfEnd::new(val[1], val[3])}
+                |'if' Expresion '->' Instruccion 'otherwise' '->' Instruccion 'end'                     
                                                                           { result = Condicional_IfOtherEnd::new(val[1], val[3])}
                 |'for' 'id' 'from' Expresion 'to' Expresion '->'Instruccion  
                                                                {result = Iteracion_Det::new(val[1],val[3], val[5]), val[7]}
@@ -118,12 +118,16 @@ rule
                 ;
 
   LDeclaraciones: 'var' Declaracion                                    { result = LDeclaracion::new ([val[1]]) }
-                | 'var' LDeclaraciones Declaracion                     { result = LDeclaracion :: new (val[1], [val[2]])}
-                | 'var' 'id' ':' Tipo                                  { result = LDeclaracion :: new (val[1], val[3]) }
+                | 'var' LDeclaraciones Declaracion                     { result = LDeclaracionRec :: new (val[1], [val[2]] )}
+                | 'var' 'id' ':' Tipo                                  { result = LDeclaracionId :: new (val[1], val[3]) }
                 ;          
 
     Declaracion: Argumentos ':' Tipo                             { result = Declaracion::new([val[0]], val[2]) }
-                |'id' ':' 'array' '[' 'num' ']' 'of' Tipo        { result = DeclaracionArray::new(val[0], val[4], val[6])}
+                |'id' ':' 'array' '[' 'num' ']' 'of' Array        { result = DeclaracionMatriz::new(val[0], val[4], val[6])}
+                ;
+
+            Array: 'id' ':' 'array' '[' 'num' ']' 'of' Array        { result = DeclaracionMatriz::new(val[0], val[4], val[6])}
+                | Tipo                                              { result = val[0] + val[2] }
                 ;
 
       Argumentos:
@@ -158,7 +162,7 @@ ElementosSalida: ElementoSalida                                                 
                |    Expresion '+'   Expresion                                   { result = Suma::new(val[0], val[2])            }
                |    Expresion '-'   Expresion                                   { result = Resta::new(val[0], val[2])           }
                |    Expresion '\/'   Expresion                                  { result = Division::new(val[0], val[2])        }
-               |    Expresion '/='  Expresion                                   { result = Desigualdad::new(val[0], val[2])        }
+               |    Expresion '/='  Expresion                                   { result = Desigualdad::new(val[0], val[2])     }
                |    Expresion '<'   Expresion                                   { result = Menor::new(val[0], val[2])           }
                |    Expresion '<='  Expresion                                   { result = MenorIgual::new(val[0], val[2])      }
                |    Expresion '='   Expresion                                   { result = Igual::new(val[0], val[2])           }
