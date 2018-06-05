@@ -101,8 +101,8 @@ rule
                 |'read' 'id' ';'                                             {  result = Read::new(val[1])  }
                 |'print' ElementosSalida  ';'                                {  result = Print::new(val[1]) }
                 |'if' Expresion '->' Instrucciones 'otherwise' '->' Instrucciones 'end' ';'                    
-                                                                      { result = Condicional_IfOtherEnd::new(val[1], val[3])}
-                |'if' Expresion '->' Instrucciones 'end' ';'          { result = Condicional_IfEnd::new(val[1], [val[3]])}
+                                                                      { result = IfOtherEnd::new(val[1], val[3])}
+                |'if' Expresion '->' Instrucciones 'end' ';'          { result = IfEnd::new(val[1], [val[3]])}
 
                 |'for' 'id' 'from' Expresion 'to' Expresion '[' 'step' 'num' ']' '->' Instrucciones 'end'
                                                         {result = Iteracion_DetStep::new(val[1],val[3], val[5], val[8], val[11])}
@@ -113,7 +113,7 @@ rule
                 | Expresion '.' Expresion                                     { result = Punto::new(val[0], val[2])   }
                 ;
 
-     Instrucciones: Instruccion  ';'                                                     { result = [val[0]]           }
+     Instrucciones: Instruccion                                                          { result = [val[0]]           }
                 | Expresion  ';'                                                         { result = [val[0]]           }
                 | Instrucciones ';' Instruccion                                          { result = val[0] + [val[2]]  }
                 | Instrucciones ';' Expresion                                            { result = val[0] + [val[2]]  }

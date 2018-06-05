@@ -20,8 +20,6 @@ def generaClase(superclase, nombre, atributos)
 end
 
 generaClase(Object, 'AST', [])
-  """generaClase(AST, 'Declaracion', ['variables', 'tipo'])
-  generaClase(AST, 'Declaraciones', ['declaraciones'])"""
 
   generaClase(AST, 'Expresion', [])
     generaClase(Expresion, 'Modulo'         , ['operando izquierdo', 'operando derecho'])
@@ -55,9 +53,6 @@ generaClase(Object, 'AST', [])
     generaClase(Instruccion, 'Bloque'          , ['.declaraciones', '-instrucciones'])
     generaClase(Instruccion, 'Read'            , ['variable'])
     generaClase(Instruccion, 'Print'           , ['elementos'])
-
-"""    generaClase(Instruccion, 'Condicional_Else', ['condicion', 'verdadero', 'falso'])
-    generaClase(Instruccion, 'Condicional_If'  , ['condicion', 'verdadero'])"""
 
     generaClase(Instruccion, 'Iteracion_Det'   , ['variable', 'exp1', 'exp2', 'instruccion'])
     generaClase(Instruccion, 'Iteracion_DetStep'   , ['variable', 'exp1', 'exp2', 'exp3', 'instruccion'])
