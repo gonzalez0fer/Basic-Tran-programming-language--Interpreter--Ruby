@@ -2,7 +2,7 @@
 #	Fernando Gonzalez 08-10464 
 
 
-def generaClase(superclase, nombre, atributos)
+def crearClase(superclase, nombre, atributos)
 
   clase = Class::new(superclase) do
     @atributos = atributos
@@ -11,7 +11,7 @@ def generaClase(superclase, nombre, atributos)
     end
 
     def initialize(*argumentos)
-      raise ArgumentError::new("wrong number of arguments (#{ argumentos.length } for #{ self.class.atributos.length })") if argumentos.length != self.class.atributos.length
+      raise ArgumentError::new("numero incorrecto de argumentos (#{ argumentos.length } for #{ self.class.atributos.length })") if argumentos.length != self.class.atributos.length
       @hijos = [self.class.atributos, argumentos].transpose
     end
   end
@@ -19,72 +19,64 @@ def generaClase(superclase, nombre, atributos)
   Object::const_set nombre, clase
 end
 
-generaClase(Object, 'AST', [])
+crearClase(Object, 'AST', [])
+  crearClase(AST, 'Instruccion', [])
+    crearClase(Instruccion, 'Asignacion'      , ['value1', 'value2'])
+    crearClase(Instruccion, 'WBloque'          , ['ldeclaraciones', 'instrucciones'])
+    crearClase(Instruccion, 'Bloque'          , ['instrucciones'])
+    crearClase(Instruccion, 'IfOtherEnd'          , ['expresion', 'instrucciones', '-instrucciones'])
+    crearClase(Instruccion, 'IfEnd'          , ['expresion','instrucciones'])
+    crearClase(Instruccion, 'Read'            , ['variable'])
+    crearClase(Instruccion, 'Print'           , ['elementos'])
+    crearClase(Instruccion, 'Punto'           , ['expresion', 'expresion'])
+    crearClase(Instruccion, 'Iteracion_Det'   , ['variable', 'exp1', 'exp2', 'instruccion'])
+    crearClase(Instruccion, 'Iteracion_DetStep'   , ['variable', 'exp1', 'exp2', 'exp3', 'instruccion'])
+    crearClase(Instruccion, 'Iteracion_Indet' , ['condicion', 'instruccion'])
 
-  generaClase(AST, 'Expresion', [])
-    generaClase(Expresion, 'Modulo'         , ['operando izquierdo', 'operando derecho'])
-    generaClase(Expresion, 'SiguienteCar'   , ['operando'])
-    generaClase(Expresion, 'AnteriorCar'    , ['operando'])
-    generaClase(Expresion, 'ValorAscii'     , ['operando'])
-    generaClase(Expresion, 'Concatenacion'  , ['operando izquierdo', 'operando derecho'])
-    generaClase(Expresion, 'Multiplicacion' , ['operando izquierdo', 'operando derecho'])
-    generaClase(Expresion, 'Suma'           , ['operando izquierdo', 'operando derecho'])
-    generaClase(Expresion, 'Resta'          , ['operando izquierdo', 'operando derecho'])
-    generaClase(Expresion, 'Division'       , ['operando izquierdo', 'operando derecho'])
-    generaClase(Expresion, 'Diferencia'     , ['operando izquierdo', 'operando derecho'])
-    generaClase(Expresion, 'Desigualdad'    , ['operando izquierdo', 'operando derecho'])
-    generaClase(Expresion, 'Menor'          , ['operando izquierdo', 'operando derecho'])
-    generaClase(Expresion, 'MenorIgual'     , ['operando izquierdo', 'operando derecho'])
-    generaClase(Expresion, 'Igual'          , ['operando izquierdo', 'operando derecho'])
-    generaClase(Expresion, 'Mayor'          , ['operando izquierdo', 'operando derecho'])
-    generaClase(Expresion, 'MayorIgual'     , ['operando izquierdo', 'operando derecho'])
-    generaClase(Expresion, 'And'            , ['operando izquierdo', 'operando derecho'])
-    generaClase(Expresion, 'Or'             , ['operando izquierdo', 'operando derecho'])
-    generaClase(Expresion, 'Not'            , ['operando'])
-    generaClase(Expresion, 'Shift'          , ['operando'])
-    generaClase(Expresion, 'MenosUnario'    , ['operando'])
-    generaClase(Expresion, 'Entero'         , ['valor'])
-    generaClase(Expresion, 'True'           , [])
-    generaClase(Expresion, 'False'          , [])
-    generaClase(Expresion, 'Variable'       , ['nombre'])
+  crearClase(AST, 'Declaracion', ['variables', 'tipo'])
+  crearClase(AST, 'Declaraciones', ['declaraciones'])
+  crearClase(AST, 'LDeclaracion', ['declaraciones'])
+  crearClase(AST, 'Expresion', [])
+    crearClase(Expresion, 'Modulo'         , ['oper izq', 'oper der'])
+    crearClase(Expresion, 'SiguienteCar'   , ['oper'])
+    crearClase(Expresion, 'AnteriorCar'    , ['oper'])
+    crearClase(Expresion, 'ValorAscii'     , ['oper'])
+    crearClase(Expresion, 'Concatenacion'  , ['oper izq', 'oper der'])
+    crearClase(Expresion, 'Multiplicacion' , ['oper izq', 'oper der'])
+    crearClase(Expresion, 'Suma'           , ['oper izq', 'oper der'])
+    crearClase(Expresion, 'Resta'          , ['oper izq', 'oper der'])
+    crearClase(Expresion, 'Division'       , ['oper izq', 'oper der'])
+    crearClase(Expresion, 'Diferencia'     , ['oper izq', 'oper der'])
+    crearClase(Expresion, 'Desigualdad'    , ['oper izq', 'oper der'])
+    crearClase(Expresion, 'Menor'          , ['oper izq', 'oper der'])
+    crearClase(Expresion, 'MenorIgual'     , ['oper izq', 'oper der'])
+    crearClase(Expresion, 'Igual'          , ['oper izq', 'oper der'])
+    crearClase(Expresion, 'Mayor'          , ['oper izq', 'oper der'])
+    crearClase(Expresion, 'MayorIgual'     , ['oper izq', 'oper der'])
+    crearClase(Expresion, 'And'            , ['oper izq', 'oper der'])
+    crearClase(Expresion, 'Or'             , ['oper izq', 'oper der'])
+    crearClase(Expresion, 'Not'            , ['oper'])
+    crearClase(Expresion, 'Shift'          , ['oper'])
+    crearClase(Expresion, 'MenosUnario'    , ['oper'])
+    crearClase(Expresion, 'Entero'         , ['valor'])
+    crearClase(Expresion, 'True'           , [])
+    crearClase(Expresion, 'False'          , [])
+    crearClase(Expresion, 'Variable'       , ['nombre'])
 
-  generaClase(AST, 'Instruccion', [])
-    generaClase(Instruccion, 'Asignacion'      , ['var', 'val'])
-    generaClase(Instruccion, 'WBloque'          , ['.declaraciones', '-instrucciones'])
-    generaClase(Instruccion, 'Bloque'          , ['-instrucciones'])
-    generaClase(Instruccion, 'IfOtherEnd'          , ['expresion', '-instrucciones', '-instrucciones'])
-    generaClase(Instruccion, 'IfEnd'          , ['expresion','-instrucciones'])
-
-    generaClase(Instruccion, 'Read'            , ['variable'])
-    generaClase(Instruccion, 'Print'           , ['elementos'])
-    generaClase(Instruccion, 'Punto'           , ['expresion', 'expresion'])
-
-    generaClase(Instruccion, 'Iteracion_Det'   , ['variable', 'exp1', 'exp2', 'instruccion'])
-    generaClase(Instruccion, 'Iteracion_DetStep'   , ['variable', 'exp1', 'exp2', 'exp3', 'instruccion'])
-    generaClase(Instruccion, 'Iteracion_Indet' , ['condicion', 'instruccion'])
 
 #bloque de prints textual por ahora
 
 # Modificamos la clase AST para agregarle el to_s y to_string
 class AST
-  # Se encarga de pasar a string el AST llamando a to_string con profundidad cero
-  # y eliminando cualquier salto de línea del inicio y cualquier cantidad de
-  # espacios en blancos.
+
   def to_s
     (to_string 0).sub(/\A[\n ]*/, '').gsub(/\s+$/, '')
   end
 
-  # Se encarga de pasar a string el AST a la profundidad indicada.
   def to_string(profundidad)
-    # Creamos un string con el nombre de la clase en mayusculas
-    # continuado por el string generado por to_string de sus hijos.
+
     @hijos.inject("\n" + self.class.to_s.upcase) do |acum, cont|
-      # Se utiliza un formato que permite ignorar la impresion de ciertos
-      # nombres de atributos y/o elementos de alguna clase. Por ejemplo:
-      # No se deben imprimir las declaraciones ni la palabra 'instrucciones'
-      # para un bloque. De este modo se le coloca un . a lo que no queremos imprimir
-      # (declaraciones) y un - a los titulos de atributos que no queremos imprimir
-      # (instrucciones)
+
       case cont[0]
         # Si el primer caracter es un '.' se genera solamente lo que se lleva acumulado
         when /\A\./
@@ -101,14 +93,5 @@ class AST
     # Por ultimo se identa adecuadamente sustituyendo el inicio del string por la cantidad
     # de espacios en blanco necesarios (2*profundidad)
     end.gsub(/^/, '  '*profundidad)
-  end
-end
-
-# Modificamos la clase Programa para agregar un to_string diferente
-class Programa
-  # Se encarga de imprimir el contenido del programa
-  # sin imprimir la palabra 'PROGRAMA' en el AST
-  def to_string(profundidad)
-    @hijos[0][1].to_string(profundidad)
   end
 end
