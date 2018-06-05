@@ -234,13 +234,16 @@ end
 
     def next_token
       token = @lexer.shift
-      puts("hellloooo")
-      puts "#{token}"
-      puts "#{token.class}"
       if token
-        return [token.class, token]
+        list = [token.class, token]
+        puts (list)
+        return list
       else
-        return [false,false]
+        puts("WTF")
+        list = [false,false]
+        puts('-------------------')
+        puts(list)
+        return list
       end
     end
 
