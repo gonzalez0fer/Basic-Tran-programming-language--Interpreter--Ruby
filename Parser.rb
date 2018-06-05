@@ -1300,14 +1300,14 @@ module_eval(<<'.,.,', 'Parser.y', 101)
 
 module_eval(<<'.,.,', 'Parser.y', 103)
   def _reduce_6(val, _values, result)
-     result = IfOtherEnd::new(val[1], val[3])
+     result = IfOtherEnd::new(val[1], val[3], val[6])
     result
   end
 .,.,
 
 module_eval(<<'.,.,', 'Parser.y', 104)
   def _reduce_7(val, _values, result)
-     result = IfEnd::new(val[1], [val[3]])
+     result = IfEnd.new(val[1], [val[3]])
     result
   end
 .,.,

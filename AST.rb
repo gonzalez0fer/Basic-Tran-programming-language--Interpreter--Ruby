@@ -50,9 +50,14 @@ generaClase(Object, 'AST', [])
 
   generaClase(AST, 'Instruccion', [])
     generaClase(Instruccion, 'Asignacion'      , ['var', 'val'])
+    generaClase(Instruccion, 'WBloque'          , ['.declaraciones', '-instrucciones'])
     generaClase(Instruccion, 'Bloque'          , ['.declaraciones', '-instrucciones'])
+    generaClase(Instruccion, 'IfOtherEnd'          , ['expresion', '-instrucciones', '-instrucciones'])
+    generaClase(Instruccion, 'IfEnd'          , ['expresion','-instrucciones'])
+
     generaClase(Instruccion, 'Read'            , ['variable'])
     generaClase(Instruccion, 'Print'           , ['elementos'])
+    generaClase(Instruccion, 'Punto'           , ['expresion', 'expresion'])
 
     generaClase(Instruccion, 'Iteracion_Det'   , ['variable', 'exp1', 'exp2', 'instruccion'])
     generaClase(Instruccion, 'Iteracion_DetStep'   , ['variable', 'exp1', 'exp2', 'exp3', 'instruccion'])
