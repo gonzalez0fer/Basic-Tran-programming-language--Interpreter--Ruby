@@ -96,7 +96,7 @@ class Parser
 rule
 
     Instruccion: 'id' '<-' Expresion  ';'                                    {  result = Asignacion.new(val[0], val[2]) }
-                |'with' LDeclaraciones 'begin' Instrucciones 'end' ';'      { result = WBloque.new(val[1], val[3]) }
+                |'with' LDeclaraciones 'begin' Instrucciones 'end' ';'      { result = WBloque.new(val[1], [val[3]]) }
                 |'begin' Instrucciones 'end' ';'                             {  result = Bloque.new([val[1]])}
                 |'read' 'id' ';'                                             {  result = Read.new(val[1])  }
                 |'print' ElementosSalida  ';'                                {  result = Print.new(val[1]) }
@@ -115,27 +115,26 @@ rule
 
      Instrucciones: Instruccion                                                          { result = [val[0]]           }
                 | Expresion  ';'                                                         { result = [val[0]]           }
-                | Instrucciones ';' Instruccion                                          { result = val[0] + [val[2]]  }
-                | Instrucciones ';' Expresion                                            { result = val[0] + [val[2]]  }
+                | Instrucciones ';' Instruccion                                          { result = [val[0] , [val[2]]]  }
+                | Instrucciones ';' Expresion                                            { result = [val[0] , [val[2]]]  }
                 ;
 
   LDeclaraciones: 'var' Declaracion                                    { result = LDeclaracion.new(val[1]) }
                 | 'var' LDeclaraciones Declaracion                     { result = LDeclaracionRec.new(val[1], val[2] )}
-                | 'var' 'id' ':' Tipo ';'                               { result = LDeclaracionId.new(val[1], val[3]) }
+                | 'var' 'id' ':' Tipo ';'                              { result = LDeclaracionId.new([val[1] + val[3]]) }
                 ;          
 
     Declaracion: Argumentos ':' Tipo ';'                         { result = Declaracion.new(val[0], val[2]) }
-                |'id' ':' 'array' '[' 'num' ']' 'of' Array        { result = DeclaracionMatriz.new(val[0], val[4], val[6])}
+                |'id' ':' 'array' '[' 'num' ']' 'of' Array       { result = DeclaracionMatriz.new(val[0], val[4], val[6])}
                 ;
 
             Array: 'id' ':' 'array' '[' 'num' ']' 'of' Array        { result = DeclaracionMatriz.new(val[0], val[4], val[6])}
-                | Tipo  ';'                                            { result = val[0]}
+                | Tipo  ';'                                         { result = val[0]}
                 ;
 
-      Argumentos:
-                'id' '<-' Expresion ',' Argumentos              { result = val[0] + val[2] + [val[4]] }
-                | 'id' ',' Argumentos                           { result = val[0] + [val[2]] }
-                |'id' '<-' Expresion                            { result = val[0] + val[2] }
+      Argumentos: 'id' '<-' Expresion                            { result = [val[0] , val[2] ]}
+                |'id' '<-' Expresion ',' Argumentos              { result = [val[0] , val[2] , [val[4]]] }
+                | 'id' ',' Argumentos                           { result = [val[0] , [val[2]]] }
                 |                                               { result = [] }
                 ;
 
@@ -144,7 +143,7 @@ rule
                 ;
 
 ElementosSalida: ElementoSalida                                                         { result = [val[0]]           }
-               | ElementosSalida ',' ElementoSalida                                     { result = val[0] + [val[2]]  }
+               | ElementosSalida ',' ElementoSalida                                     { result = [val[0] , [val[2]]]  }
                ;
 
  ElementoSalida: 'caracter'                                                             { result = val[0]             }

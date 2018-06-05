@@ -1,7 +1,5 @@
+with 
+	var b <- 9+3 : int ;
 begin
-    while b = x < y -> 
-        if b ->
-            x+-y;
-        end;
-    end;
-end;
+	print b;
+end ;

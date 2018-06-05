@@ -434,9 +434,7 @@ class Lexer
 			end
 
 		end
-		@tokens.each do |l|
-				l.imprimir
-		end
+
 		mostrarResultado()
 	end
 end
