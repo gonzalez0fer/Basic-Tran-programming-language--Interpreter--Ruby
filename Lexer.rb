@@ -335,7 +335,7 @@ class Lexer
 					p =p +simbolo
 					#puts "entre aqui y soy: #{p}"
 
-					puts "simbolo completo: #{p} "
+					#puts "simbolo completo: #{p} "
 					if p=~ $simDobles
 						buscar(p)
 					else
@@ -346,7 +346,7 @@ class Lexer
 						@columna += 1
 						@colInicio= @columna
 					end
-					
+
 					p = ''
 					p1= ''
 			elsif simbolo=~ TkId.basicTran && str == 0

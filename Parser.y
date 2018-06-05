@@ -100,9 +100,9 @@ rule
                 |'begin' Instrucciones 'end' ';'                             {  result = Bloque::new(val[1])}
                 |'read' 'id' ';'                                             {  result = Read::new(val[1])  }
                 |'print' ElementosSalida  ';'                                {  result = Print::new(val[1]) }
-                |'if' Expresion '->' Instruccion 'otherwise' '->' Instruccion 'end' ';'                    
+                |'if' Expresion '->' Instrucciones 'otherwise' '->' Instruccion 'end' ';'                    
                                                                           { result = Condicional_IfOtherEnd::new(val[1], val[3])}
-                |'if' Expresion '->' Instruccion 'end' ';'                   { result = Condicional_IfEnd::new(val[1], val[3])}
+                |'if' Expresion '->' Instrucciones 'end' ';'                   { result = Condicional_IfEnd::new(val[1], val[3])}
 
                 |'for' 'id' 'from' Expresion 'to' Expresion '[' 'step' 'num' ']' '->' Instruccion              
                                                         {result = Iteracion_DetStep::new(val[1],val[3], val[5], val[8], val[11])}
@@ -116,7 +116,9 @@ rule
                 ;
 
      Instrucciones: Instruccion                                                          { result = val[0]           }
+                | Expresion                                                              { result = val[0]           }
                 | Instrucciones ';' Instruccion                                          { result = val[0] + val[2]  }
+                | Instrucciones ';' Expresion                                            { result = val[0] + val[2]  }
                 ;
 
   LDeclaraciones: 'var' Declaracion                                    { result = LDeclaracion::new([val[1]]) }
@@ -174,7 +176,7 @@ ElementosSalida: ElementoSalida                                                 
                |    Expresion '\\\/'  Expresion                                         { result = Or::new(val[0], val[2])      }
                |    'not' Expresion                                                     { result = Not::new(val[1])             }
                |    '$' Expresion                                                      { result = Shift::new(val[1])           }
-               |    '-'   Expresion = UMINUS                                            { result = MenosUnario::new(val[1])    }
+               |    '-' Expresion = UMINUS                                            { result = MenosUnario::new(val[1])    }
                |    '(' Expresion ')'                                                 { result = val[1]                       }
                |    '[' Expresion ']'                                                 { result = val[1]                       }
                |    '{' Expresion '}'                                                 { result = val[1]                       }
