@@ -1,9 +1,7 @@
-with
-	var b : bool;
 begin
     while b = x < y -> 
         if b ->
-            x++y;
+            x+-y;
         end;
     end;
 end;

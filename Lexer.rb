@@ -67,6 +67,8 @@ dicTokens = {
 
 $caracteres = /=|>|<|\+|-|\*|%|;|,|\(|\)|\.|\[|\{|:|\$|#|\/|\}|\]|\)|[a-zA-Z0-9]/
 
+$simDobles= /--|::|->|<-|\/\\|<=|>=|\+\+|\/=| /
+
 #Escribimos las palabras reservadas del lenguaje
 palabras_reservadas = %w(with true false var begin end int while if else bool char array read of print for step from to)
 
@@ -327,16 +329,26 @@ class Lexer
 				
 					ltr = 1
 
-			elsif not(simbolo=~ TkId.basicTran) && sim ==1 		#anterior es un simbolo mientras que el actual es un numero
+			elsif not(simbolo=~ TkId.basicTran) && sim ==1 		#anterior es un simbolo mientras que el actual es otro simbolo
 					sim = 0
+					p1 = p
 					p =p +simbolo
 					#puts "entre aqui y soy: #{p}"
 
-					#puts "simbolo completo: #{p} "
-					buscar(p)
-					@columna += 1
-					@colInicio= @columna
+					puts "simbolo completo: #{p} "
+					if p=~ $simDobles
+						buscar(p)
+					else
+						buscar(p1)
+						@columna += 1
+						@colInicio= @columna
+						buscar(simbolo)
+						@columna += 1
+						@colInicio= @columna
+					end
+					
 					p = ''
+					p1= ''
 			elsif simbolo=~ TkId.basicTran && str == 0
 					#puts "entre en un ID #{simbolo}"
 					p =p +simbolo
@@ -422,7 +434,9 @@ class Lexer
 			end
 
 		end
-		
+		@tokens.each do |l|
+				l.imprimir
+		end
 		mostrarResultado()
 	end
 end

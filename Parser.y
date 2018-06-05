@@ -96,20 +96,22 @@ class Parser
 rule
 
     Instruccion: 'id' '<-' Expresion  ';'                                    {  result = Asignacion::new(val[0], val[2]) }
+                |'with' LDeclaraciones 'begin' Instrucciones 'end' ';'      { result = WBloque::new([val[1]], [val[3]]) }
                 |'begin' Instrucciones 'end' ';'                             {  result = Bloque::new(val[1])}
-                |'with' LDeclaraciones 'begin' Instrucciones 'end' ';'      { result = WBloque::new(val[1], val[3]) }
                 |'read' 'id' ';'                                             {  result = Read::new(val[1])  }
                 |'print' ElementosSalida  ';'                                {  result = Print::new(val[1]) }
-                |'if' Expresion '->' Instruccion 'end'                    { result = Condicional_IfEnd::new(val[1], val[3])}
-                |'if' Expresion '->' Instruccion 'otherwise' '->' Instruccion 'end'                     
+                |'if' Expresion '->' Instruccion 'otherwise' '->' Instruccion 'end' ';'                    
                                                                           { result = Condicional_IfOtherEnd::new(val[1], val[3])}
-                |'for' 'id' 'from' Expresion 'to' Expresion '->'Instruccion  
-                                                               {result = Iteracion_Det::new(val[1],val[3], val[5]), val[7]}
+                |'if' Expresion '->' Instruccion 'end' ';'                   { result = Condicional_IfEnd::new(val[1], val[3])}
 
                 |'for' 'id' 'from' Expresion 'to' Expresion '[' 'step' 'num' ']' '->' Instruccion              
                                                         {result = Iteracion_DetStep::new(val[1],val[3], val[5], val[8], val[11])}
+                |'for' 'id' 'from' Expresion 'to' Expresion '->'Instruccion  
+                                                               {result = Iteracion_Det::new(val[1],val[3], val[5]), val[7]}
 
-                | 'while' Expresion '->' Instruccion  'end'                    { result = Iteracion_Indet::new(val[1], val[3]) }
+                
+
+                | 'while' Expresion '->' Instruccion  'end'  ';'                { result = Iteracion_Indet::new(val[1], val[3]) }
                 | Expresion '.' Expresion                                      { result = Punto::new(val[0], val[2])   }
                 ;
 
@@ -119,15 +121,15 @@ rule
 
   LDeclaraciones: 'var' Declaracion                                    { result = LDeclaracion::new([val[1]]) }
                 | 'var' LDeclaraciones Declaracion                     { result = LDeclaracionRec::new(val[1], [val[2]] )}
-                | 'var' 'id' ':' Tipo                                  { result = LDeclaracionId::new(val[1], val[3]) }
+                | 'var' 'id' ':' Tipo ';'                               { result = LDeclaracionId::new(val[1], val[3]) }
                 ;          
 
-    Declaracion: Argumentos ':' Tipo                             { result = Declaracion::new([val[0]], val[2]) }
+    Declaracion: Argumentos ':' Tipo ';'                         { result = Declaracion::new([val[0]], val[2]) }
                 |'id' ':' 'array' '[' 'num' ']' 'of' Array        { result = DeclaracionMatriz::new(val[0], val[4], val[6])}
                 ;
 
             Array: 'id' ':' 'array' '[' 'num' ']' 'of' Array        { result = DeclaracionMatriz::new(val[0], val[4], val[6])}
-                | Tipo                                              { result = val[0] + val[2] }
+                | Tipo  ';'                                            { result = val[0]}
                 ;
 
       Argumentos:
@@ -190,7 +192,7 @@ class ErrorSintactico < RuntimeError
   end
 
   def to_s
-    "Error de sintaxis en linea #{@token.linea}, columna #{@token.columna}, token '#{@token.texto}' inesperado."
+    "Error de sintaxis en linea #{@token.linea}, columna #{@token.columna}, token '#{@token.contenido}' inesperado."
   end
 end
 ---- inner ----
@@ -200,7 +202,8 @@ end
     end
 
     def next_token
-      token = @lexer.yylex
+      token = @lexer.shift
+      puts "#{token}"
       return [false, false] unless token
       return [token.class, token]
     end
@@ -215,7 +218,7 @@ end
         t = false
         while (!t) do
           begin
-            t = lexer.yylex.nil?
+            t = lexer.shift.nil?
             rescue Error => error
           end
         end
