@@ -121,7 +121,7 @@ rule
 
   LDeclaraciones: 'var' Declaracion                                    { result = LDeclaracion.new(val[1]) }
                 | 'var' LDeclaraciones Declaracion                     { result = LDeclaracionRec.new(val[1], val[2] )}
-                | 'var' 'id' ':' Tipo ';'                              { result = LDeclaracionId.new([val[1] + val[3]]) }
+                | 'var' 'id' ':' Tipo ';'                              { result = LDeclaracionId.new([val[1] , val[3]]) }
                 ;          
 
     Declaracion: Argumentos ':' Tipo ';'                         { result = Declaracion.new(val[0], val[2]) }

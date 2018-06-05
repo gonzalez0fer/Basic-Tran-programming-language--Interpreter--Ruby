@@ -1356,14 +1356,14 @@ module_eval(<<'.,.,', 'Parser.y', 116)
 
 module_eval(<<'.,.,', 'Parser.y', 117)
   def _reduce_14(val, _values, result)
-     result = val[0] + [val[2]]  
+     result = [val[0] , [val[2]]]  
     result
   end
 .,.,
 
 module_eval(<<'.,.,', 'Parser.y', 118)
   def _reduce_15(val, _values, result)
-     result = val[0] + [val[2]]  
+     result = [val[0] , [val[2]]]  
     result
   end
 .,.,
@@ -1384,14 +1384,14 @@ module_eval(<<'.,.,', 'Parser.y', 122)
 
 module_eval(<<'.,.,', 'Parser.y', 123)
   def _reduce_18(val, _values, result)
-     result = LDeclaracionId.new([val[1] + val[3]]) 
+     result = LDeclaracionId.new([val[1] , val[3]]) 
     result
   end
 .,.,
 
 module_eval(<<'.,.,', 'Parser.y', 126)
   def _reduce_19(val, _values, result)
-     result = Declaracion.new(val[0], val[2]) 
+     result = Declaracion.new([val[0], val[2]]) 
     result
   end
 .,.,
@@ -1426,14 +1426,14 @@ module_eval(<<'.,.,', 'Parser.y', 134)
 
 module_eval(<<'.,.,', 'Parser.y', 135)
   def _reduce_24(val, _values, result)
-     result = val[0] + val[2] + [val[4]] 
+     result = [val[0] , val[2] , [val[4]]] 
     result
   end
 .,.,
 
 module_eval(<<'.,.,', 'Parser.y', 136)
   def _reduce_25(val, _values, result)
-     result = val[0] + [val[2]] 
+     result = [val[0] , [val[2]]] 
     result
   end
 .,.,
@@ -1468,7 +1468,7 @@ module_eval(<<'.,.,', 'Parser.y', 144)
 
 module_eval(<<'.,.,', 'Parser.y', 145)
   def _reduce_30(val, _values, result)
-     result = val[0] + [val[2]]  
+     result = [val[0] , [val[2]]]  
     result
   end
 .,.,
