@@ -97,12 +97,12 @@ rule
 
     Instruccion: 'id' '<-' Expresion  ';'                                    {  result = Asignacion.new(val[0], val[2]) }
                 |'with' LDeclaraciones 'begin' Instrucciones 'end' ';'      { result = WBloque.new(val[1], val[3]) }
-                |'begin' Instrucciones 'end' ';'                             {  result = Bloque.new(val[1])}
+                |'begin' Instrucciones 'end' ';'                             {  result = Bloque.new([val[1]])}
                 |'read' 'id' ';'                                             {  result = Read.new(val[1])  }
                 |'print' ElementosSalida  ';'                                {  result = Print.new(val[1]) }
                 |'if' Expresion '->' Instrucciones 'otherwise' '->' Instrucciones 'end' ';'                    
                                                                       { result = IfOtherEnd.new(val[1], val[3], val[6])}
-                |'if' Expresion '->' Instrucciones 'end' ';'          { result = IfEnd.new(val[1], [val[3]])}
+                |'if' Expresion '->' Instrucciones 'end' ';'          { result = IfEnd.new(val[1], val[3])}
 
                 |'for' 'id' 'from' Expresion 'to' Expresion '[' 'step' 'num' ']' '->' Instrucciones 'end'
                                                         {result = Iteracion_DetStep.new(val[1],val[3], val[5], val[8], val[11])}

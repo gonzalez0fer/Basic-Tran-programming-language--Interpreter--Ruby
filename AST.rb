@@ -51,7 +51,7 @@ generaClase(Object, 'AST', [])
   generaClase(AST, 'Instruccion', [])
     generaClase(Instruccion, 'Asignacion'      , ['var', 'val'])
     generaClase(Instruccion, 'WBloque'          , ['.declaraciones', '-instrucciones'])
-    generaClase(Instruccion, 'Bloque'          , ['.declaraciones', '-instrucciones'])
+    generaClase(Instruccion, 'Bloque'          , ['-instrucciones'])
     generaClase(Instruccion, 'IfOtherEnd'          , ['expresion', '-instrucciones', '-instrucciones'])
     generaClase(Instruccion, 'IfEnd'          , ['expresion','-instrucciones'])
 
