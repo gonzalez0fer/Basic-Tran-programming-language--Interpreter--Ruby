@@ -76,22 +76,10 @@ class AST
   def to_string(profundidad)
 
     @hijos.inject("\n" + self.class.to_s.upcase) do |acum, cont|
-
-      case cont[0]
-        # Si el primer caracter es un '.' se genera solamente lo que se lleva acumulado
-        when /\A\./
-          acum
-        # Si el primer caracter es un '-' se genera el string acumulado mas el to_string
-        # del contenido del atributo
-        when /\A-/
-          acum + cont[1].to_string(1)
-        # En cualquier otro caso se genera el string que contiene el nombre del atributo
-        # seguido por dos puntos y luego el to_string del contenido del atributo
-        else
-          acum + "\n  #{cont[0]}: #{ cont[1].to_string(2) }"
-        end
+      acum + "#{cont[0]}"
+       puts "#{cont}"
     # Por ultimo se identa adecuadamente sustituyendo el inicio del string por la cantidad
     # de espacios en blanco necesarios (2*profundidad)
-    end.gsub(/^/, '  '*profundidad)
+    end
   end
 end

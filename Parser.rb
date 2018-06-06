@@ -662,45 +662,36 @@ class ErrorSintactico < RuntimeError
     "Error de sintaxis en linea #{@token.linea}, columna #{@token.columna}, token '#{@token.contenido}' inesperado."
   end
 end
+
 class Parser < Racc::Parser
 
-module_eval(<<'...end Parser.y/module_eval...', 'Parser.y', 230)
+module_eval(<<'...end Parser.y/module_eval...', 'Parser.y', 199)
 
     def on_error(id, token, stack)
-      raise ErrorSintactico::new(token)
+      raise ErrorSintactico.new(token)
     end
 
     def next_token
-      token = @lexer.shift
-      if token
-        list = [token.class, token]
-        puts (list)
-        return list
-      else
-        puts("WTF")
-        list = [false,false]
-        puts('-------------------')
-        puts(list)
-        return list
+      
+      
+      if @lexer.shift.nil?
+        puts "entre"
+        return [false, false]
       end
+      token = @lexer.shift
+      puts "#{token}"
+      return [token.class, token]
+      
     end
 
     def parse(lexer)
       @yydebug = true # DEBUG
       @lexer  = lexer
-      @tokens = []
       begin
         ast = do_parse
-      rescue Error => error
-        t = false
-        while (!t) do
-          begin
-            t = lexer.shift.nil?
-            rescue Error => error
-          end
-        end
-        puts lexer
+      rescue ErrorSintactico => error
       end
+      puts lexer
       return ast
     end
 ...end Parser.y/module_eval...
@@ -1271,413 +1262,413 @@ Racc_debug_parser = false
 
 # reduce 0 omitted
 
-module_eval(<<'.,.,', 'Parser.y', 100)
+module_eval(<<'.,.,', 'Parser.y', 97)
   def _reduce_1(val, _values, result)
       result = Asignacion.new(val[0], val[2]) 
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'Parser.y', 101)
+module_eval(<<'.,.,', 'Parser.y', 98)
   def _reduce_2(val, _values, result)
-     result = WBloque.new(val[1], [val[3]]) 
+     result = WBloque.new(val[1], val[3]) 
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'Parser.y', 102)
+module_eval(<<'.,.,', 'Parser.y', 99)
   def _reduce_3(val, _values, result)
       result = Bloque.new([val[1]])
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'Parser.y', 103)
+module_eval(<<'.,.,', 'Parser.y', 100)
   def _reduce_4(val, _values, result)
       result = Read.new(val[1])  
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'Parser.y', 104)
+module_eval(<<'.,.,', 'Parser.y', 101)
   def _reduce_5(val, _values, result)
       result = Print.new(val[1]) 
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'Parser.y', 106)
+module_eval(<<'.,.,', 'Parser.y', 103)
   def _reduce_6(val, _values, result)
      result = IfOtherEnd.new(val[1], val[3], val[6])
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'Parser.y', 108)
+module_eval(<<'.,.,', 'Parser.y', 104)
   def _reduce_7(val, _values, result)
      result = IfEnd.new(val[1], val[3])
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'Parser.y', 111)
+module_eval(<<'.,.,', 'Parser.y', 107)
   def _reduce_8(val, _values, result)
     result = Iteracion_DetStep.new(val[1],val[3], val[5], val[8], val[11])
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'Parser.y', 114)
+module_eval(<<'.,.,', 'Parser.y', 109)
   def _reduce_9(val, _values, result)
     result = Iteracion_Det.new(val[1],val[3], val[5]), val[7]
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'Parser.y', 116)
+module_eval(<<'.,.,', 'Parser.y', 111)
   def _reduce_10(val, _values, result)
      result = Iteracion_Indet.new(val[1], val[3]) 
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'Parser.y', 117)
+module_eval(<<'.,.,', 'Parser.y', 112)
   def _reduce_11(val, _values, result)
      result = Punto.new(val[0], val[2])   
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'Parser.y', 123)
+module_eval(<<'.,.,', 'Parser.y', 115)
   def _reduce_12(val, _values, result)
-     result = [val[0]]           
+     result = val[0]           
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'Parser.y', 124)
+module_eval(<<'.,.,', 'Parser.y', 116)
   def _reduce_13(val, _values, result)
-     result = [val[0]]           
+     result = val[0]           
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'Parser.y', 125)
+module_eval(<<'.,.,', 'Parser.y', 117)
   def _reduce_14(val, _values, result)
-     result = [val[0] , [val[2]]]  
+     result = val[0] , val[2]  
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'Parser.y', 126)
+module_eval(<<'.,.,', 'Parser.y', 118)
   def _reduce_15(val, _values, result)
-     result = [val[0] , [val[2]]]  
+     result = val[0] , val[2]  
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'Parser.y', 132)
+module_eval(<<'.,.,', 'Parser.y', 121)
   def _reduce_16(val, _values, result)
      result = LDeclaracion.new(val[1]) 
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'Parser.y', 133)
+module_eval(<<'.,.,', 'Parser.y', 122)
   def _reduce_17(val, _values, result)
      result = LDeclaracionRec.new(val[1], val[2] )
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'Parser.y', 134)
+module_eval(<<'.,.,', 'Parser.y', 123)
   def _reduce_18(val, _values, result)
-     result = LDeclaracionId.new([val[1] , val[3]]) 
+     result = LDeclaracionId.new(val[1] , val[3]) 
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'Parser.y', 140)
+module_eval(<<'.,.,', 'Parser.y', 126)
   def _reduce_19(val, _values, result)
-     result = Declaracion.new([val[0], val[2]]) 
+     result = Declaracion.new(val[0], val[2]) 
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'Parser.y', 141)
+module_eval(<<'.,.,', 'Parser.y', 127)
   def _reduce_20(val, _values, result)
      result = DeclaracionMatriz.new(val[0], val[4], val[6])
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'Parser.y', 147)
+module_eval(<<'.,.,', 'Parser.y', 130)
   def _reduce_21(val, _values, result)
      result = DeclaracionMatriz.new(val[0], val[4], val[6])
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'Parser.y', 148)
+module_eval(<<'.,.,', 'Parser.y', 131)
   def _reduce_22(val, _values, result)
      result = val[0]
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'Parser.y', 154)
+module_eval(<<'.,.,', 'Parser.y', 134)
   def _reduce_23(val, _values, result)
-     result = [val[0] , val[2] ]
+     result = val[0] , val[2]
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'Parser.y', 155)
+module_eval(<<'.,.,', 'Parser.y', 135)
   def _reduce_24(val, _values, result)
-     result = [val[0] , val[2] , [val[4]]] 
+     result = val[0] , val[2] , val[4] 
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'Parser.y', 156)
+module_eval(<<'.,.,', 'Parser.y', 136)
   def _reduce_25(val, _values, result)
-     result = [val[0] , [val[2]]] 
+     result = val[0] , val[2] 
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'Parser.y', 157)
+module_eval(<<'.,.,', 'Parser.y', 137)
   def _reduce_26(val, _values, result)
      result = [] 
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'Parser.y', 163)
+module_eval(<<'.,.,', 'Parser.y', 140)
   def _reduce_27(val, _values, result)
      result = val[0] 
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'Parser.y', 164)
+module_eval(<<'.,.,', 'Parser.y', 141)
   def _reduce_28(val, _values, result)
      result = val[0] 
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'Parser.y', 170)
+module_eval(<<'.,.,', 'Parser.y', 144)
   def _reduce_29(val, _values, result)
-     result = [val[0]]           
+     result = val[0]          
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'Parser.y', 171)
+module_eval(<<'.,.,', 'Parser.y', 145)
   def _reduce_30(val, _values, result)
-     result = [val[0] , [val[2]]]  
+     result = val[0] , val[2]  
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'Parser.y', 177)
+module_eval(<<'.,.,', 'Parser.y', 148)
   def _reduce_31(val, _values, result)
-     result = val[0]
+     result = val[0]             
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'Parser.y', 178)
+module_eval(<<'.,.,', 'Parser.y', 149)
   def _reduce_32(val, _values, result)
-     result = val[0]
+     result = val[0]             
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'Parser.y', 184)
+module_eval(<<'.,.,', 'Parser.y', 152)
   def _reduce_33(val, _values, result)
      result = Entero.new(val[0])         
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'Parser.y', 185)
+module_eval(<<'.,.,', 'Parser.y', 153)
   def _reduce_34(val, _values, result)
      result = True.new()                 
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'Parser.y', 186)
+module_eval(<<'.,.,', 'Parser.y', 154)
   def _reduce_35(val, _values, result)
      result = False.new()                
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'Parser.y', 187)
+module_eval(<<'.,.,', 'Parser.y', 155)
   def _reduce_36(val, _values, result)
      result = Variable.new(val[0])       
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'Parser.y', 188)
+module_eval(<<'.,.,', 'Parser.y', 156)
   def _reduce_37(val, _values, result)
      result = ValorAscii.new(val[0])     
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'Parser.y', 189)
+module_eval(<<'.,.,', 'Parser.y', 157)
   def _reduce_38(val, _values, result)
      result = Modulo.new(val[0], val[2]) 
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'Parser.y', 190)
+module_eval(<<'.,.,', 'Parser.y', 158)
   def _reduce_39(val, _values, result)
      result = SiguienteCar.new(val[0])   
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'Parser.y', 191)
+module_eval(<<'.,.,', 'Parser.y', 159)
   def _reduce_40(val, _values, result)
      result = AnteriorCar.new(val[0])    
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'Parser.y', 192)
+module_eval(<<'.,.,', 'Parser.y', 160)
   def _reduce_41(val, _values, result)
      result = Concatenacion.new(val[0], val[2])   
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'Parser.y', 193)
+module_eval(<<'.,.,', 'Parser.y', 161)
   def _reduce_42(val, _values, result)
      result = Multiplicacion.new(val[0], val[2])  
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'Parser.y', 194)
+module_eval(<<'.,.,', 'Parser.y', 162)
   def _reduce_43(val, _values, result)
      result = Suma.new(val[0], val[2])            
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'Parser.y', 195)
+module_eval(<<'.,.,', 'Parser.y', 163)
   def _reduce_44(val, _values, result)
      result = Resta.new(val[0], val[2])           
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'Parser.y', 196)
+module_eval(<<'.,.,', 'Parser.y', 164)
   def _reduce_45(val, _values, result)
      result = Division.new(val[0], val[2])        
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'Parser.y', 197)
+module_eval(<<'.,.,', 'Parser.y', 165)
   def _reduce_46(val, _values, result)
      result = Desigualdad.new(val[0], val[2])     
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'Parser.y', 198)
+module_eval(<<'.,.,', 'Parser.y', 166)
   def _reduce_47(val, _values, result)
      result = Menor.new(val[0], val[2])           
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'Parser.y', 199)
+module_eval(<<'.,.,', 'Parser.y', 167)
   def _reduce_48(val, _values, result)
      result = MenorIgual.new(val[0], val[2])      
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'Parser.y', 200)
+module_eval(<<'.,.,', 'Parser.y', 168)
   def _reduce_49(val, _values, result)
      result = Igual.new(val[0], val[2])           
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'Parser.y', 201)
+module_eval(<<'.,.,', 'Parser.y', 169)
   def _reduce_50(val, _values, result)
      result = Mayor.new(val[0], val[2])           
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'Parser.y', 202)
+module_eval(<<'.,.,', 'Parser.y', 170)
   def _reduce_51(val, _values, result)
      result = MayorIgual.new(val[0], val[2])      
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'Parser.y', 203)
+module_eval(<<'.,.,', 'Parser.y', 171)
   def _reduce_52(val, _values, result)
      result = And.new(val[0], val[2])     
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'Parser.y', 204)
+module_eval(<<'.,.,', 'Parser.y', 172)
   def _reduce_53(val, _values, result)
      result = Or.new(val[0], val[2])      
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'Parser.y', 205)
+module_eval(<<'.,.,', 'Parser.y', 173)
   def _reduce_54(val, _values, result)
      result = Not.new(val[1])             
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'Parser.y', 206)
+module_eval(<<'.,.,', 'Parser.y', 174)
   def _reduce_55(val, _values, result)
      result = Shift.new(val[1])           
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'Parser.y', 207)
+module_eval(<<'.,.,', 'Parser.y', 175)
   def _reduce_56(val, _values, result)
      result = MenosUnario.new(val[1])    
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'Parser.y', 208)
+module_eval(<<'.,.,', 'Parser.y', 176)
   def _reduce_57(val, _values, result)
      result = val[1]                       
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'Parser.y', 209)
+module_eval(<<'.,.,', 'Parser.y', 177)
   def _reduce_58(val, _values, result)
      result = val[1]                       
     result
   end
 .,.,
 
-module_eval(<<'.,.,', 'Parser.y', 210)
+module_eval(<<'.,.,', 'Parser.y', 178)
   def _reduce_59(val, _values, result)
      result = val[1]                       
     result

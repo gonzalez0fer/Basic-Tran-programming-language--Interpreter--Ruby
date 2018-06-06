@@ -93,96 +93,64 @@ class Parser
 
 #declarando la gramatica
 
-start Instruccion
-
 rule
 
-    Instruccion
-                : 'id' '<-' Expresion  ';'                                               {  result = Asignacion.new(val[0], val[2]) }
-                |'with' LDeclaraciones 'begin' Instrucciones 'end' ';'                  { result = WBloque.new(val[1], [val[3]]) }
-                |'begin' Instrucciones 'end' ';'                                        {  result = Bloque.new([val[1]])}
-                |'read' 'id' ';'                                                        {  result = Read.new(val[1])  }
-                |'print' ElementosSalida  ';'                                           {  result = Print.new(val[1]) }
+    Instruccion: 'id' '<-' Expresion  ';'                                    {  result = Asignacion.new(val[0], val[2]) }
+                |'with' LDeclaraciones 'begin' Instrucciones 'end' ';'      { result = WBloque.new(val[1], val[3]) }
+                |'begin' Instrucciones 'end' ';'                             {  result = Bloque.new([val[1]])}
+                |'read' 'id' ';'                                             {  result = Read.new(val[1])  }
+                |'print' ElementosSalida  ';'                                {  result = Print.new(val[1]) }
                 |'if' Expresion '->' Instrucciones 'otherwise' '->' Instrucciones 'end' ';'                    
-                                                                                        { result = IfOtherEnd.new(val[1], val[3], val[6])}
-
-                |'if' Expresion '->' Instrucciones 'end' ';'                            { result = IfEnd.new(val[1], val[3])}
+                                                                      { result = IfOtherEnd.new(val[1], val[3], val[6])}
+                |'if' Expresion '->' Instrucciones 'end' ';'          { result = IfEnd.new(val[1], val[3])}
 
                 |'for' 'id' 'from' Expresion 'to' Expresion '[' 'step' 'num' ']' '->' Instrucciones 'end'
-                                                                                        {result = Iteracion_DetStep.new(val[1],val[3], val[5], val[8], val[11])}
-
+                                                        {result = Iteracion_DetStep.new(val[1],val[3], val[5], val[8], val[11])}
                 |'for' 'id' 'from' Expresion 'to' Expresion '->' Instrucciones 'end'
-                                                                                        {result = Iteracion_Det.new(val[1],val[3], val[5]), val[7]}
+                                                               {result = Iteracion_Det.new(val[1],val[3], val[5]), val[7]}
 
-                | 'while' Expresion '->' Instrucciones  'end'  ';'                      { result = Iteracion_Indet.new(val[1], val[3]) }
-                | Expresion '.' Expresion                                               { result = Punto.new(val[0], val[2])   }
+                | 'while' Expresion '->' Instrucciones  'end'  ';'            { result = Iteracion_Indet.new(val[1], val[3]) }
+                | Expresion '.' Expresion                                     { result = Punto.new(val[0], val[2])   }
                 ;
 
-
-
-  Instrucciones
-                : Instruccion                                                          { result = [val[0]]           }
-                | Expresion  ';'                                                         { result = [val[0]]           }
-                | Instrucciones ';' Instruccion                                          { result = [val[0] , [val[2]]]  }
-                | Instrucciones ';' Expresion                                            { result = [val[0] , [val[2]]]  }
+     Instrucciones: Instruccion                                                          { result = val[0]           }
+                | Expresion  ';'                                                         { result = val[0]           }
+                | Instrucciones ';' Instruccion                                          { result = val[0] , val[2]  }
+                | Instrucciones ';' Expresion                                            { result = val[0] , val[2]  }
                 ;
 
-
-
-  LDeclaraciones
-                : 'var' Declaracion                                    { result = LDeclaracion.new(val[1]) }
+  LDeclaraciones: 'var' Declaracion                                    { result = LDeclaracion.new(val[1]) }
                 | 'var' LDeclaraciones Declaracion                     { result = LDeclaracionRec.new(val[1], val[2] )}
-                | 'var' 'id' ':' Tipo ';'                              { result = LDeclaracionId.new([val[1] , val[3]]) }
+                | 'var' 'id' ':' Tipo ';'                              { result = LDeclaracionId.new(val[1] , val[3]) }
                 ;          
 
-
-
-    Declaracion
-                : Argumentos ':' Tipo ';'                         { result = Declaracion.new(val[0], val[2]) }
+    Declaracion: Argumentos ':' Tipo ';'                         { result = Declaracion.new(val[0], val[2]) }
                 |'id' ':' 'array' '[' 'num' ']' 'of' Array       { result = DeclaracionMatriz.new(val[0], val[4], val[6])}
                 ;
 
-
-
-            Array
-                : 'id' ':' 'array' '[' 'num' ']' 'of' Array        { result = DeclaracionMatriz.new(val[0], val[4], val[6])}
+            Array: 'id' ':' 'array' '[' 'num' ']' 'of' Array        { result = DeclaracionMatriz.new(val[0], val[4], val[6])}
                 | Tipo  ';'                                         { result = val[0]}
                 ;
 
-
-
-      Argumentos
-                : 'id' '<-' Expresion                            { result = [val[0] , val[2] ]}
-                |'id' '<-' Expresion ',' Argumentos              { result = [val[0] , val[2] , [val[4]]] }
-                | 'id' ',' Argumentos                            { result = [val[0] , [val[2]]] }
-                |                                                { result = [] }
+      Argumentos: 'id' '<-' Expresion                            { result = val[0] , val[2]}
+                |'id' '<-' Expresion ',' Argumentos              { result = val[0] , val[2] , val[4] }
+                | 'id' ',' Argumentos                           { result = val[0] , val[2] }
+                |                                               { result = [] }
                 ;
 
-
-
-           Tipo
-                :  'int'                                          { result = val[0] }
-                | 'bool'                                         { result = val[0] }
+           Tipo:  'int'                                                                 { result = val[0] }
+                | 'bool'                                                                { result = val[0] }
                 ;
 
-
-
-ElementosSalida
-               : ElementoSalida                                  { result = [val[0]]           }
-               | ElementosSalida ',' ElementoSalida              { result = [val[0] , [val[2]]]  }
+ElementosSalida: ElementoSalida                                                         { result = val[0]          }
+               | ElementosSalida ',' ElementoSalida                                     { result = val[0] , val[2]  }
                ;
 
-
-
- ElementoSalida
-               : 'caracter'                                      { result = val[0]}
-               | Expresion                                       { result = val[0]}
+ ElementoSalida: 'caracter'                                                             { result = val[0]             }
+               | Expresion                                                              { result = val[0]             }
                ;
 
-
-
-      Expresion
-               :    'num'                                                       { result = Entero.new(val[0])         }
+      Expresion:    'num'                                                       { result = Entero.new(val[0])         }
                |    'true'                                                      { result = True.new()                 }
                |    'false'                                                     { result = False.new()                }
                |    'id'                                                        { result = Variable.new(val[0])       }
@@ -226,42 +194,33 @@ class ErrorSintactico < RuntimeError
     "Error de sintaxis en linea #{@token.linea}, columna #{@token.columna}, token '#{@token.contenido}' inesperado."
   end
 end
+
 ---- inner ----
 
     def on_error(id, token, stack)
-      raise ErrorSintactico::new(token)
+      raise ErrorSintactico.new(token)
     end
 
     def next_token
-      token = @lexer.shift
-      if token
-        list = [token.class, token]
-        puts (list)
-        return list
-      else
-        puts("WTF")
-        list = [false,false]
-        puts('-------------------')
-        puts(list)
-        return list
+      
+      
+      if @lexer.shift.nil?
+        puts "entre"
+        return [false, false]
       end
+      token = @lexer.shift
+      puts "#{token}"
+      return [token.class, token]
+      
     end
 
     def parse(lexer)
       @yydebug = true # DEBUG
       @lexer  = lexer
-      @tokens = []
       begin
         ast = do_parse
-      rescue Error => error
-        t = false
-        while (!t) do
-          begin
-            t = lexer.shift.nil?
-            rescue Error => error
-          end
-        end
-        puts lexer
+      rescue ErrorSintactico => error
       end
+      puts lexer
       return ast
     end
