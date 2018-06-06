@@ -32,11 +32,11 @@ crearClase(Object, 'AST', [])
     crearClase(Instruccion, 'Iteracion_Det'   , ['variable', 'exp1', 'exp2', 'instruccion'])
     crearClase(Instruccion, 'Iteracion_DetStep'   , ['variable', 'exp1', 'exp2', 'exp3', 'instruccion'])
     crearClase(Instruccion, 'Iteracion_Indet' , ['condicion', 'instruccion'])
+    crearClase(Instruccion, 'LDeclaracion', ['declaraciones'])
 
-  crearClase(AST, 'Declaracion', ['variables', 'tipo'])
-  crearClase(AST, 'Declaraciones', ['declaraciones'])
-  crearClase(AST, 'LDeclaracion', ['declaraciones'])
-  crearClase(AST, 'Expresion', [])
+  crearClase(LDeclaracion, 'Declaracion', ['variables', 'tipo'])
+  crearClase(LDeclaracion, 'Declaraciones', ['declaraciones'])
+  crearClase(Instruccion, 'Expresion', [])
     crearClase(Expresion, 'Modulo'         , ['oper izq', 'oper der'])
     crearClase(Expresion, 'SiguienteCar'   , ['oper'])
     crearClase(Expresion, 'AnteriorCar'    , ['oper'])
@@ -76,8 +76,8 @@ class AST
   def to_string(profundidad)
 
     @hijos.inject("\n" + self.class.to_s.upcase) do |acum, cont|
+      puts "estoy en ast"
       acum + "#{cont[0]}"
-       puts "#{cont}"
     # Por ultimo se identa adecuadamente sustituyendo el inicio del string por la cantidad
     # de espacios en blanco necesarios (2*profundidad)
     end

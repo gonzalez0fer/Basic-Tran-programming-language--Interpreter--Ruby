@@ -673,20 +673,22 @@ module_eval(<<'...end Parser.y/module_eval...', 'Parser.y', 199)
 
     def next_token
       
-      
-      if @lexer.shift.nil?
+      tok = @lexer.shift
+
+      if tok.nil?
         puts "entre"
         return [false, false]
       end
-      token = @lexer.shift
-      puts "#{token}"
-      return [token.class, token]
+      @token.push(tok)
+      puts "leo tokens: #{tok}"
+      return [tok.class, tok]
       
     end
 
     def parse(lexer)
       @yydebug = true # DEBUG
       @lexer  = lexer
+      @token =[]
       begin
         ast = do_parse
       rescue ErrorSintactico => error
@@ -1369,21 +1371,21 @@ module_eval(<<'.,.,', 'Parser.y', 118)
 
 module_eval(<<'.,.,', 'Parser.y', 121)
   def _reduce_16(val, _values, result)
-     result = LDeclaracion.new(val[1]) 
+     result = LDeclaracion.new(val[1], nil) 
     result
   end
 .,.,
 
 module_eval(<<'.,.,', 'Parser.y', 122)
   def _reduce_17(val, _values, result)
-     result = LDeclaracionRec.new(val[1], val[2] )
+     result = LDeclaracion.new(val[1], val[2] )
     result
   end
 .,.,
 
 module_eval(<<'.,.,', 'Parser.y', 123)
   def _reduce_18(val, _values, result)
-     result = LDeclaracionId.new(val[1] , val[3]) 
+     result = LDeclaracion.new(val[1] , val[3]) 
     result
   end
 .,.,

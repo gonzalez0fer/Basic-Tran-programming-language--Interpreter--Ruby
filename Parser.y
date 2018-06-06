@@ -119,9 +119,9 @@ rule
                 | Instrucciones ';' Expresion                                            { result = val[0] , val[2]  }
                 ;
 
-  LDeclaraciones: 'var' Declaracion                                    { result = LDeclaracion.new(val[1]) }
-                | 'var' LDeclaraciones Declaracion                     { result = LDeclaracionRec.new(val[1], val[2] )}
-                | 'var' 'id' ':' Tipo ';'                              { result = LDeclaracionId.new(val[1] , val[3]) }
+  LDeclaraciones: 'var' Declaracion                                    { result = LDeclaracion.new(val[1], nil) }
+                | 'var' LDeclaraciones Declaracion                     { result = LDeclaracion.new(val[1], val[2] )}
+                | 'var' 'id' ':' Tipo ';'                              { result = LDeclaracion.new(val[1] , val[3]) }
                 ;          
 
     Declaracion: Argumentos ':' Tipo ';'                         { result = Declaracion.new(val[0], val[2]) }
@@ -203,20 +203,22 @@ end
 
     def next_token
       
-      
-      if @lexer.shift.nil?
+      tok = @lexer.shift
+
+      if tok.nil?
         puts "entre"
         return [false, false]
       end
-      token = @lexer.shift
-      puts "#{token}"
-      return [token.class, token]
+      @token.push(tok)
+      puts "leo tokens: #{tok}"
+      return [tok.class, tok]
       
     end
 
     def parse(lexer)
       @yydebug = true # DEBUG
       @lexer  = lexer
+      @token =[]
       begin
         ast = do_parse
       rescue ErrorSintactico => error
