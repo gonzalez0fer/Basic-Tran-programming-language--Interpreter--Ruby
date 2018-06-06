@@ -34,8 +34,11 @@ crearClase(Object, 'AST', [])
     crearClase(Instruccion, 'Iteracion_Indet' , ['condicion', 'instruccion'])
     crearClase(Instruccion, 'LDeclaracion', ['declaraciones'])
 
-  crearClase(LDeclaracion, 'Declaracion', ['variables', 'tipo'])
-  crearClase(LDeclaracion, 'Declaraciones', ['declaraciones'])
+  crearClase(LDeclaracion, 'Declaracion', ['argumentos', 'tipo'])
+  crearClase(LDeclaracion, 'LDeclaracionId', ['id', 'tipo'])
+  crearClase(LDeclaracion, 'LDeclaracionS', ['declaracion'])
+  crearClase(LDeclaracion, 'LDeclaracionRec', [['declaraciones'],'declaracion'])
+  crearClase(Declaracion, 'DeclaracionMatriz', ['id', 'longitud', 'tipo'])
   crearClase(Instruccion, 'Expresion', [])
     crearClase(Expresion, 'Modulo'         , ['oper izq', 'oper der'])
     crearClase(Expresion, 'SiguienteCar'   , ['oper'])
@@ -74,7 +77,7 @@ class AST
   end
 
   def to_string(profundidad)
-
+    puts "#{@hijos}"
     @hijos.inject("\n" + self.class.to_s.upcase) do |acum, cont|
       puts "estoy en ast"
       acum + "#{cont[0]}"

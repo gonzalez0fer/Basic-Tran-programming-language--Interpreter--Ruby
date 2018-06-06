@@ -1,3 +1,5 @@
+with 
+	var b <- 9+3 : int ;
 begin
-  print b;
+	print b;
 end ;

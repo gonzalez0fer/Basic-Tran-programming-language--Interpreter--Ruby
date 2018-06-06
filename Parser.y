@@ -119,9 +119,9 @@ rule
                 | Instrucciones ';' Expresion                                            { result = val[0] , val[2]  }
                 ;
 
-  LDeclaraciones: 'var' Declaracion                                    { result = LDeclaracion.new(val[1], nil) }
-                | 'var' LDeclaraciones Declaracion                     { result = LDeclaracion.new(val[1], val[2] )}
-                | 'var' 'id' ':' Tipo ';'                              { result = LDeclaracion.new(val[1] , val[3]) }
+  LDeclaraciones: 'var' Declaracion                                    { result = LDeclaracionS.new(val[1]) }
+                | 'var' LDeclaraciones Declaracion                     { result = LDeclaracionRec.new(val[1], val[2] )}
+                | 'var' 'id' ':' Tipo ';'                              { result = LDeclaracionId.new(val[1] , val[3]) }
                 ;          
 
     Declaracion: Argumentos ':' Tipo ';'                         { result = Declaracion.new(val[0], val[2]) }
