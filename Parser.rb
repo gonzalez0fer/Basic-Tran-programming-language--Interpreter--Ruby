@@ -676,7 +676,6 @@ module_eval(<<'...end Parser.y/module_eval...', 'Parser.y', 199)
       tok = @lexer.shift
 
       if tok.nil?
-        puts "entre"
         return [false, false]
       end
       @token.push(tok)
@@ -693,7 +692,6 @@ module_eval(<<'...end Parser.y/module_eval...', 'Parser.y', 199)
         ast = do_parse
       rescue ErrorSintactico => error
       end
-      puts lexer
       return ast
     end
 ...end Parser.y/module_eval...

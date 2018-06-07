@@ -50,8 +50,7 @@ dicTokens = {
 	'Caracter' => /^"'"."'"$/,		'Id' => /^[a-z][a-zA-Z0-9_]*/,
 	'Coma' => /\A,/,				'DosPuntos' => /\A:/,
 	'ParAbre' => /\A\(/,			'ParCierra' => /\A\)/,
-	'CorcheteAbre' => /\A\[/,		'CorcheteCierre' => /\A\]/,
-	'LlaveAbre' => /\A\{/,			'LlaveCierra' => /\A\}/,
+	'CorcheteAbre' => /\A\[/,		'CorcheteCierre' => /\A\]/,		
 	'Resta' =>/\A-(?!>)$/,			'Hacer' =>/\A->(?!>)/,
 	'Asignacion' => /\A<-(?!-)/,	'Suma' => /\A\+/,
 	'Desigualdad' => /\A\/=/,		'PuntoYComa' => /\A;/,
@@ -65,7 +64,7 @@ dicTokens = {
 	'Concatenacion' => /\A::/,		'Shift' => /\A\$/,
 }
 
-$caracteres = /=|>|<|\+|-|\*|%|;|,|\(|\)|\.|\[|\{|:|\$|#|\/|\}|\]|\)|[a-zA-Z0-9]/
+$caracteres = /=|>|<|\+|-|\*|%|;|,|\(|\)|\.|\[|:|\$|#|\/|\]|\)|[a-zA-Z0-9]/
 
 $simDobles= /--|::|->|<-|\/\\|<=|>=|\+\+|\/=| /
 

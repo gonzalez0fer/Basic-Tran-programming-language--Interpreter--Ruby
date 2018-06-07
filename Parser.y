@@ -5,7 +5,7 @@ class Parser
 
     #Procedemos a declarar los tokens de BasicTran
 
-    token   ',' '.' ';' ':' '(' ')' '[' ']' '{' '}' '->' '<-'
+    token   ',' '.' ';' ':' '(' ')' '[' ']'  '->' '<-'
             '+' '-' '*' '\/' '%' '\/\\' '\\\/' 'not' '/=' '<' '<='
             '>' '>=' '=' '++' '--' '#' '::' '$' 'with' 'true' 
             'false' 'var' 'begin' 'end' 'int' 'while' 'if' 
@@ -44,8 +44,6 @@ class Parser
         ')'         'TkParCierra'
         '['         'TkCorcheteAbre'
         ']'         'TkCorcheteCierre'
-        '{'         'TkLlaveAbre'
-        '}'         'TkLlaveCierra'
         '-'         'TkResta'
         '->'        'TkHacer'
         '<-'        'TkAsignacion'
@@ -110,7 +108,7 @@ rule
                                                                {result = Iteracion_Det.new(val[1],val[3], val[5]), val[7]}
 
                 | 'while' Expresion '->' Instrucciones  'end'  ';'            { result = Iteracion_Indet.new(val[1], val[3]) }
-                | Expresion '.' Expresion                                     { result = Punto.new(val[0], val[2])   }
+                | 'id' '.' 'num'                                   { result = Punto.new(val[0], val[2])   }
                 ;
 
      Instrucciones: Instruccion                                                          { result = val[0]           }
@@ -132,21 +130,21 @@ rule
                 | Tipo  ';'                                         { result = val[0]}
                 ;
 
-      Argumentos: 'id' '<-' Expresion                            { result = val[0] , val[2]}
-                |'id' '<-' Expresion ',' Argumentos              { result = val[0] , val[2] , val[4] }
-                | 'id' ',' Argumentos                           { result = val[0] , val[2] }
+      Argumentos: 'id' '<-' Expresion                            { result = Argumento.new(val[0] , val[2], nil)}
+                |'id' '<-' Expresion ',' Argumentos              { result = Argumento.new(val[0] , val[2] , val[4]) }
+                | 'id' ',' Argumentos                           { result = Argumento.new(val[0] , val[2], nil) }
                 |                                               { result = [] }
                 ;
 
-           Tipo:  'int'                                                                 { result = val[0] }
-                | 'bool'                                                                { result = val[0] }
+           Tipo:  'num'                                                                 { result = Num.new() }
+                | 'bool'                                                                { result = Bool.new() }
                 ;
 
-ElementosSalida: ElementoSalida                                                         { result = val[0]          }
-               | ElementosSalida ',' ElementoSalida                                     { result = val[0] , val[2]  }
+ElementosSalida: ElementoSalida                                                         { result = Salida.new(nil, val[0])          }
+               | ElementosSalida ',' ElementoSalida                                     { result = Salida.new(val[0] , val[2])  }
                ;
 
- ElementoSalida: 'caracter'                                                             { result = val[0]             }
+ ElementoSalida: 'caracter'                                                             { result = Caracter.new(val[0] )       }
                | Expresion                                                              { result = val[0]             }
                ;
 
@@ -176,7 +174,6 @@ ElementosSalida: ElementoSalida                                                 
                |    '-' Expresion = UMINUS                                            { result = MenosUnario.new(val[1])    }
                |    '(' Expresion ')'                                                 { result = val[1]                       }
                |    '[' Expresion ']'                                                 { result = val[1]                       }
-               |    '{' Expresion '}'                                                 { result = val[1]                       }
                ;
 
 ---- header ----
@@ -206,11 +203,9 @@ end
       tok = @lexer.shift
 
       if tok.nil?
-        puts "entre"
         return [false, false]
       end
       @token.push(tok)
-      puts "leo tokens: #{tok}"
       return [tok.class, tok]
       
     end
@@ -223,6 +218,5 @@ end
         ast = do_parse
       rescue ErrorSintactico => error
       end
-      puts lexer
       return ast
     end

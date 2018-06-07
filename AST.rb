@@ -49,7 +49,6 @@ crearClase(Object, 'AST', [])
     crearClase(Expresion, 'Suma'           , ['oper izq', 'oper der'])
     crearClase(Expresion, 'Resta'          , ['oper izq', 'oper der'])
     crearClase(Expresion, 'Division'       , ['oper izq', 'oper der'])
-    crearClase(Expresion, 'Diferencia'     , ['oper izq', 'oper der'])
     crearClase(Expresion, 'Desigualdad'    , ['oper izq', 'oper der'])
     crearClase(Expresion, 'Menor'          , ['oper izq', 'oper der'])
     crearClase(Expresion, 'MenorIgual'     , ['oper izq', 'oper der'])
@@ -77,12 +76,14 @@ class AST
   end
 
   def to_string(profundidad)
-    puts "#{@hijos}"
+  #puts "#{@hijos}"
     @hijos.inject("\n" + self.class.to_s.upcase) do |acum, cont|
-      puts "estoy en ast"
-      acum + "#{cont[0]}"
+       #puts "veamos: #{cont[1]}"
+
+       #puts "que es: #{cont[0]}"
+       
     # Por ultimo se identa adecuadamente sustituyendo el inicio del string por la cantidad
     # de espacios en blanco necesarios (2*profundidad)
-    end
+    end.gsub(/^/, '  '*profundidad)
   end
 end
