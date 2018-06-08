@@ -17,16 +17,25 @@ def main
     end
     archivo = File::read(ARGV[0])
     begin
+        #creamos un Lexer que analice la entrada
+        lexer = Lexer::new archivo
+        tokens, errores = lexer.leer()
+        if !errores.empty?
+            errores.each do |imp|
+                imp.imprimir()
+            end
+        else
+            begin
+                pars = Parser.new()
+                ast =  pars.parse(tokens)
+                puts ast.to_s()
+                rescue ErrorSintactico => e
+                puts e
+                return
 
-    #creamos un Lexer que analice la entrada
-    lexer = Lexer::new archivo
-    tokens = lexer.leer()
-        ast = Parser::new.parse(tokens)
-        if (nil != ast) then puts ast end
-    rescue ErrorSintactico => e
-        puts e
+            end
+        end
     end
-
 end
 
 main

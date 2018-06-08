@@ -433,7 +433,7 @@ class Lexer
 			end
 
 		end
-
-		mostrarResultado()
+		return @tokens, @errores
+		#mostrarResultado()
 	end
 end
