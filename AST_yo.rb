@@ -54,11 +54,12 @@ class Print
 	def initialize(salida)
 		@salida = salida
 
+
 	end
 
 	def to_s(tab)
 		s = (" "*tab) + "Impresion:\n"
-		s << (" "*(tab+2)) + "salida: \n" + @salida.to_s(tab+4)
+		s << (" "*(tab+2)) + "salida: " + @salida.to_s(0)
 		return s
 	end
 end
@@ -147,6 +148,7 @@ class WBloque
 
 	def to_s(tab)
 		s = (" "*tab) + "Nuevo Bloque:\n"
+		s << (" "*(tab+2)) + "Declaraciones: \n" + @declaraciones.to_s(tab+4)
 		s << (" "*(tab+2)) + "Instrucciones: \n" + @instrucciones.to_s(tab+4)
 		s << (" "*(tab+2)) + "Fin del bloque \n"
 		return s
@@ -294,7 +296,7 @@ class LDeclaracionS
 	end
 
 	def to_s(tab)
-		s = (" "*tab) + "Declaracion:\n"
+		s = ""
 		s << (" "*(tab+2)) + "Variable: \n" + @declaracion.to_s(tab+4)
 		return s
 	end
@@ -336,7 +338,7 @@ class LDeclaracionId
 	end
 
 	def to_s(tab)
-		s << (" "*(tab+2)) + "Identificador: \n" + @id.to_s(tab+4)
+		s << (" "*(tab+2)) + "Identificador: \n" + @id.to_s(0)
 		s << (" "*(tab+2)) + "Tipo: \n" + @tipo.to_s(tab+4)
 		return s
 	end
@@ -356,8 +358,9 @@ class Declaracion
 	end
 
 	def to_s(tab)
-		s << (" "*(tab+2)) + "Argumentos: \n" + @argumentos.to_s(tab+4)
-		s << (" "*(tab+2)) + "Tipo: \n" + @tipo.to_s(tab+4)
+		s = ""
+		s << (" "*(tab+2)) + "Argumentos: \n" + @argumentos.to_s(tab+4) + "\n"
+		s <<  @tipo.to_s(tab+2)
 		return s
 	end
 end
@@ -380,7 +383,7 @@ class DeclaracionMatriz
 	def to_s(tab)
 		s << (" "*(tab+2)) + "Identificador: \n" + @id.to_s(tab+4)
 		s << (" "*(tab+2)) + "Tamaño del arreglo: \n" + @tam.to_s(tab+4)
-		s << (" "*(tab+2)) + "Tipo: \n" + @tipo.to_s(tab+4)
+		s << (" "*(tab+2)) +  @tipo.to_s(tab+4)
 		return s
 	end
 end
@@ -401,10 +404,13 @@ class Argumento
 	end
 
 	def to_s(tab)
-		s << (" "*(tab+2)) + "Identificador: \n" + @id.to_s(tab+4)
-		s << (" "*(tab+2)) + "Expresion a Asignar: \n" + @exp.to_s(tab+4)
-		if @arg!= nil
-			s << (" "*(tab+2)) + "Siguiente declaracion: \n" + @arg.to_s(tab+4)
+		s = ""
+		if !(@id== nil && @exp==nil && @arg==nil)
+			s << (" "*(tab+2)) + "Identificador: " + @id.to_s() + "\n"
+			s << (" "*(tab+2)) + "Expresion a Asignar: " + @exp.to_s()
+			if @arg!= nil
+				s << (" "*(tab+2)) + "Siguiente declaracion: \n" + @arg.to_s()
+			end
 		end
 		return s
 	end
@@ -422,7 +428,7 @@ class Tipo
 	end
 
 	def to_s(tab)
-		return (" "*tab) + "Tipo: \n" + (" "*(tab+2)) + "nombre: " + @tipo.to_s() + "\n"
+		return (" "*tab) + "Tipo: "  + @tipo.to_s() + "\n"
 	end
 end
 
@@ -462,7 +468,7 @@ class Salida
 
 	def to_s(tab)
 		s = ""
-    	s << (" "*(tab+2)) + @salida.to_s(tab+4)
+    	s <<  @salida.to_s(tab+4)
     	return s
 	end
 end
@@ -711,7 +717,7 @@ class Literal
 	end
 
 	def to_s(tab)
-		return (" "*tab) + "valor: " + @valor.to_s() + "\n"
+		return (" "*tab) + @tipo.to_s() + (" "*(tab+1)) + "valor: " + @valor.to_s() + "\n"
 	end
 end
 
@@ -744,6 +750,10 @@ end
 class Variable < Literal
 
 	def initialize(valor)
-		super(valor, "Variable: \n")
+		super(valor, "\n ")
+	end
+
+	def to_s(tab)
+		return   @valor.to_s() + "\n"
 	end
 end

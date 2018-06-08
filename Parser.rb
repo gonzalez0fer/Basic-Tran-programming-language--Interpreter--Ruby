@@ -1393,7 +1393,7 @@ module_eval(<<'.,.,', 'Parser.y', 136)
 
 module_eval(<<'.,.,', 'Parser.y', 137)
   def _reduce_27(val, _values, result)
-     result = [] 
+     result = Argumento.new(nil , nil, nil) 
     result
   end
 .,.,

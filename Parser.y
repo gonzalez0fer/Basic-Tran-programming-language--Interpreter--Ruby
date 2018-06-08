@@ -135,7 +135,7 @@ rule
       Argumentos: 'id' '<-' Expresion                            { result = Argumento.new(val[0] , val[2], nil)}
                 |'id' '<-' Expresion ',' Argumentos              { result = Argumento.new(val[0] , val[2] , val[4]) }
                 | 'id' ',' Argumentos                           { result = Argumento.new(val[0] , val[2], nil) }
-                |                                               { result = [] }
+                |                                               { result = Argumento.new(nil , nil, nil) }
                 ;
 
            Tipo:  'int'                                                                 { result = Int.new() }
