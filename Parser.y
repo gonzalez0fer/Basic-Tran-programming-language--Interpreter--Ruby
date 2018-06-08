@@ -9,7 +9,7 @@ class Parser
             '+' '-' '*' '\/' '%' '\/\\' '\\\/' 'not' '/=' '<' '<='
             '>' '>=' '=' '++' '--' '#' '::' '$' 'with' 'true' 
             'false' 'var' 'begin' 'end' 'int' 'while' 'if' 
-            'else' 'bool' 'char' 'array' 'read' 'of' 'print' 
+            'otherwise' 'bool' 'char' 'array' 'read' 'of' 'print' 
             'for' 'step' 'from' 'to' UMINUS
            
     #Declaramos la presedencia de los operadores donde el de mayor presedencia
@@ -75,7 +75,7 @@ class Parser
         'int'       'TkInt' 
         'while'     'TkWhile' 
         'if'        'TkIf' 
-        'else'      'TkElse' 
+        'otherwise' 'TkOtherwise' 
         'bool'      'TkBool' 
         'char'      'TkChar' 
         'array'     'TkArray' 
@@ -95,22 +95,22 @@ rule
     Programa: Instruccion                                                   {result = Programa.new(val[0])}
             ;
 
-    Instruccion: 'id' '<-' Expresion  ';'                                    {  result = Asignacion.new(val[0], val[2]) }
+    Instruccion: 'id' '<-' Expresion  ';'                               {  result = Asignacion.new(val[0].contenido, val[2]) }
                 |'with' LDeclaraciones 'begin' Instrucciones 'end'       { result = WBloque.new(val[1], val[3]) }
                 |'begin' Instrucciones 'end'                              {  result = Bloque.new([val[1]])}
-                |'read' 'id' ';'                                             {  result = Read.new(val[1])  }
+                |'read' 'id' ';'                                             {  result = Read.new(val[1].contenido)  }
                 |'print' ElementosSalida  ';'                                {  result = Print.new(val[1]) }
                 |'if' Expresion '->' Instrucciones 'otherwise' '->' Instrucciones 'end'                     
                                                                       { result = IfOtherEnd.new(val[1], val[3], val[6])}
                 |'if' Expresion '->' Instrucciones 'end'         { result = IfEnd.new(val[1], val[3])}
 
                 |'for' 'id' 'from' Expresion 'to' Expresion '[' 'step' 'num' ']' '->' Instrucciones 'end'
-                                                        {result = Iteracion_DetStep.new(val[1],val[3], val[5], val[8], val[11])}
+                                    {result = Iteracion_DetStep.new(val[1].contenido,val[3], val[5].contenido, val[8], val[11])}
                 |'for' 'id' 'from' Expresion 'to' Expresion '->' Instrucciones 'end'
-                                                               {result = Iteracion_Det.new(val[1],val[3], val[5]), val[7]}
+                                            {result = Iteracion_Det.new(val[1].contenido,val[3], val[5]), val[7]}
 
                 | 'while' Expresion '->' Instrucciones  'end'            { result = Iteracion_Indet.new(val[1], val[3]) }
-                | 'id' '.' 'num'                                   { result = Punto.new(val[0], val[2])   }
+                | 'id' '.' 'num'                                   { result = Punto.new(val[0].contenido, val[2].contenido)   }
                 ;
 
      Instrucciones: Instruccion                                                          { result = val[0]           }
@@ -120,21 +120,21 @@ rule
                 ;
 
   LDeclaraciones: 'var' Declaracion                                    { result = LDeclaracionS.new(val[1]) }
-                | 'var' LDeclaraciones Declaracion                     { result = LDeclaracionRec.new(val[1], val[2] )}
-                | 'var' 'id' ':' Tipo ';'                              { result = LDeclaracionId.new(val[1] , val[3]) }
+                | 'var' LDeclaraciones Declaracion                     { result = LDeclaracionRec.new(val[1].contenido, val[2] )}
+                | 'var' 'id' ':' Tipo ';'                              { result = LDeclaracionId.new(val[1].contenido , val[3]) }
                 ;          
 
     Declaracion: Argumentos ':' Tipo ';'                         { result = Declaracion.new(val[0], val[2]) }
-                |'id' ':' 'array' '[' 'num' ']' 'of' Array       { result = DeclaracionMatriz.new(val[0], val[4], val[6])}
+                |'id' ':' 'array' '[' 'num' ']' 'of' Array       { result = DeclaracionMatriz.new(val[0].contenido, val[4].contenido, val[6])}
                 ;
 
-            Array: 'id' ':' 'array' '[' 'num' ']' 'of' Array        { result = DeclaracionMatriz.new(val[0], val[4], val[6])}
+            Array: 'id' ':' 'array' '[' 'num' ']' 'of' Array        { result = DeclaracionMatriz.new(val[0].contenido, val[4].contenido, val[6])}
                 | Tipo  ';'                                         { result = val[0]}
                 ;
 
-      Argumentos: 'id' '<-' Expresion                            { result = Argumento.new(val[0] , val[2], nil)}
-                |'id' '<-' Expresion ',' Argumentos              { result = Argumento.new(val[0] , val[2] , val[4]) }
-                | 'id' ',' Argumentos                           { result = Argumento.new(val[0] , val[2], nil) }
+      Argumentos: 'id' '<-' Expresion                            { result = Argumento.new(val[0].contenido , val[2], nil)}
+                |'id' '<-' Expresion ',' Argumentos              { result = Argumento.new(val[0].contenido , val[2] , val[4]) }
+                | 'id' ',' Argumentos                           { result = Argumento.new(val[0].contenido , val[2], nil) }
                 |                                               { result = Argumento.new(nil , nil, nil) }
                 ;
 
@@ -146,15 +146,15 @@ ElementosSalida: ElementoSalida                                                 
                | ElementosSalida ',' ElementoSalida                                     { result = Salida.new(val[0] , val[2])  }
                ;
 
- ElementoSalida: 'caracter'                                                             { result = Caracter.new(val[0] )       }
-               | Expresion                                                              { result = val[0]             }
+ ElementoSalida: 'caracter'                                                    { result = Caracter.new(val[0].contenido )       }
+               | Expresion                                                     { result = val[0]             }
                ;
 
-      Expresion:    'num'                                                       { result = Entero.new(val[0])         }
+      Expresion:    'num'                                                       { result = Entero.new(val[0].contenido)         }
                |    'true'                                                      { result = True.new()                 }
                |    'false'                                                     { result = False.new()                }
-               |    'id'                                                        { result = Variable.new(val[0])       }
-               |    '#' 'caracter'                                              { result = ValorAscii.new(val[0])     }
+               |    'id'                                                        { result = Variable.new(val[0].contenido)       }
+               |    '#' 'caracter'                                              { result = ValorAscii.new(val[0].contenido)     }
                |    Expresion '%'   Expresion                                   { result = Modulo.new(val[0], val[2]) }
                |    Expresion '++'                                              { result = SiguienteCar.new(val[0])   }
                |    Expresion '--'                                              { result = AnteriorCar.new(val[0])    }

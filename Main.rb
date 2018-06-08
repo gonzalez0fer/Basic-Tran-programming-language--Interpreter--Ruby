@@ -27,14 +27,13 @@ def main
             end
         else
             begin
-
                 pars = Parser.new(lexer.listaTokens)
                 ast =  pars.parse
 
                 puts ast.to_s()
                 rescue ErrorSintactico => e
-
-                return
+                    puts e
+                return 
 
             end
         end

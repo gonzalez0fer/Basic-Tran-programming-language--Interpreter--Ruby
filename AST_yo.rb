@@ -30,16 +30,16 @@ class Read
 	# == Atributos
 	#
 	# id: identificador del parametro
-	attr_accessor  :id
+	attr_accessor  :archivo
 
-	def initialize(id)
-		@id = id
+	def initialize(archivo)
+		@archivo = archivo
 
 	end
 
 	def to_s(tab)
 		s = (" "*tab) + "Lectura:\n"
-		s << (" "*(tab+2)) + "archivo: \n" + @id.to_s(tab+4)
+		s << (" "*(tab+2)) + "archivo: " + @archivo + "\n"
 		return s
 	end
 end
@@ -148,9 +148,9 @@ class WBloque
 
 	def to_s(tab)
 		s = (" "*tab) + "Nuevo Bloque:\n"
-		s << (" "*(tab+2)) + "Declaraciones: \n" + @declaraciones.to_s(tab+4)
-		s << (" "*(tab+2)) + "Instrucciones: \n" + @instrucciones.to_s(tab+4)
-		s << (" "*(tab+2)) + "Fin del bloque \n"
+		s << (" "*(tab+3)) + "Declaraciones: \n" + @declaraciones.to_s(tab+4)
+		s << (" "*(tab+3)) + "Instrucciones: \n" + @instrucciones.to_s(tab+4)
+		s << (" "*(tab+1)) + "Fin del bloque \n"
 		return s
 	end
 end
@@ -276,9 +276,10 @@ class Punto
 	end
 
 	def to_s(tab)
-		s = (" "*tab) + "Instruccion Punto:\n"
-		s << (" "*(tab+2)) + "Variable a modificar: \n" + @id.to_s(tab+4)
-		s << (" "*(tab+2)) + "Valor a restar: \n" + @num.to_s(tab+4)
+		s = ""
+		s << (" "*(tab+2)) + "Variable a modificar: " + @id.to_s() + "\n"
+		s << (" "*(tab+4)) + "Operador Punto\n"
+		s << (" "*(tab+2)) + "Valor a restar: " + @num + "\n"
 		return s
 	end
 end
@@ -397,7 +398,7 @@ class Argumento
 	# arg: permite la definicion de los argumentos de varias variables
 	attr_accessor  :id,:exp, :arg
 
-	def initialize(id,tam, arg)
+	def initialize(id,exp, arg)
 		@id = id
 		@exp = exp
 		@arg= arg
@@ -405,11 +406,12 @@ class Argumento
 
 	def to_s(tab)
 		s = ""
+
 		if !(@id== nil && @exp==nil && @arg==nil)
 			s << (" "*(tab+2)) + "Identificador: " + @id.to_s() + "\n"
-			s << (" "*(tab+2)) + "Expresion a Asignar: " + @exp.to_s()
+			s << (" "*(tab+2)) + "Expresion a Asignar: \n" + @exp.to_s(tab+4)
 			if @arg!= nil
-				s << (" "*(tab+2)) + "Siguiente declaracion: \n" + @arg.to_s()
+				s << (" "*(tab+2)) + "Siguiente declaracion: \n" + @arg.to_s(tab+4)
 			end
 		end
 		return s
@@ -503,9 +505,10 @@ class ExpresionDosOper
 	end
 
 	def to_s(tab)
-		s = (" "*tab) + @oper + ": \n" 
-		s << (" "*(tab+2)) + "oper izquierdo: \n" + @op1.to_s(tab+4)
-		s << (" "*(tab+2)) + "oper derecho: \n" + @op2.to_s(tab+4)
+		s = ""
+		s << (" "*(tab+2)) + "oper izquierdo: " + @op1.to_s(tab+4)
+		s <<(" "*(tab+3)) +"Operador: " + @oper + "\n" 
+		s << (" "*(tab+2)) + "oper derecho: " + @op2.to_s(tab+4)
 		return s
 	end
 end
@@ -726,6 +729,9 @@ class Entero < Literal
 
 	def initialize(valor)
 		super(valor, "valor numerico: \n")
+	end
+	def to_s(tab)
+		return @valor.to_s() + "\n"
 	end
 end
 
