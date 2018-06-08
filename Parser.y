@@ -92,6 +92,8 @@ class Parser
 #declarando la gramatica
 
 rule
+    Programa: Instruccion                                                   {result = Programa.new(val[0])}
+            ;
 
     Instruccion: 'id' '<-' Expresion  ';'                                    {  result = Asignacion.new(val[0], val[2]) }
                 |'with' LDeclaraciones 'begin' Instrucciones 'end'       { result = WBloque.new(val[1], val[3]) }
@@ -136,7 +138,7 @@ rule
                 |                                               { result = [] }
                 ;
 
-           Tipo:  'num'                                                                 { result = Num.new() }
+           Tipo:  'int'                                                                 { result = Int.new() }
                 | 'bool'                                                                { result = Bool.new() }
                 ;
 
@@ -194,29 +196,20 @@ end
 
 ---- inner ----
 
+    def initialize(lexer)
+      @lexer = lexer
+      @yydebug = true
+      super()
+    end 
+
     def on_error(id, token, stack)
       raise ErrorSintactico.new(token)
     end
 
     def next_token
-      
-      tok = @lexer.shift
-
-      if tok.nil?
-        return [false, false]
-      end
-      @token.push(tok)
-      return [tok.class, tok]
-      
+      @lexer.shift
     end
 
-    def parse(lexer)
-      @yydebug = true # DEBUG
-      @lexer  = lexer
-      @token =[]
-      begin
-        ast = do_parse
-      rescue ErrorSintactico => error
-      end
-      return ast
+    def parse
+      do_parse
     end

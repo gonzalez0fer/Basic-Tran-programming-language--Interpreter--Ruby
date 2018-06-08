@@ -215,6 +215,26 @@ class Iteracion_Det
 	end
 end
 
+class Programa
+
+	# == Atributos
+	#
+	# Instrucciones: Secuencia de instrucciones definidas en el programa
+	attr_accessor :instruccion
+
+	def initialize(instruccion)
+		@instruccion = instruccion
+	end
+
+	def to_s()
+		s = ""
+		if @instruccion != nil 
+			s = "Programa: \n" 
+			s << @instruccion.to_s(4)
+		end
+		return s
+	end
+end
 
 class Iteracion_Indet
 
@@ -409,10 +429,10 @@ end
 # == Clase TipoNum
 #
 # Clase que representa el nodo de un tipo numérico. Hereda de Tipo.
-class Num < Tipo
+class Int < Tipo
 
 	def initialize()
-		super("numero")
+		super("entero")
 	end
 end
 
@@ -442,12 +462,7 @@ class Salida
 
 	def to_s(tab)
 		s = ""
-    	if @iteracion != nil
-    		s = (" "*tab) + "Salida: \n"
-    	else
-    		s = (" "*tab) + "Salida: \n"
-    	end 
-    	s << (" "*(tab+2)) + "impresion: \n" + @salida.to_s(tab+4)
+    	s << (" "*(tab+2)) + @salida.to_s(tab+4)
     	return s
 	end
 end
@@ -696,7 +711,7 @@ class Literal
 	end
 
 	def to_s(tab)
-		return (" "*tab) + @tipo.to_s() + (" "*(tab+2)) + "valor: " + @valor.to_s() + "\n"
+		return (" "*tab) + "valor: " + @valor.to_s() + "\n"
 	end
 end
 

@@ -19,18 +19,23 @@ def main
     begin
         #creamos un Lexer que analice la entrada
         lexer = Lexer::new archivo
-        tokens, errores = lexer.leer()
-        if !errores.empty?
-            errores.each do |imp|
+        lexer.leer()
+        #puts "mis errores son: #{lexer.errores}"
+        if !(lexer.errores.empty?)
+            lexer.errores.each do |imp|
                 imp.imprimir()
             end
         else
             begin
-                pars = Parser.new()
-                ast =  pars.parse(tokens)
+
+                puts "#{lexer.tokens}"
+                pars = Parser.new(lexer.listaTokens)
+                ast =  pars.parse
+
                 puts ast.to_s()
                 rescue ErrorSintactico => e
-                puts e
+
+                puts "soy el problema: #{e}"
                 return
 
             end

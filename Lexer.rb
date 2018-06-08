@@ -153,16 +153,25 @@ end
 #filas y columnas quienes posteriormente daran la situacion de los dos
 #elementos de texto definidos (tokens o errores)
 class Lexer
-	attr_reader :tokens, :errores
+	attr_reader :tokens, :errores , :listaTokens
 
 	def initialize(archivo)
 		@errores = []
 		@tokens = []
+		@listaTokens = []
 		@linea = 1
 		@columna = 1
 		@archivo = archivo
 	end
 
+	def next_token()
+		if not (listaTokens.empty?)
+    		tok = @listaTokens.shift
+    	else
+    		tok = [false,false]
+    	end
+    	return tok
+  	end
 	#metodo que se encarga de revisar la entrada y clasificarlo en error
 	#o token y los agrega a su respectiva lista del lexer con su situacion
 	#indicada por la fila y la columna.
@@ -433,7 +442,10 @@ class Lexer
 			end
 
 		end
-		return @tokens, @errores
+		for i in @tokens
+				@listaTokens << [i.class,i]
+			end
+		#return @tokens, @errores
 		#mostrarResultado()
 	end
 end
