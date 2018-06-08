@@ -179,7 +179,7 @@ ElementosSalida: ElementoSalida                                                 
 ---- header ----
 
 require_relative 'Lexer'
-require_relative 'AST'
+require_relative 'AST_yo'
 
 
 class ErrorSintactico < RuntimeError

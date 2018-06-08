@@ -385,6 +385,7 @@ class Argumento
 		s << (" "*(tab+2)) + "Expresion a Asignar: \n" + @exp.to_s(tab+4)
 		if @arg!= nil
 			s << (" "*(tab+2)) + "Siguiente declaracion: \n" + @arg.to_s(tab+4)
+		end
 		return s
 	end
 end
