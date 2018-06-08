@@ -1265,14 +1265,14 @@ module_eval(<<'.,.,', 'Parser.y', 104)
 
 module_eval(<<'.,.,', 'Parser.y', 107)
   def _reduce_9(val, _values, result)
-    result = Iteracion_DetStep.new(val[1].contenido,val[3], val[5].contenido, val[8], val[11])
+    result = Iteracion_DetStep.new(val[1].contenido,val[3], val[5], val[8], val[11])
     result
   end
 .,.,
 
 module_eval(<<'.,.,', 'Parser.y', 109)
   def _reduce_10(val, _values, result)
-    result = Iteracion_Det.new(val[1].contenido,val[3], val[5]), val[7]
+    result = Iteracion_Det.new(val[1].contenido,val[3], val[5], val[7])
     result
   end
 .,.,

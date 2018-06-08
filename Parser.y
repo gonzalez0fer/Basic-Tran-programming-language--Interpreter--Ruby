@@ -105,9 +105,9 @@ rule
                 |'if' Expresion '->' Instrucciones 'end'         { result = IfEnd.new(val[1], val[3])}
 
                 |'for' 'id' 'from' Expresion 'to' Expresion '[' 'step' 'num' ']' '->' Instrucciones 'end'
-                                    {result = Iteracion_DetStep.new(val[1].contenido,val[3], val[5].contenido, val[8], val[11])}
+                                    {result = Iteracion_DetStep.new(val[1].contenido,val[3], val[5], val[8], val[11])}
                 |'for' 'id' 'from' Expresion 'to' Expresion '->' Instrucciones 'end'
-                                            {result = Iteracion_Det.new(val[1].contenido,val[3], val[5]), val[7]}
+                                            {result = Iteracion_Det.new(val[1].contenido,val[3], val[5], val[7])}
 
                 | 'while' Expresion '->' Instrucciones  'end'            { result = Iteracion_Indet.new(val[1], val[3]) }
                 | 'id' '.' 'num'                                   { result = Punto.new(val[0].contenido, val[2].contenido)   }
