@@ -14,11 +14,10 @@ class Asignacion
 	end
 
 	def to_s(tab)
-		s << (" "*(tab+2)) + "identificador: \n" + @id.to_s(tab+4)
-		s << (" "*(tab+2)) + "expresion: \n" + @expresion.to_s(tab+4)
-		if @expresion != nil
-			s << @expresion.to_s(tab)
-		end
+		s = ""
+		s << (" "*(tab+2)) + "identificador: " + @id.to_s() + "\n"
+		s << (" "*(tab+2)) + "expresion: " + @expresion.to_s(tab+4) +"\n"
+		
 		return s
 	end
 end
@@ -39,7 +38,7 @@ class Read
 
 	def to_s(tab)
 		s = (" "*tab) + "Lectura:\n"
-		s << (" "*(tab+2)) + "archivo: \n" + @id.to_s(tab+4)
+		s << (" "*(tab+2)) + "archivo: " + @id.to_s() + "\n"
 		return s
 	end
 end
@@ -59,7 +58,7 @@ class Print
 
 	def to_s(tab)
 		s = (" "*tab) + "Impresion:\n"
-		s << (" "*(tab+2)) + "salida: " + @salida.to_s(0)
+		s << (" "*(tab+2)) + "salida: " + @salida.to_s(tab) + "\n"
 		return s
 	end
 end
@@ -155,6 +154,32 @@ class WBloque
 	end
 end
 
+class Instrucciones
+
+	# == Atributos
+	#
+	# guardia: guardia relacionada con el if
+	# intr: instruccion a realizar si se cumple la comdicion
+	attr_accessor  :instrucciones, :accion
+
+	def initialize(instrucciones, accion)
+		@accion = accion
+		@instrucciones = instrucciones
+
+	end
+
+	def to_s(tab)
+		s = ""
+		if instrucciones != nil
+			s << @instrucciones.to_s(tab)
+		end
+		if accion != nil
+			s << @accion.to_s(tab)
+		end
+		return s
+	end
+end
+
 
 class Iteracion_DetStep
 
@@ -208,10 +233,10 @@ class Iteracion_Det
 
 	def to_s(tab)
 		s = (" "*tab) + "Ciclo For:\n"
-		s << (" "*(tab+2)) + "Iterador: \n" + @id.to_s(tab+4)
-		s << (" "*(tab+2)) + "Inicio del ciclo: \n" + @start.to_s(tab+4)
-		s << (" "*(tab+2)) + "final del ciclo: \n" + @final.to_s(tab+4)
-		s << (" "*(tab+2)) + "Instrucciones: \n" + @inst.to_s(tab+4)
+		s << (" "*(tab+2)) + "Iterador: " + @id.to_s() + "\n"
+		s << (" "*(tab+2)) + "Inicio del ciclo: " + @start.to_s(tab+4)+ "\n"
+		s << (" "*(tab+2)) + "final del ciclo: " + @final.to_s(tab+4)+ "\n"
+		s << (" "*(tab+2)) + "Instrucciones: \n" + @inst.to_s(tab+4) + "\n"
 		s << (" "*(tab+2)) + "Fin del ciclo \n"
 		return s
 	end
@@ -277,8 +302,8 @@ class Punto
 
 	def to_s(tab)
 		s = (" "*tab) + "Instruccion Punto:\n"
-		s << (" "*(tab+2)) + "Variable a modificar: \n" + @id.to_s(tab+4)
-		s << (" "*(tab+2)) + "Valor a restar: \n" + @num.to_s(tab+4)
+		s << (" "*(tab+2)) + "Variable a modificar: " + @id.to_s() + "\n"
+		s << (" "*(tab+2)) + "Valor a restar: " + @num.to_s() + "\n"
 		return s
 	end
 end
@@ -397,7 +422,7 @@ class Argumento
 	# arg: permite la definicion de los argumentos de varias variables
 	attr_accessor  :id,:exp, :arg
 
-	def initialize(id,tam, arg)
+	def initialize(id,exp, arg)
 		@id = id
 		@exp = exp
 		@arg= arg
@@ -407,7 +432,7 @@ class Argumento
 		s = ""
 		if !(@id== nil && @exp==nil && @arg==nil)
 			s << (" "*(tab+2)) + "Identificador: " + @id.to_s() + "\n"
-			s << (" "*(tab+2)) + "Expresion a Asignar: " + @exp.to_s()
+			s << (" "*(tab+2)) + "Expresion a Asignar: " + @exp.to_s(tab+4)
 			if @arg!= nil
 				s << (" "*(tab+2)) + "Siguiente declaracion: \n" + @arg.to_s()
 			end
@@ -428,7 +453,7 @@ class Tipo
 	end
 
 	def to_s(tab)
-		return (" "*tab) + "Tipo: "  + @tipo.to_s() + "\n"
+		return (" "*(tab+6))+ "Tipo: "  + @tipo.to_s() + "\n"
 	end
 end
 
@@ -486,7 +511,7 @@ class Caracter
 	def to_s(tab)
 		s = (" "*tab) + "Caracter: \n"
 		s << (" "*(tab+2)) + "nombre: " + @caracter.to_s()
-		return s + "\n"
+		return s 
 	end
 end
 
@@ -503,9 +528,10 @@ class ExpresionDosOper
 	end
 
 	def to_s(tab)
-		s = (" "*tab) + @oper + ": \n" 
-		s << (" "*(tab+2)) + "oper izquierdo: \n" + @op1.to_s(tab+4)
-		s << (" "*(tab+2)) + "oper derecho: \n" + @op2.to_s(tab+4)
+		s = (" "*(tab+2)) + "oper izquierdo: " + @op1.to_s(tab+4)
+		s <<(" "*(tab+2)) + "operador: " + @oper + "\n" 
+
+		s << (" "*(tab+2)) + "oper derecho: " + @op2.to_s(tab+4) + "\n"
 		return s
 	end
 end
@@ -692,16 +718,22 @@ end
 class SiguienteCar < ExpresionUnOperIzq
 
 	def initialize(op)
-        super(op,"SiguienteCar")
+        super(op,"")
     end
+    def to_s(tab)
+		return (" "*tab) + "SiguienteCar de: " + @op.to_s()
+	end
 end
 
 
 class AnteriorCar < ExpresionUnOperIzq
 
-	def initialize(op)
-        super(op,"AnteriorCar")
+    def initialize(op)
+        super(op,"")
     end
+    def to_s(tab)
+		return (" "*tab) + "AnteriorCar de: " + @op.to_s()
+	end
 end
 
 
@@ -717,7 +749,7 @@ class Literal
 	end
 
 	def to_s(tab)
-		return (" "*tab) + @tipo.to_s() + (" "*(tab+1)) + "valor: " + @valor.to_s() + "\n"
+		return "\n"+ (" "*tab) + @tipo.to_s() + @valor.to_s()
 	end
 end
 
@@ -725,8 +757,9 @@ end
 class Entero < Literal
 
 	def initialize(valor)
-		super(valor, "valor numerico: \n")
+		super(valor, "valor numerico: ")
 	end
+	
 end
 
 

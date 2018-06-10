@@ -69,14 +69,13 @@ $caracteres = /=|>|<|\+|-|\*|%|;|,|\(|\)|\.|\[|:|\$|#|\/|\]|\)|[a-zA-Z0-9]/
 $simDobles= /--|::|->|<-|\/\\|<=|>=|\+\+|\/=| /
 
 #Escribimos las palabras reservadas del lenguaje
-palabras_reservadas = %w(with true false var begin end int while if else bool char array read of print for step from to)
+palabras_reservadas = %w(with true false var begin end int while if otherwise bool char array read of print for step from to)
 
 #Procedemos a meter dentro de nuestro diccionario de tokens, los
 #tokens relacionados a nuestras palabras reservadas.
 palabras_reservadas.each do |palabra|
 	dicTokens[palabra.capitalize] = /\A#{palabra}\b/
 end
-
 
 #Creamos las clases para cada tipo de token que poseemos en nuestro diccionario de tokens,
 #(las cuales pertenecen a la clase Token) , las mismas se inicializan para tener el contexto

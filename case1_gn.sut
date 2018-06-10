@@ -1,5 +1,10 @@
 with 
 	var b <- 9  : int ;
 begin
-	print b;
+	read b;
+	if x >9 -> v = 6; otherwise -> a.4; end
+	if b/= 3 -> 
+		for a from 3 to 9 -> 'v'++ ; end
+	 end
+	
 end
