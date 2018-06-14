@@ -3,6 +3,7 @@ with
 	var q : int;
 begin
 	read b;
+	b + t ;
 	if x >9 -> v = 6; otherwise -> a.4; end
 	if b/= 3 -> 
 		for a from 3 to 9 -> 
@@ -10,5 +11,6 @@ begin
 			b <- 7;
 		end
 	 end
+	print 
 	
 end

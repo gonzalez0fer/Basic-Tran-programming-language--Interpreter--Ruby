@@ -489,7 +489,6 @@ end
 #
 # Clase que representa el nodo de un tipo numérico. Hereda de Tipo.
 class Int < Tipo
-
 	def initialize()
 		super("entero")
 	end
@@ -499,12 +498,16 @@ end
 #
 # Clase que representa el nodo de un tipo booleano. Hereda de Tipo.
 class Bool < Tipo
-
 	def initialize()
 		super("booleano")
 	end
 end
 
+class Char < Tipo
+	def initialize()
+		super("caracter")
+	end
+end
 
 class Salida
 
@@ -556,10 +559,11 @@ class ExpresionDosOper
 	end
 
 	def to_s(tab)
-		s = (" "*(tab+2)) + "oper izquierdo: " + @op1.to_s(tab+4)
-		s <<(" "*(tab+2)) + "operador: " + @oper + "\n" 
+		s = (" "*(tab)) +"Operacion binaria: \n"
+		s << (" "*(tab+3)) + "oper izquierdo: " + @op1.to_s(tab+6)
+		s <<(" "*(tab+6)) + "operador: " + @oper + "\n" 
 
-		s << (" "*(tab+2)) + "oper derecho: " + @op2.to_s(tab+4) + "\n"
+		s << (" "*(tab+3)) + "oper derecho: " + @op2.to_s(tab+6) + "\n"
 		return s
 	end
 end
@@ -790,6 +794,13 @@ class Entero < Literal
 	
 end
 
+class Caracter < Literal
+
+	def initialize(valor)
+		super(valor, "valor del caracter: ")
+	end
+	
+end
 
 class True < Literal
 

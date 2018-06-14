@@ -134,7 +134,7 @@ rule
 
            Tipo:  'int'                                              { result = Int.new() }
                 | 'bool'                                             { result = Bool.new() }
-                | 'caracter'                                         { result = Caracter.new(val[0].contenido )       }
+                | 'caracter'                                         { result = Char.new()       }
                 | 'array' '[' 'num' ']' 'of' Array                   { result = DeclaracionMatriz.new(val[2].contenido, val[5])}
                 ;
 
@@ -143,22 +143,19 @@ rule
                 ;
 
 
-ElementosSalida: ElementoSalida                                                         { result = Salida.new(nil, val[0])          }
-               | ElementosSalida ',' ElementoSalida                                     { result = Salida.new(val[0] , val[2])  }
-               ;
-
- ElementoSalida: 'caracter'                                                             { result = Caracter.new(val[0].contenido )       }
-               | Expresion                                                              { result = val[0]             }
+ElementosSalida: Expresion                                                         { result = Salida.new(nil, val[0])          }
+               | ElementosSalida ','  Expresion                                     { result = Salida.new(val[0] , val[2])  }
                ;
 
       Expresion:    'num'                                                       { result = Entero.new(val[0].contenido)         }
                |    'true'                                                      { result = True.new()                 }
                |    'false'                                                     { result = False.new()                }
+               |    'caracter'                                                  { result = Caracter.new(val[0].contenido )       }
                |    'id'                                                        { result = Variable.new(val[0].contenido)       }
                |    '#' 'caracter'                                              { result = ValorAscii.new(val[0])     }
                |    Expresion '%'   Expresion                                   { result = Modulo.new(val[0], val[2]) }
-               |    'caracter'  '++'                                              { result = SiguienteCar.new(val[0].contenido)   }
-               |    'caracter'  '--'                                              { result = AnteriorCar.new(val[0].contenido)    }
+               |    'caracter'  '++'                                            { result = SiguienteCar.new(val[0].contenido)   }
+               |    'caracter'  '--'                                            { result = AnteriorCar.new(val[0].contenido)    }
                |    Expresion '::'  Expresion                                   { result = Concatenacion.new(val[0], val[2])   }
                |    Expresion '*'   Expresion                                   { result = Multiplicacion.new(val[0], val[2])  }
                |    Expresion '+'   Expresion                                   { result = Suma.new(val[0], val[2])            }
