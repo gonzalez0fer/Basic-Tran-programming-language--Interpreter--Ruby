@@ -135,11 +135,7 @@ rule
            Tipo:  'int'                                              { result = Int.new() }
                 | 'bool'                                             { result = Bool.new() }
                 | 'char'                                             { result = Char.new()       }
-                | 'array' '[' 'num' ']' 'of' Array                   { result = DeclaracionMatriz.new(val[2].contenido, val[5])}
-                ;
-
-           Array: 'id' ':' 'array' '[' 'num' ']' 'of' Array        { result = DeclaracionMatriz.new(val[0].contenido, val[4].contenido, val[6])}
-                | Tipo  ';'                                        { result = val[0]}
+                | 'array' '[' 'num' ']' 'of' Tipo                   { result = DeclaracionMatriz.new(val[2].contenido, val[5])}
                 ;
 
 

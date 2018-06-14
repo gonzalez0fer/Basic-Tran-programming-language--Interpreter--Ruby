@@ -1,6 +1,5 @@
 with 
-	var b <- true , c <- false , k : bool ;
-	var q : int;
+	var q : array [7] of array [4] of int;
 begin
 	read b;
 	b + t ;
