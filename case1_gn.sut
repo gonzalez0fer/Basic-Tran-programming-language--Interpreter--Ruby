@@ -11,6 +11,6 @@ begin
 			b <- 7;
 		end
 	 end
-	print 
+	print u, '6', y+9;
 	
 end

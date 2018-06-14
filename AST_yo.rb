@@ -58,7 +58,7 @@ class Print
 
 	def to_s(tab)
 		s = (" "*tab) + "Impresion:\n"
-		s << (" "*(tab+2)) + "salida: " + @salida.to_s(tab) + "\n"
+		s << (" "*(tab+2)) + "salida: " + @salida.to_s(tab)
 		return s
 	end
 end
@@ -524,25 +524,12 @@ class Salida
 
 	def to_s(tab)
 		s = ""
-    	s <<  @salida.to_s(tab+4)
+
+  		s << @iteracion.to_s(tab+4) + "\n"
+    	if @salida != nil
+    		s << (" "*10) +"siguiente Impresion: " + @salida.to_s(10)
+    	end
     	return s
-	end
-end
-
-class Caracter
-
-	# Representa a la clase de los caracteres
-
-	attr_accessor  :caracter
-
-	def initialize(caracter)
-		@caracter = caracter
-	end
-
-	def to_s(tab)
-		s = (" "*tab) + "Caracter: \n"
-		s << (" "*(tab+2)) + "nombre: " + @caracter.to_s()
-		return s 
 	end
 end
 
@@ -559,7 +546,7 @@ class ExpresionDosOper
 	end
 
 	def to_s(tab)
-		s = (" "*(tab)) +"Operacion binaria: \n"
+		s = "\n" + (" "*(tab)) +"Operacion binaria: \n"
 		s << (" "*(tab+3)) + "oper izquierdo: " + @op1.to_s(tab+6)
 		s <<(" "*(tab+6)) + "operador: " + @oper + "\n" 
 
@@ -781,7 +768,7 @@ class Literal
 	end
 
 	def to_s(tab)
-		return "\n"+ (" "*tab) + @tipo.to_s() + @valor.to_s()
+		return "\n"+ (" "*tab) + @tipo.to_s() + @valor.to_s() + "\n"
 	end
 end
 
@@ -794,13 +781,13 @@ class Entero < Literal
 	
 end
 
-class Caracter < Literal
-
+class Letra < Literal
 	def initialize(valor)
 		super(valor, "valor del caracter: ")
 	end
-	
 end
+
+
 
 class True < Literal
 

@@ -8,7 +8,7 @@ class Parser
     token   ',' '.' ';' ':' '(' ')' '[' ']'  '->' '<-'
             '+' '-' '*' '\/' '%' '\/\\' '\\\/' 'not' '/=' '<' '<='
             '>' '>=' '=' '++' '--' '#' '::' '$' 'with' 'true' 
-            'false' 'var' 'begin' 'end' 'int' 'while' 'if' 
+            'false' 'var' 'begin' 'end' 'int' 'while' 'if' 'char'
             'otherwise' 'bool' 'caracter' 'array' 'read' 'of' 'print' 
             'for' 'step' 'from' 'to' UMINUS
            
@@ -36,7 +36,7 @@ class Parser
     convert
         '.'         'TkPunto' 
         'num'       'TkNum'
-        'caracter'      'TkCaracter'
+        'caracter'  'TkCaracter'
         'id'        'TkId'
         ','         'TkComa'
         ':'         'TkDosPuntos'
@@ -134,23 +134,23 @@ rule
 
            Tipo:  'int'                                              { result = Int.new() }
                 | 'bool'                                             { result = Bool.new() }
-                | 'caracter'                                         { result = Char.new()       }
+                | 'char'                                             { result = Char.new()       }
                 | 'array' '[' 'num' ']' 'of' Array                   { result = DeclaracionMatriz.new(val[2].contenido, val[5])}
                 ;
 
            Array: 'id' ':' 'array' '[' 'num' ']' 'of' Array        { result = DeclaracionMatriz.new(val[0].contenido, val[4].contenido, val[6])}
-                | Tipo  ';'                                         { result = val[0]}
+                | Tipo  ';'                                        { result = val[0]}
                 ;
 
 
-ElementosSalida: Expresion                                                         { result = Salida.new(nil, val[0])          }
-               | ElementosSalida ','  Expresion                                     { result = Salida.new(val[0] , val[2])  }
+ElementosSalida: Expresion                                                         { result = Salida.new(val[0], nil)          }
+               | Expresion  ',' ElementosSalida                                    { result = Salida.new(val[0] , val[2])  }
                ;
 
       Expresion:    'num'                                                       { result = Entero.new(val[0].contenido)         }
                |    'true'                                                      { result = True.new()                 }
                |    'false'                                                     { result = False.new()                }
-               |    'caracter'                                                  { result = Caracter.new(val[0].contenido )       }
+               |    'caracter'                                                  { result = Letra.new(val[0].contenido )       }
                |    'id'                                                        { result = Variable.new(val[0].contenido)       }
                |    '#' 'caracter'                                              { result = ValorAscii.new(val[0])     }
                |    Expresion '%'   Expresion                                   { result = Modulo.new(val[0], val[2]) }
