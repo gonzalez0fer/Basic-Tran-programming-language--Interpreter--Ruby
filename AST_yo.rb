@@ -14,9 +14,9 @@ class Asignacion
 	end
 
 	def to_s(tab)
-		s = ""
+		s =  (" "*tab)+ "Asignacion: \n"
 		s << (" "*(tab+2)) + "identificador: " + @id.to_s() + "\n"
-		s << (" "*(tab+2)) + "expresion: " + @expresion.to_s(tab+4) +"\n"
+		s << (" "*(tab+2)) + "expresion: " + @expresion.to_s(tab+4)
 		
 		return s
 	end
@@ -342,9 +342,9 @@ class LDeclaracionRec
 	end
 
 	def to_s(tab)
-		s = (" "*tab) + "Declaraciones:\n"
-		s << (" "*(tab+2)) + "Variable: \n" + @declaraciones.to_s(tab+4)
-		s << (" "*(tab+2)) + "Propiedades: \n" + @declaracion.to_s(tab+4)
+		s = ""
+		s << (" "*(tab+2)) + "Variable\\s: \n" + @declaraciones.to_s(tab+4)
+		s << (" "*(tab+2)) + "Siguiente Variable\\s: \n" + @declaracion.to_s(tab+4)
 		return s
 	end
 end
@@ -385,7 +385,7 @@ class Declaracion
 	def to_s(tab)
 		s = ""
 		s << (" "*(tab+2)) + "Argumentos: \n" + @argumentos.to_s(tab+4) + "\n"
-		s <<  @tipo.to_s(tab+2)
+		s <<  @tipo.to_s(8)
 		return s
 	end
 end
@@ -431,16 +431,44 @@ class Argumento
 	def to_s(tab)
 		s = ""
 		if !(@id== nil && @exp==nil && @arg==nil)
-			s << (" "*(tab+2)) + "Identificador: " + @id.to_s() + "\n"
-			s << (" "*(tab+2)) + "Expresion a Asignar: " + @exp.to_s(tab+4)
+			s << (" "*(tab+2)) + "Identificador: " + @id.to_s()
+			if @exp!= nil
+				s << "\n" +(" "*(tab+2)) + "Expresion a Asignar: " + @exp.to_s(tab+4)
+			end
 			if @arg!= nil
-				s << (" "*(tab+2)) + "Siguiente declaracion: \n" + @arg.to_s()
+				s << "\n" + (" "*(18)) + "Siguiente declaracion: \n" + @arg.to_s(tab+4)
 			end
 		end
 		return s
 	end
 end
 
+class ArgumentoId
+
+	# == Atributos
+	#
+	# id: identificador del arreglo
+	# exp: expresion que se le asignara a la nueva variable
+	# arg: permite la definicion de los argumentos de varias variables
+	attr_accessor  :id,:exp, :arg
+
+	def initialize(id,exp, arg)
+		@id = id
+		@exp = exp
+		@arg= arg
+	end
+
+	def to_s(tab)
+		s = ""
+		if !(@id== nil && @exp==nil && @arg==nil)
+			s << (" "*(tab+2)) + "Identificador: " + @id.to_s()
+			if @exp!= nil
+				s << "\n" +(" "*(tab+2)) + "Siguiente Identificador: \n" + @exp.to_s(tab+4)
+			end
+		end
+		return s
+	end
+end
 class Tipo
 
 	# == Atributos
@@ -721,7 +749,7 @@ class SiguienteCar < ExpresionUnOperIzq
         super(op,"")
     end
     def to_s(tab)
-		return (" "*tab) + "SiguienteCar de: " + @op.to_s()
+		return (" "*tab) + "SiguienteCar de: " + @op.to_s() + "\n"
 	end
 end
 
@@ -765,17 +793,17 @@ end
 
 class True < Literal
 
-    def initialize(valor)
+    def initialize()
         valor = 'True'
-		super(valor, "Valor booleano: \n")
+		super(valor, "Valor booleano: ")
 	end
 end
 
 class False < Literal
 
-    def initialize(valor)
+    def initialize()
         valor = 'False'
-		super(valor, "Valor booleano: \n")
+		super(valor, "Valor booleano: ")
 	end
 end
 
