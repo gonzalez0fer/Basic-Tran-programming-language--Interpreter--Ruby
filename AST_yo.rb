@@ -126,7 +126,7 @@ class Bloque
 	def to_s(tab)
 		s = (" "*tab) + "Nuevo Bloque:\n"
 		s << (" "*(tab+2)) + "Instrucciones: \n" + @instrucciones.to_s(tab+4)
-		s << (" "*(tab+2)) + "Fin del bloque \n"
+		s << (" "*(tab)) + "Fin del bloque \n"
 
 		return s
 	end
@@ -149,7 +149,7 @@ class WBloque
 		s = (" "*tab) + "Nuevo Bloque:\n"
 		s << (" "*(tab+2)) + "Declaraciones: \n" + @declaraciones.to_s(tab+4)
 		s << (" "*(tab+2)) + "Instrucciones: \n" + @instrucciones.to_s(tab+4)
-		s << (" "*(tab+2)) + "Fin del bloque \n"
+		s << (" "*(tab)) + "Fin del bloque \n"
 		return s
 	end
 end
@@ -203,12 +203,12 @@ class Iteracion_DetStep
 
 	def to_s(tab)
 		s = (" "*tab) + "Ciclo For:\n"
-		s << (" "*(tab+2)) + "Iterador: \n" + @id.to_s(tab+4)
-		s << (" "*(tab+2)) + "Inicio del ciclo: \n" + @start.to_s(tab+4)
-		s << (" "*(tab+2)) + "final del ciclo: \n" + @final.to_s(tab+4)
-		s << (" "*(tab+2)) + "Paso: \n" + @step.to_s(tab+4)
+		s << (" "*(tab+2)) + "Iterador: " + @id.to_s() + "\n"
+		s << (" "*(tab+2)) + "Inicio del ciclo: " + @start.to_s()+ "\n"
+		s << (" "*(tab+2)) + "El ciclo termina en: " + @final.to_s()+ "\n"
+		s << (" "*(tab+2)) + "Paso: " + @step.to_s() + "\n"
 		s << (" "*(tab+2)) + "Instrucciones: \n" + @inst.to_s(tab+4)
-		s << (" "*(tab+2)) + "Fin del ciclo \n"
+		s << (" "*(tab)) + "Fin del ciclo \n"
 		return s
 	end
 end
@@ -234,10 +234,10 @@ class Iteracion_Det
 	def to_s(tab)
 		s = (" "*tab) + "Ciclo For:\n"
 		s << (" "*(tab+2)) + "Iterador: " + @id.to_s() + "\n"
-		s << (" "*(tab+2)) + "Inicio del ciclo: " + @start.to_s(tab+4)+ "\n"
-		s << (" "*(tab+2)) + "final del ciclo: " + @final.to_s(tab+4)+ "\n"
-		s << (" "*(tab+2)) + "Instrucciones: \n" + @inst.to_s(tab+4) + "\n"
-		s << (" "*(tab+2)) + "Fin del ciclo \n"
+		s << (" "*(tab+2)) + "Inicio del ciclo: " + @start.to_s()+ "\n"
+		s << (" "*(tab+2)) + "El ciclo termina en: " + @final.to_s()+ "\n"
+		s << (" "*(tab+2)) + "Instrucciones: \n" + @inst.to_s(tab+4)
+		s << (" "*(tab)) + "Fin del ciclo \n"
 		return s
 	end
 end
@@ -281,7 +281,7 @@ class Iteracion_Indet
 		s = (" "*tab) + "Ciclo While:\n"
 		s << (" "*(tab+2)) + "Condicional: \n" + @condicional.to_s(tab+4)
 		s << (" "*(tab+2)) + "Instrucciones: \n" + @inst.to_s(tab+4)
-		s << (" "*(tab+2)) + "Fin del ciclo \n"
+		s << (" "*(tab)) + "Fin del ciclo \n"
 		return s
 	end
 end
@@ -349,26 +349,6 @@ class LDeclaracionRec
 	end
 end
 
-class LDeclaracionId
-
-	# == Atributos
-	#
-	# id: id correspondiente a la variable que se esta declarando
-	# tipo: tipo de la variable que se esta declarando
-	attr_accessor  :id, :tipo
-
-	def initialize(id, tipo)
-		@id = id
-		@tipo= tipo
-	end
-
-	def to_s(tab)
-		s << (" "*(tab+2)) + "Identificador: \n" + @id.to_s(0)
-		s << (" "*(tab+2)) + "Tipo: \n" + @tipo.to_s(tab+4)
-		return s
-	end
-end
-
 class Declaracion
 
 	# == Atributos
@@ -390,28 +370,6 @@ class Declaracion
 	end
 end
 
-class DeclaracionMatriz
-
-	# == Atributos
-	#
-	# id: identificador del arreglo
-	# tam: tamano del arreglo
-	# tipo: tipo de la variable que se esta declarando
-	attr_accessor  :id,:tam, :tipo
-
-	def initialize(id,tam, tipo)
-		@id = id
-		@tam = tam
-		@tipo= tipo
-	end
-
-	def to_s(tab)
-		s << (" "*(tab+2)) + "Identificador: \n" + @id.to_s(tab+4)
-		s << (" "*(tab+2)) + "Tamaño del arreglo: \n" + @tam.to_s(tab+4)
-		s << (" "*(tab+2)) +  @tipo.to_s(tab+4)
-		return s
-	end
-end
 
 class Argumento
 
@@ -506,6 +464,16 @@ end
 class Char < Tipo
 	def initialize()
 		super("caracter")
+	end
+end
+
+class Matriz < Tipo
+	def initialize( tam, tipo)
+		@tam = tam
+		@tipo = tipo
+	end
+	def to_s(tab)
+		return (" "*(tab+6))+ "Arreglo de tamaño: "  + @tam.to_s()+ "\n"+ @tipo.to_s(tab)
 	end
 end
 

@@ -178,7 +178,6 @@ class Lexer
 		
 			$dicTokens.each do |t|
 				if p =~ t.basicTran
-					
 						nuevo1 = t.new(@linea,@colInicio,p)
 						@tokens << nuevo1
 						#mostrarResultado()
@@ -305,12 +304,13 @@ class Lexer
 					@columna += 1
 					@colInicio= @columna
 					p = p + simbolo
+					#puts simbolo
 					
-			elsif simbolo=~ TkNum.basicTran && num == 1 										#detecta numeros despues de ya tener numeros
+			elsif simbolo=~ TkNum.basicTran && num == 1                          #detecta numeros despues de ya tener numeros
 					@columna += 1
 					p = p + simbolo
 										
-			elsif !(simbolo=~ TkNum.basicTran) && num == 1 									#tienes numeros pero lo siguiente no lo es
+			elsif !(simbolo=~ TkNum.basicTran) && num == 1 						#tienes numeros pero lo siguiente no lo es
 										
 					num = 0
 					buscar(p)
@@ -321,7 +321,7 @@ class Lexer
 					if simbolo=~ TkId.basicTran
 						p = p + simbolo
 						ltr = 1
-					elsif simbolo == "-"|| simbolo=="+"|| simbolo == "<" || simbolo =="=" || simbolo =="."|| simbolo ==","|| simbolo ==";"|| simbolo ==":" || simbolo ==">" || simbolo =="/" || simbolo =="\\"
+					elsif simbolo == "-"|| simbolo=="+"|| simbolo == "<" || simbolo =="=" || simbolo =="."|| simbolo ==","|| simbolo ==";"|| simbolo ==":" || simbolo ==">" || simbolo =="/" || simbolo =="\\" || simbolo =="]" || simbolo =="[" || simbolo =="(" || simbolo ==")"
 						sim = 1
 						p =p +simbolo
 					end
@@ -429,6 +429,7 @@ class Lexer
 					@mal = 1
 				else
 					sim = 1
+					#puts "hizo match #{simbolo}"
 				end
 				p =p +simbolo
 				@columna += 1
@@ -445,6 +446,6 @@ class Lexer
 				@listaTokens << [i.class,i]
 			end
 		#return @tokens, @errores
-		#mostrarResultado()
+		mostrarResultado()
 	end
 end

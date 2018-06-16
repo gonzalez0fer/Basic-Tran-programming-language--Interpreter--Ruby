@@ -104,10 +104,10 @@ rule
                                                                          { result = IfOtherEnd.new(val[1], val[3], val[6])}
                 |'if' Expresion '->' Instrucciones 'end'                 { result = IfEnd.new(val[1], val[3])}
 
-                |'for' 'id' 'from' Expresion 'to' Expresion '[' 'step' 'num' ']' '->' Instrucciones 'end'
-                                             {result = Iteracion_DetStep.new(val[1].contenido,val[3], val[5], val[8], val[11])}
-                |'for' 'id' 'from' Expresion 'to' Expresion '->' Instrucciones 'end'
-                                             {result = Iteracion_Det.new(val[1].contenido,val[3], val[5], val[7])}
+                |'for' 'id' 'from' 'num' 'to' 'num' '[' 'step' 'num' ']' '->' Instrucciones 'end'
+                                             {result = Iteracion_DetStep.new(val[1].contenido,val[3].contenido, val[5].contenido, val[8].contenido, val[11])}
+                |'for' 'id' 'from' 'num' 'to' 'num' '->' Instrucciones 'end'
+                                             {result = Iteracion_Det.new(val[1].contenido,val[3].contenido, val[5].contenido, val[7])}
 
                 | 'while' Expresion '->' Instrucciones  'end'         { result = Iteracion_Indet.new(val[1], val[3]) }
                 | 'id' '.' 'num' ';'                                  { result = Punto.new(val[0].contenido, val[2].contenido)   }
@@ -135,7 +135,7 @@ rule
            Tipo:  'int'                                              { result = Int.new() }
                 | 'bool'                                             { result = Bool.new() }
                 | 'char'                                             { result = Char.new()       }
-                | 'array' '[' 'num' ']' 'of' Tipo                   { result = DeclaracionMatriz.new(val[2].contenido, val[5])}
+                | 'array' '[' 'num' ']' 'of' Tipo                   { result = Matriz.new(val[2].contenido, val[5])}
                 ;
 
 

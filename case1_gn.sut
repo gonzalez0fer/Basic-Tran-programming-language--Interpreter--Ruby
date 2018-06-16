@@ -1,15 +1,7 @@
 with 
-	var q : array [7] of array [4] of int;
+	var q : array [7] of array [6] of int;
 begin
-	read b;
-	b + t ;
-	if x >9 -> v = 6; otherwise -> a.4; end
-	if b/= 3 -> 
-		for a from 3 to 9 -> 
-			'v'++;
-			b <- 7;
-		end
-	 end
-	print u, '6', y+9;
-	
+	while u/= y -> read p;
+	end
+	print u;
 end
