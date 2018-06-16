@@ -135,7 +135,7 @@ rule
            Tipo:  'int'                                              { result = Int.new() }
                 | 'bool'                                             { result = Bool.new() }
                 | 'char'                                             { result = Char.new()       }
-                | 'array' '[' 'num' ']' 'of' Tipo                   { result = Matriz.new(val[2].contenido, val[5])}
+                | 'array' '[' Expresion ']' 'of' Tipo                   { result = Matriz.new(val[2], val[5])}
                 ;
 
 

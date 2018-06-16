@@ -27,7 +27,7 @@ def main
             end
         else
             begin
-                #puts lexer.tokens.linea
+                puts lexer.tokens
                 pars = Parser.new(lexer.listaTokens)
                 ast =  pars.parse
 

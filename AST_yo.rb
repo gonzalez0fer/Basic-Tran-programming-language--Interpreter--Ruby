@@ -473,7 +473,7 @@ class Matriz < Tipo
 		@tipo = tipo
 	end
 	def to_s(tab)
-		return (" "*(tab+6))+ "Arreglo de tamaño: "  + @tam.to_s()+ "\n"+ @tipo.to_s(tab)
+		return (" "*(tab+6))+ "Arreglo de tamaño: "  + @tam.to_s(tab)+ "\n"+ @tipo.to_s(tab)
 	end
 end
 
@@ -516,9 +516,9 @@ class ExpresionDosOper
 	def to_s(tab)
 		s = "\n" + (" "*(tab)) +"Operacion binaria: \n"
 		s << (" "*(tab+3)) + "oper izquierdo: " + @op1.to_s(tab+6)
-		s <<(" "*(tab+6)) + "operador: " + @oper + "\n" 
+		s <<(" "*(tab+5)) + "operador: " + @oper + "\n" 
 
-		s << (" "*(tab+3)) + "oper derecho: " + @op2.to_s(tab+6) + "\n"
+		s << (" "*(tab+3)) + "oper derecho: " + @op2.to_s(tab+6)
 		return s
 	end
 end

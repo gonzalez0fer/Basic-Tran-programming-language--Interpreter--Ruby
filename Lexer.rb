@@ -321,9 +321,10 @@ class Lexer
 					if simbolo=~ TkId.basicTran
 						p = p + simbolo
 						ltr = 1
-					elsif simbolo == "-"|| simbolo=="+"|| simbolo == "<" || simbolo =="=" || simbolo =="."|| simbolo ==","|| simbolo ==";"|| simbolo ==":" || simbolo ==">" || simbolo =="/" || simbolo =="\\" || simbolo =="]" || simbolo =="[" || simbolo =="(" || simbolo ==")"
+					elsif simbolo == "-"|| simbolo=="+"|| simbolo=="*"|| simbolo == "<" || simbolo =="=" || simbolo =="."|| simbolo ==","|| simbolo ==";"|| simbolo ==":" || simbolo ==">" || simbolo =="/" || simbolo =="\\" || simbolo =="]" || simbolo =="[" || simbolo =="(" || simbolo ==")"
 						sim = 1
 						p =p +simbolo
+						puts "#{simbolo}"
 					end
 			elsif simbolo=~ TkId.basicTran && sim == 1 				#el anterior es un simbolo mientras que el actual es un ID
 

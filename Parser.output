@@ -28,7 +28,7 @@ rule 23 Argumentos: "id"
 rule 24 Tipo: "int"
 rule 25 Tipo: "bool"
 rule 26 Tipo: "char"
-rule 27 Tipo: "array" "[" "num" "]" "of" Tipo
+rule 27 Tipo: "array" "[" Expresion "]" "of" Tipo
 rule 28 ElementosSalida: Expresion
 rule 29 ElementosSalida: Expresion "," ElementosSalida
 rule 30 Expresion: "num"
@@ -73,7 +73,7 @@ rule 56 Expresion: "[" Expresion "]"
     on right: 1 13 15
     on left : 2 3 4 5 6 7 8 9 10 11 12
   Expresion (58)
-    on right: 2 7 8 11 14 16 20 21 28 29 36 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56
+    on right: 2 7 8 11 14 16 20 21 27 28 29 36 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56
     on left : 30 31 32 33 34 35 36 37 38 39 40 41 42 43 44 45 46 47 48 49 50 51 52 53 54 55 56
   LDeclaraciones (59)
     on right: 3 18
@@ -149,7 +149,7 @@ rule 56 Expresion: "[" Expresion "]"
   "from" (50) 9 10
   "to" (51) 9 10
   UMINUS (52) 
-  "num" (53) 9 10 12 27 30
+  "num" (53) 9 10 12 30
   "id" (54) 2 5 9 10 12 20 21 22 23 34
 
 --------- State ---------
@@ -1984,7 +1984,7 @@ state 108
 
 state 109
 
-  27) Tipo : "array" _ "[" "num" "]" "of" Tipo
+  27) Tipo : "array" _ "[" Expresion "]" "of" Tipo
 
   "["           shift, and go to state 117
 
@@ -2071,10 +2071,21 @@ state 116
 
 state 117
 
-  27) Tipo : "array" "[" _ "num" "]" "of" Tipo
+  27) Tipo : "array" "[" _ Expresion "]" "of" Tipo
 
-  "num"         shift, and go to state 121
+  "("           shift, and go to state 28
+  "["           shift, and go to state 29
+  "-"           shift, and go to state 27
+  "not"         shift, and go to state 25
+  "#"           shift, and go to state 24
+  "$"           shift, and go to state 26
+  "true"        shift, and go to state 21
+  "false"       shift, and go to state 22
+  "caracter"    shift, and go to state 23
+  "num"         shift, and go to state 20
+  "id"          shift, and go to state 33
 
+  Expresion     go to state 121
 
 state 118
 
@@ -2122,9 +2133,37 @@ state 120
 
 state 121
 
-  27) Tipo : "array" "[" "num" _ "]" "of" Tipo
+  27) Tipo : "array" "[" Expresion _ "]" "of" Tipo
+  36) Expresion : Expresion _ "%" Expresion
+  39) Expresion : Expresion _ "::" Expresion
+  40) Expresion : Expresion _ "*" Expresion
+  41) Expresion : Expresion _ "+" Expresion
+  42) Expresion : Expresion _ "-" Expresion
+  43) Expresion : Expresion _ "\\/" Expresion
+  44) Expresion : Expresion _ "/=" Expresion
+  45) Expresion : Expresion _ "<" Expresion
+  46) Expresion : Expresion _ "<=" Expresion
+  47) Expresion : Expresion _ "=" Expresion
+  48) Expresion : Expresion _ ">" Expresion
+  49) Expresion : Expresion _ ">=" Expresion
+  50) Expresion : Expresion _ "\\/\\" Expresion
+  51) Expresion : Expresion _ "\\\\/" Expresion
 
   "]"           shift, and go to state 126
+  "+"           shift, and go to state 51
+  "-"           shift, and go to state 52
+  "*"           shift, and go to state 50
+  "\\/"         shift, and go to state 53
+  "%"           shift, and go to state 48
+  "\\/\\"       shift, and go to state 60
+  "\\\\/"       shift, and go to state 61
+  "/="          shift, and go to state 54
+  "<"           shift, and go to state 55
+  "<="          shift, and go to state 56
+  ">"           shift, and go to state 58
+  ">="          shift, and go to state 59
+  "="           shift, and go to state 57
+  "::"          shift, and go to state 49
 
 
 state 122
@@ -2199,7 +2238,7 @@ state 125
 
 state 126
 
-  27) Tipo : "array" "[" "num" "]" _ "of" Tipo
+  27) Tipo : "array" "[" Expresion "]" _ "of" Tipo
 
   "of"          shift, and go to state 130
 
@@ -2249,7 +2288,7 @@ state 129
 
 state 130
 
-  27) Tipo : "array" "[" "num" "]" "of" _ Tipo
+  27) Tipo : "array" "[" Expresion "]" "of" _ Tipo
 
   "int"         shift, and go to state 106
   "char"        shift, and go to state 108
@@ -2274,7 +2313,7 @@ state 132
 
 state 133
 
-  27) Tipo : "array" "[" "num" "]" "of" Tipo _
+  27) Tipo : "array" "[" Expresion "]" "of" Tipo _
 
   $default      reduce using rule 27 (Tipo)
 
