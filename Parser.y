@@ -17,8 +17,9 @@ class Parser
 
     prechigh
         nonassoc    UMINUS
-        left        '*' '\/' '%'            
+        left        '*' '\/' '%'           
         left        '+' '-' 
+        left        '.' 
         left        'not'   
         left        '\/\\'            
         left        '\\\/'  
@@ -92,25 +93,24 @@ class Parser
 #declarando la gramatica
 
 rule
-    Programa: Instruccion                                                   {result = Programa.new(val[0])}
+    Programa: Instruccion                                                   {result = Programa.new(val[0]) }
             ;
 
-    Instruccion: 'id' '<-' Expresion  ';'                                {  result = Asignacion.new(val[0].contenido, val[2]) }
+    Instruccion: Expresion '<-' Expresion  ';'                           {  result = Asignacion.new(val[0], val[2]) }
                 |'with' LDeclaraciones 'begin' Instrucciones 'end'       { result = WBloque.new(val[1], val[3]) }
                 |'begin' Instrucciones 'end'                             {  result = Bloque.new(val[1])}
-                |'read' 'id' ';'                                         {  result = Read.new(val[1].contenido)  }
-                |'print' ElementosSalida  ';'                            {  result = Print.new(val[1]) }
+                |'read' Expresion ';'                                    {  result = Read.new(val[1])  }
+                |'print' Expresion  ';'                                  {  result = Print.new(val[1]) }
                 |'if' Expresion '->' Instrucciones 'otherwise' '->' Instrucciones 'end'                     
                                                                          { result = IfOtherEnd.new(val[1], val[3], val[6])}
                 |'if' Expresion '->' Instrucciones 'end'                 { result = IfEnd.new(val[1], val[3])}
 
-                |'for' 'id' 'from' 'num' 'to' 'num' '[' 'step' 'num' ']' '->' Instrucciones 'end'
-                                             {result = Iteracion_DetStep.new(val[1].contenido,val[3].contenido, val[5].contenido, val[8].contenido, val[11])}
-                |'for' 'id' 'from' 'num' 'to' 'num' '->' Instrucciones 'end'
-                                             {result = Iteracion_Det.new(val[1].contenido,val[3].contenido, val[5].contenido, val[7])}
+                |'for' Expresion 'from' Expresion 'to' Expresion '[' 'step' Expresion ']' '->' Instrucciones 'end'
+                                             {result = Iteracion_DetStep.new(val[1],val[3], val[5], val[8], val[11])}
+                |'for' Expresion 'from' Expresion'to' Expresion '->' Instrucciones 'end'
+                                             {result = Iteracion_Det.new(val[1],val[3], val[5], val[7])}
 
                 | 'while' Expresion '->' Instrucciones  'end'         { result = Iteracion_Indet.new(val[1], val[3]) }
-                | 'id' '.' 'num' ';'                                  { result = Punto.new(val[0].contenido, val[2].contenido)   }
                 ;
 
      Instrucciones: Instruccion                                        { result = val[0]           }
@@ -138,11 +138,6 @@ rule
                 | 'array' '[' Expresion ']' 'of' Tipo                   { result = Matriz.new(val[2], val[5])}
                 ;
 
-
-ElementosSalida: Expresion                                                         { result = Salida.new(val[0], nil)          }
-               | Expresion  ',' ElementosSalida                                    { result = Salida.new(val[0] , val[2])  }
-               ;
-
       Expresion:    'num'                                                       { result = Entero.new(val[0].contenido)         }
                |    'true'                                                      { result = True.new()                 }
                |    'false'                                                     { result = False.new()                }
@@ -161,6 +156,7 @@ ElementosSalida: Expresion                                                      
                |    Expresion '<'   Expresion                                   { result = Menor.new(val[0], val[2])           }
                |    Expresion '<='  Expresion                                   { result = MenorIgual.new(val[0], val[2])      }
                |    Expresion '='   Expresion                                   { result = Igual.new(val[0], val[2])           }
+               |    Expresion '.' Expresion                                     { result = Punto.new(val[0], val[2])   }
                |    Expresion '>'   Expresion                                   { result = Mayor.new(val[0], val[2])           }
                |    Expresion '>='  Expresion                                   { result = MayorIgual.new(val[0], val[2])      }
                |    Expresion '\/\\'  Expresion                                         { result = And.new(val[0], val[2])     }
@@ -197,6 +193,10 @@ end
     end 
 
     def on_error(id, token, stack)
+      raise ErrorSintactico.new(token)
+    end
+
+    def errorEncontrado(token)
       raise ErrorSintactico.new(token)
     end
 

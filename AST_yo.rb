@@ -1,3 +1,35 @@
+$simbolos = {
+	'Punto' => ".",				
+	'Coma' => ",",				
+	'DosPuntos' => ":" ,
+	'ParAbre' => "(" ,			
+	'ParCierra' => ")" ,
+	'CorcheteAbre' => "[" ,		
+	'CorcheteCierre' => "]" ,		
+	'Resta' =>"-" ,	
+	'Suma' => "+" ,
+	'Desigualdad' => "/=" ,		
+	'PuntoYComa' => ";" ,
+	'Multiplicacion' => "*" ,				
+	'Division' => "/" ,
+	'Modulo' => "%" ,			
+	'Conjuncion' => "/\\" ,
+	'Disyuncion' => "\\/" ,		
+	'Not' => "not" ,
+	'Menor' =>"<" ,				
+	'MenorIgual' => "<=" ,
+	'Mayor' => ">" ,				
+	'MayorIgual' => ">=" ,
+	'Igual' => "=" , 				
+	'SiguienteCar' => "++" ,
+	'AnteriorCar' => "--" ,		
+	'ValorAscii' => "#",
+	'Concatenacion' => "::" ,		
+	'Shift' => "$" ,
+}
+def conversorImprimir (simbolo)
+end
+
 # == Clase Asignacion
 #
 class Asignacion
@@ -6,16 +38,22 @@ class Asignacion
 	#
 	# id: identificador del parametro
 	# expresion: expresion que se le asigna al id
-	attr_accessor  :id, :expresion
+	attr_accessor  :id, :expresion, :valor, :tipo
 
 	def initialize(id, expresion)
 		@id = id
 		@expresion = expresion
+		@tipo = @expresion.tipo
+		@valor = nil
+		if @id.tipo != "variable"
+			puts "\n Para realizar un asignacion el identificador debe ser una variable definida"
+			exit
+		end
 	end
 
 	def to_s(tab)
 		s =  (" "*tab)+ "Asignacion: \n"
-		s << (" "*(tab+2)) + "identificador: " + @id.to_s() + "\n"
+		s << (" "*(tab+2)) + "identificador: " + @id.to_s(tab+4) + "\n"
 		s << (" "*(tab+2)) + "expresion: " + @expresion.to_s(tab+4)
 		
 		return s
@@ -29,16 +67,20 @@ class Read
 	# == Atributos
 	#
 	# id: identificador del parametro
-	attr_accessor  :id
+	attr_accessor  :id, :tipo
 
 	def initialize(id)
 		@id = id
-
+		@tipo = id.tipo
+		if @tipo != "variable"
+			puts "\n Debes colocar un identificador valido para leer archivos"
+			exit
+		end
 	end
 
 	def to_s(tab)
 		s = (" "*tab) + "Lectura:\n"
-		s << (" "*(tab+2)) + "archivo: " + @id.to_s() + "\n"
+		s << (" "*(tab+2)) + "archivo: " + @id.to_s(tab+4) + "\n"
 		return s
 	end
 end
@@ -52,8 +94,10 @@ class Print
 
 	def initialize(salida)
 		@salida = salida
-
-
+		if @salida.tipo != "entero" && @salida.tipo != "caracter" && @salida.tipo != "booleano" &&  @salida.tipo != "variable"
+			puts "El argumento que desea imprimir no es valido"
+			exit	
+		end
 	end
 
 	def to_s(tab)
@@ -76,6 +120,12 @@ class IfOtherEnd
 		@guardia = guardia
 		@intr = intr
 		@intr2 = intr2
+		#puts @guardia.tipo
+		if @guardia.tipo != "booleano" && @guardia.tipo != "variable"
+			puts "entre"
+			puts "\n en la guardia del if solo deben ir expresiones booleanas"
+			exit
+		end
 
 	end
 
@@ -99,6 +149,11 @@ class IfEnd
 	def initialize(guardia, intr)
 		@guardia = guardia
 		@intr = intr
+		if @guardia.tipo != "booleano" && @guardia.tipo != "variable"
+			puts "entre"
+			puts "\n en la guardia del if solo deben ir expresiones booleanas"
+			exit
+		end
 
 	end
 
@@ -170,12 +225,8 @@ class Instrucciones
 
 	def to_s(tab)
 		s = ""
-		if instrucciones != nil
-			s << @instrucciones.to_s(tab)
-		end
-		if accion != nil
-			s << @accion.to_s(tab)
-		end
+		s << @instrucciones.to_s(tab)
+		s << @accion.to_s(tab)
 		return s
 	end
 end
@@ -195,18 +246,49 @@ class Iteracion_DetStep
 	def initialize(id,start, final, step, inst)
 		@id = id
 		@start = start
-		@final = final 
+		@final = final
 		@step = step
 		@inst = inst
+
+		if @id.tipo != "variable"
+			puts "\n El identificador debe ser una variable"
+			exit
+		end
+
+		if @step == "0"
+			puts "El valor del step debe ser distinto de cero"
+			exit
+		end
+
+		if @start.tipo != "entero"
+			puts "\n El comienzo del ciclo debe ser una expresion numerica"
+			exit
+		elsif @final.tipo != "entero"
+			puts "\n El final del ciclo debe ser una expresion numerica"
+			exit
+		elsif @step.tipo != "entero"
+			puts "\n El paso del ciclo debe ser una expresion numerica"
+			exit
+		end
+		$y = @start.valorR.to_i
+		#puts @step.valorR
+		while $y< @final.valorR.to_i do
+			$y = $y + @step.valorR.to_i
+		end
+		#puts "soy y: #{$y}"
+		if $y.to_i != @final.valorR.to_i
+			puts "su valor de step: #{@step.valor} llega mas alla de #{@final.valor}"
+			exit
+		end
 
 	end
 
 	def to_s(tab)
 		s = (" "*tab) + "Ciclo For:\n"
-		s << (" "*(tab+2)) + "Iterador: " + @id.to_s() + "\n"
-		s << (" "*(tab+2)) + "Inicio del ciclo: " + @start.to_s()+ "\n"
-		s << (" "*(tab+2)) + "El ciclo termina en: " + @final.to_s()+ "\n"
-		s << (" "*(tab+2)) + "Paso: " + @step.to_s() + "\n"
+		s << (" "*(tab+2)) + "Iterador: " + @id.to_s(tab+4) + "\n"
+		s << (" "*(tab+2)) + "Inicio del ciclo: " + @start.to_s(tab+4)+ "\n"
+		s << (" "*(tab+2)) + "El ciclo termina en: " + @final.to_s(tab+4)+ "\n"
+		s << (" "*(tab+2)) + "Paso: " + @step.to_s(tab+4) + "\n"
 		s << (" "*(tab+2)) + "Instrucciones: \n" + @inst.to_s(tab+4)
 		s << (" "*(tab)) + "Fin del ciclo \n"
 		return s
@@ -228,6 +310,19 @@ class Iteracion_Det
 		@start = start
 		@final = final 
 		@inst = inst
+
+		if @id.tipo != "variable"
+			puts "\n El identificador debe ser una variable"
+			exit
+		end
+		
+		if @start.tipo != "entero"
+			puts "\n El comienzo del ciclo debe ser una expresion numerica"
+			exit
+		elsif @final.tipo != "entero"
+			puts "\n El final del ciclo debe ser una expresion numerica"
+			exit
+		end
 
 	end
 
@@ -256,7 +351,7 @@ class Programa
 	def to_s()
 		s = ""
 		if @instruccion != nil 
-			s = "Programa: \n" 
+			s = "\n Programa: \n" 
 			s << @instruccion.to_s(4)
 		end
 		return s
@@ -274,6 +369,10 @@ class Iteracion_Indet
 	def initialize(condicional, inst)
 		@condicional= condicional 
 		@inst = inst
+		if @condicional.tipo != "booleano" && @condicional.tipo != "variable"
+			puts "\n El condicional del while debe ser una expresion Booleana"
+			exit
+		end
 
 	end
 
@@ -282,28 +381,6 @@ class Iteracion_Indet
 		s << (" "*(tab+2)) + "Condicional: \n" + @condicional.to_s(tab+4)
 		s << (" "*(tab+2)) + "Instrucciones: \n" + @inst.to_s(tab+4)
 		s << (" "*(tab)) + "Fin del ciclo \n"
-		return s
-	end
-end
-
-class Punto
-
-	# == Atributos
-	#
-	# id: elemento al que se le asignara la resta resultante
-	# num: cantidad que se le resta a lo que tenga el id
-	attr_accessor  :id, :num
-
-	def initialize(id, num)
-		@id= id 
-		@num = num
-
-	end
-
-	def to_s(tab)
-		s = (" "*tab) + "Instruccion Punto:\n"
-		s << (" "*(tab+2)) + "Variable a modificar: " + @id.to_s() + "\n"
-		s << (" "*(tab+2)) + "Valor a restar: " + @num.to_s() + "\n"
 		return s
 	end
 end
@@ -378,12 +455,15 @@ class Argumento
 	# id: identificador del arreglo
 	# exp: expresion que se le asignara a la nueva variable
 	# arg: permite la definicion de los argumentos de varias variables
-	attr_accessor  :id,:exp, :arg
+	attr_accessor  :id,:exp, :arg, :tipo
 
 	def initialize(id,exp, arg)
 		@id = id
 		@exp = exp
-		@arg= arg
+		@arg= arg	
+		if exp != nil
+			@tipo = @exp.tipo
+		end
 	end
 
 	def to_s(tab)
@@ -420,13 +500,48 @@ class ArgumentoId
 		s = ""
 		if !(@id== nil && @exp==nil && @arg==nil)
 			s << (" "*(tab+2)) + "Identificador: " + @id.to_s()
-			if @exp!= nil
-				s << "\n" +(" "*(tab+2)) + "Siguiente Identificador: \n" + @exp.to_s(tab+4)
-			end
+
+			s << "\n" +(" "*(tab+2)) + "Siguiente Identificador: \n" + @exp.to_s(tab+4)
+			
 		end
 		return s
 	end
 end
+
+class ErrorContexto < RuntimeError 
+end
+
+# == Clase TipoError
+#
+# Clase que representa el nodo de un tipo error para una operacion de 2 operandos.
+class Error2ope < ErrorContexto
+	def initialize(token1,ope, token2)
+		@token1 = token1
+		@ope = ope
+		@token2 = token2
+	end
+
+	def to_s()
+		#"Inconsistencia de tipo entre los operandos'#{@token1.valor}' y '#{@token2.valor}'"
+		"\n Inconsistencia de tipo para la operacion: #{@token1.valor} #{$simbolos[@ope]} #{@token2.valor}"
+	end
+end
+# == Clase TipoError
+#
+# Clase que representa el nodo de un tipo error para una operacion con 1 operando a la derecha.
+class Error1opeD < ErrorContexto
+	def initialize(ope, token)
+		@ope = ope
+		@token = token
+	end
+
+	def to_s()
+		#"Inconsistencia de tipo entre los operandos'#{@token1.valor}' y '#{@token2.valor}'"
+		"\n Inconsistencia de tipo para la operacion:  #{$simbolos[@ope]} #{@token.valor}"
+	end
+end
+
+
 class Tipo
 
 	# == Atributos
@@ -505,24 +620,81 @@ class ExpresionDosOper
 	# op1 	: 	Operador izquierdo de la expresión
 	# op2 	: 	Operador derecho de la expresión
 	# oper 	: 	Operación correspondiente a la expresión
-	attr_accessor :op1, :op2, :oper
-
+	# tipo :    tipo de la expresion
+	attr_accessor :op1, :op2, :oper, :tipo, :valor, :valorR
 	def initialize(op1, op2, oper)
 		@op1 = op1
 		@op2 = op2
 		@oper = oper
+		@valor = @op1.valor + $simbolos[@oper] + @op2.valor
+
+
+		if @oper == "Concatenacion"
+			if @op1.tipo == "caracter" && @op2.tipo == "caracter"
+				@tipo = "caracter"
+			elsif @op1.tipo == "variable" && @op2.tipo == "caracter" || @op1.tipo == "caracter" && @op2.tipo == "variable" || @op1.tipo == "variable" && @op2.tipo == "variable"
+				@tipo = "variable"
+			else  @tipo = "error"
+			end
+
+		elsif @oper == "Suma" ||  @oper == "Multiplicacion" || @oper == "Resta" || @oper == "Division" || @oper == "Modulo"
+			if @op1.tipo == "entero" && @op2.tipo == "entero"
+				@tipo = "entero"
+			elsif @op1.tipo == "variable" && @op2.tipo == "entero" || @op1.tipo == "entero" && @op2.tipo == "variable" || @op1.tipo == "variable" && @op2.tipo == "variable"
+				@tipo = "variable"
+			else @tipo = "error"
+			end
+		elsif 
+			if @oper == "Punto" && @op1.tipo == "variable"
+				if @op2.tipo == "entero"
+					@tipo = "variable"
+				else
+					puts "\n El operando '#{@op2.valor}'debe ser tipo entero "
+					exit
+				end                                                                                                            
+			elsif  @oper == "Punto"
+				puts "\n El identificador '#{@op1.valor}' debe ser una variable declarada"
+				exit
+			end
+			
+		else
+			if @op1.tipo == "booleano" && @op2.tipo == "booleano" || @op1.tipo == "entero" && @op2.tipo == "entero"
+				@tipo = "booleano"
+			elsif @op1.tipo == "variable" && (@op2.tipo == "booleano" || @op2.tipo == "entero"  ) || (@op1.tipo == "booleano" || @op1.tipo == "entero"  ) && @op2.tipo == "variable" || @op1.tipo == "variable" && @op2.tipo == "variable"
+				@tipo = "variable"
+			else @tipo = "error"
+			end
+		end
+
+		#puts @tipo
+		#puts @op2.valor
+		
+		if @tipo == 'error'
+			
+			puts Error2ope.new(@op1,@oper,@op2).to_s()
+			exit
+		end
 	end
+
 
 	def to_s(tab)
 		s = "\n" + (" "*(tab)) +"Operacion binaria: \n"
+
 		s << (" "*(tab+3)) + "oper izquierdo: " + @op1.to_s(tab+6)
 		s <<(" "*(tab+5)) + "operador: " + @oper + "\n" 
 
 		s << (" "*(tab+3)) + "oper derecho: " + @op2.to_s(tab+6)
+		
 		return s
 	end
 end
 
+class Punto < ExpresionDosOper
+	def initialize(op1,op2)
+        super(op1, op2,"Punto")
+    end
+
+end
 
 class Modulo < ExpresionDosOper
 
@@ -544,6 +716,7 @@ class Multiplicacion < ExpresionDosOper
 
     def initialize(op1,op2)
         super(op1, op2,"Multiplicacion")
+        @valorR = @op1.valorR.to_i * @op2.valorR.to_i
     end
 end
 
@@ -552,6 +725,7 @@ class Suma < ExpresionDosOper
 
     def initialize(op1,op2)
         super(op1, op2,"Suma")
+        @valorR = @op1.valorR.to_i + @op2.valorR.to_i
     end
 end
 
@@ -560,6 +734,7 @@ class Resta < ExpresionDosOper
 
     def initialize(op1,op2)
         super(op1, op2,"Resta")
+        @valorR = @op1.valorR.to_i - @op2.valorR.to_i
     end
 end
 
@@ -568,6 +743,7 @@ class Division < ExpresionDosOper
 
     def initialize(op1,op2)
         super(op1, op2,"Division")
+        @valorR = @op1.valorR.to_i / @op2.valorR.to_i
     end
 end
 
@@ -639,15 +815,34 @@ end
 class ExpresionUnOperDer
 	# op 	: 	Recibe el operador que afecta la expresión.
 	# oper 	: 	Recibe el operando que es afectado por el operador unario.
-	attr_accessor :op, :oper
+	attr_accessor :op, :oper,:valor, :tipo
 
 	def initialize(op, oper)
 		@op = op
 		@oper = oper
+		@valor = $simbolos[@oper] + @op.valor
+		if @oper== "Not" && @op.tipo == "booleano"
+				@tipo = "booleano"
+		elsif @oper== "MenosUnario" && @op.tipo == "entero"
+				@tipo = "entero"
+		else
+			if @op.tipo == "caracter"
+				@tipo = "caracter"
+			elsif @op.tipo == "variable"
+				@tipo = "variable"
+			else
+				@tipo = "error"
+			end
+		end
+		if @tipo == 'error'
+			puts Error1opeD.new(@oper,@op).to_s()
+			exit
+		end	
+			
 	end
 
 	def to_s(tab)
-		return (" "*tab) + @oper + ": \n" + (" "*(tab+2)) + "lado derecho: \n" + @op.to_s(tab+4)
+		return @oper + " \n" + (" "*(tab+2)) + "lado derecho: " + @op.to_s(tab+4)
 	end
 end
 
@@ -683,17 +878,16 @@ class ValorAscii < ExpresionUnOperDer
     end
 end
 
-
-
-
 class ExpresionUnOperIzq
 	# op 	: 	Recibe el operador que afecta la expresión.
 	# oper 	: 	Recibe el operando que es afectado por el operador unario.
-	attr_accessor :op, :oper
+	attr_accessor :op, :oper, :valor , :tipo
 
 	def initialize(op, oper)
 		@op = op
 		@oper = oper
+		@valor = @op.valor 
+		@tipo = "caracter"
 	end
 
 	def to_s(tab)
@@ -728,15 +922,17 @@ end
 
 class Literal
 
-	attr_accessor :valor, :tipo
+	attr_accessor :valor, :tipo, :valorR
 
-	def initialize(valor, tipo)
+	def initialize(valor, tipoI, tipo)
 		@valor = valor
+		@tipoI = tipoI
 		@tipo = tipo
+		@valorR = valor
 	end
 
 	def to_s(tab)
-		return "\n"+ (" "*tab) + @tipo.to_s() + @valor.to_s() + "\n"
+		return "\n"+ (" "*tab) + @tipoI.to_s() + @valor.to_s() + "\n"
 	end
 end
 
@@ -744,14 +940,15 @@ end
 class Entero < Literal
 
 	def initialize(valor)
-		super(valor, "valor numerico: ")
+		#puts "soy #{valor}"
+		super(valor, "valor numerico: ", "entero")
 	end
 	
 end
 
 class Letra < Literal
 	def initialize(valor)
-		super(valor, "valor del caracter: ")
+		super(valor, "valor del caracter: ","caracter")
 	end
 end
 
@@ -761,7 +958,7 @@ class True < Literal
 
     def initialize()
         valor = 'True'
-		super(valor, "Valor booleano: ")
+		super(valor, "Valor booleano: ", "booleano")
 	end
 end
 
@@ -769,7 +966,7 @@ class False < Literal
 
     def initialize()
         valor = 'False'
-		super(valor, "Valor booleano: ")
+		super(valor, "Valor booleano: ", "booleano")
 	end
 end
 
@@ -777,7 +974,7 @@ end
 class Variable < Literal
 
 	def initialize(valor)
-		super(valor, "\n ")
+		super(valor, "\n ", "variable")
 	end
 
 	def to_s(tab)

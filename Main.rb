@@ -9,6 +9,7 @@
 
 require_relative 'Lexer'
 require_relative 'Parser'
+require_relative 'Verificaciones'
 
 def main
     if ARGV.length != 1
@@ -16,10 +17,12 @@ def main
     exit;
     end
     archivo = File::read(ARGV[0])
+
     begin
         #creamos un Lexer que analice la entrada
         lexer = Lexer::new archivo
         lexer.leer()
+        #puts lexer.tokens
         #puts "mis errores son: #{lexer.errores}"
         if !(lexer.errores.empty?)
             lexer.errores.each do |imp|
@@ -27,10 +30,10 @@ def main
             end
         else
             begin
-                puts lexer.tokens
+                
                 pars = Parser.new(lexer.listaTokens)
                 ast =  pars.parse
-
+                ast.verificacion()
                 puts ast.to_s()
                 rescue ErrorSintactico => e
                     puts e

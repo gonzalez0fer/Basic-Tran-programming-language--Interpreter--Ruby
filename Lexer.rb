@@ -66,7 +66,7 @@ dicTokens = {
 
 $caracteres = /=|>|<|\+|-|\*|%|;|,|\(|\)|\.|\[|:|\$|#|\/|\]|\)|[a-zA-Z0-9]/
 
-$simDobles= /--|::|->|<-|\/\\|<=|>=|\+\+|\/=| /
+$simDobles= /--|::|->|<-|\/\\|\\\/|<=|>=|\+\+|\/=| /
 
 #Escribimos las palabras reservadas del lenguaje
 palabras_reservadas = %w(with true false var begin end int while if otherwise bool char array read of print for step from to)
@@ -324,7 +324,7 @@ class Lexer
 					elsif simbolo == "-"|| simbolo=="+"|| simbolo=="*"|| simbolo == "<" || simbolo =="=" || simbolo =="."|| simbolo ==","|| simbolo ==";"|| simbolo ==":" || simbolo ==">" || simbolo =="/" || simbolo =="\\" || simbolo =="]" || simbolo =="[" || simbolo =="(" || simbolo ==")"
 						sim = 1
 						p =p +simbolo
-						puts "#{simbolo}"
+						#puts "#{simbolo}"
 					end
 			elsif simbolo=~ TkId.basicTran && sim == 1 				#el anterior es un simbolo mientras que el actual es un ID
 
