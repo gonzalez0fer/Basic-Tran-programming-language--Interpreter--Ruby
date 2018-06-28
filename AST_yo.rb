@@ -1,3 +1,5 @@
+#	Irina Marcano 13-10805
+
 $simbolos = {
 	'Punto' => ".",				
 	'Coma' => ",",				
