@@ -6,6 +6,7 @@ require_relative 'Parser'
 #crearemos nuestra tabla de scopes
 $scopes = []
 $scopeImp =[]
+$noIni = []
 $tam = 0
 $idFor = 0
 $idF = ""
@@ -29,6 +30,18 @@ def Encontrar(id)
 	return false, "error"
 end
 
+def verificarIni(id)
+	g = 0
+	$noIni.each do |ini|
+		#puts alcance
+		if ini == id
+			return true, g
+		end
+		g += 1
+	end
+
+	return false, false
+end
 ##############################################################
 class ErrorYaExiste< ErrorContexto
 	def initialize(token)
@@ -60,7 +73,7 @@ class ErrorNoDeclarado< ErrorContexto
 	end
 
 	def to_s()
-		"\nError: #{@token.valor} no esta declarada "
+		"\nError: #{@token} no esta declarada "
 	end
 end
 
@@ -121,6 +134,8 @@ class WBloque
 		@declaraciones.verificacion(tabla)
 		$scopes.unshift(tabla)
 		$scopeImp << tabla
+		#puts $scopes
+		#puts $noIni
 		@instrucciones.verificacion()
 		$scopes.delete(tabla)
 		$tam -= 1
@@ -158,7 +173,12 @@ class Argumento
 			exit
 		else
 			if @exp == nil 
-				tabla[@id]= tipoP
+				if tipoP.tipo == 'entero' ||tipoP.tipo == 'booleano' || tipoP.tipo == 'caracter'
+					tabla[@id]= tipoP.tipo
+				else 
+					tabla[@id]= tipoP
+				end
+				$noIni.insert(0, @id)
 			elsif tipoP.tipo == @tipo
 				tabla[@id]= tipoP.tipo
 			else
@@ -175,9 +195,11 @@ end
 class ArgumentoId
 	def verificacion(tabla, tipoP)
 		if existeYa(tabla,@id)
-			ErrorYaExiste(@id.valor)
+			puts ErrorYaExiste.new(@id).to_s()
+			exit
 		else	
 			tabla[@id]= tipoP.tipo
+			$noIni.insert(0, @id)
 		end
 		@exp.verificacion(tabla, tipoP)
 	end
@@ -192,29 +214,45 @@ class Asignacion
 		end
 
 		esta, tipo = Encontrar(@id.valor)
+		noInic, pos = verificarIni(@id.valor)
 		#puts "soy #{@id.valor} #{tipo}"
 		if esta
 			if tipo != @tipo && @tipo != "variable"
-				puts ErrorTipo.new(@id,tipo).to_s()
+				puts ErrorTipo.new(@id.valor,tipo).to_s()
 				exit
 			elsif tipo != @tipo && @tipo == "variable"
 				#puts "entre"
-				#puts @tipo
+				
 				@expresion.verificacion()
+				#puts @expresion.tipo
 				@tipo = @expresion.tipo
 
 				#puts "soy #{@tipo}"
+				if noInic
+					$noIni.delete_at(pos)
+				end
 				if  tipo != @tipo
-					puts ErrorTipo.new(@id,tipo).to_s()
+					puts ErrorTipo.new(@id.valor,tipo).to_s()
 					exit
 				end
 			end
 		else
-			puts ErrorNoDeclarado.new(@id).to_s()
+			puts ErrorNoDeclarado.new(@id.valor).to_s()
 				exit
 		end
 	end
 end
+
+class Variable < Literal
+
+	def verificacion()
+		esta, tipo = Encontrar(@valor)
+		@tipo = tipo
+		#puts "#{@valor}"
+		return @valor
+	end
+end
+
 
 class ExpresionDosOper
 	def decidir()
@@ -238,6 +276,22 @@ class ExpresionDosOper
 	def verificacion()
 		
 		if @op1.tipo == "variable" && @op2.tipo == "variable"
+
+			#verificamos si las variables que se van operan estan inicializadas
+			#puts @op1.valor
+			noInic1, pos1 = verificarIni(@op1.valor)
+			
+			if noInic1
+				puts "\nPara operar con #{@op1.valor} debe inicializarla primero" 
+				exit
+			end
+			#puts @op2.valor
+			noInic2, pos2 = verificarIni(@op2.valor)
+			if noInic2
+				puts "\nPara operar con #{@op2.valor} debe inicializarla primero" 
+				exit
+			end
+
 			@op2.verificacion()
 			@op1.verificacion()
 
@@ -262,8 +316,14 @@ class ExpresionDosOper
 			
 
 		elsif @op2.tipo == "variable"
+			
+			noInic2, pos2 = verificarIni(@op2.valor)
+			
+			if noInic2
+				puts "\n Para operar con #{@op2.valor} debe inicializarla primero" 
+				exit
+			end
 			esta, @tipo1 = Encontrar(@op2.verificacion())
-
 			#puts "entre"
 			#puts "------"
 			if esta
@@ -280,6 +340,13 @@ class ExpresionDosOper
 			end
 
 		elsif @op1.tipo == "variable"
+			#puts @op1.valor
+			noInic1, pos1 = verificarIni(@op1.valor)
+			
+			if noInic1
+				puts "\n Para operar con #{@op1.valor} debe inicializarla primero" 
+				exit
+			end
 			esta, @tipo1 = Encontrar(@op1.verificacion())
 			#puts @tipo1
 			#puts @op2.tipo
@@ -329,7 +396,11 @@ end
 class ExpresionUnOperIzq
 	
 	def verificacion()
-		
+		noInic, pos = verificarIni(@op.valor)
+		if noInic
+				puts "Para operar con #{@op1.valor} debe inicializarla primero" 
+				exit
+		end
 	end
 end
 
@@ -349,6 +420,11 @@ class ExpresionUnOperDer
 	end
 
 	def verificacion()
+		noInic, pos = verificarIni(@op.valor)
+		if noInic
+				puts "Para operar con #{@op1.valor} debe inicializarla primero" 
+				exit
+		end
 		if @op1.tipo == "variable"
 			esta, @tipo2 = Encontrar(@op1.verificacion())
 			if esta
@@ -414,14 +490,21 @@ end
 
 class Read
 	def verificacion()
+		noInic, pos = verificarIni(@id.valor)
+			
+			if noInic
+				puts "\n Para poder leer #{@id.valor} debe inicializarla primero" 
+				exit
+			end
 		esta, tipo = Encontrar(@id.valor)
+
 		if esta
 			if tipo != "entero" && tipo != "booleano" && tipo != "caracter"
 				puts "\n El identificador #{id} de archivo, no tiene un tipo permitido"
 				exit
 			end
 		else
-			puts ErrorNoDeclarado.new(@id).to_s()
+			puts ErrorNoDeclarado.new(@id.valor).to_s()
 			exit
 		end
 	end
@@ -429,6 +512,14 @@ end
 
 class Print
 	def verificacion()
+		if salida.tipo == 'variable'
+			noInic2, pos2 = verificarIni(@salida.valor)
+			
+			if noInic2
+				puts "\n Para operar con #{@salida.valor} debe inicializarla primero" 
+				exit
+			end
+		end
 		@salida.verificacion()
 	end
 end
@@ -436,6 +527,11 @@ end
 class Iteracion_Indet
 	def verificacion()
 		@condicional.verificacion()
+		if @condicional.tipo != 'booleano'
+			puts "\n El condicional del while debe ser una expresion Booleana"
+			exit
+		end
+		
 		@inst.verificacion()
 	end
 end
@@ -443,6 +539,10 @@ end
 class IfOtherEnd
 	def verificacion()
 		@guardia.verificacion()
+		if @guardia.tipo != 'booleano'
+			puts "\n El condicional del while debe ser una expresion Booleana"
+			exit
+		end
 		@intr.verificacion()
 		@intr2.verificacion()
 	end
@@ -451,6 +551,10 @@ end
 class IfEnd
 	def verificacion()
 		@guardia.verificacion()
+		if @guardia.tipo != 'booleano'
+			puts "\n El condicional del while debe ser una expresion Booleana"
+			exit
+		end
 		@intr.verificacion()
 	end
 end

@@ -338,24 +338,28 @@ class Lexer
 					ltr = 1
 
 			elsif not(simbolo=~ TkId.basicTran) && sim ==1 		#anterior es un simbolo mientras que el actual es otro simbolo
-					sim = 0
+					
 					p1 = p
-					p =p +simbolo
+					p = p +simbolo
 					#puts "entre aqui y soy: #{p}"
 
-					#puts "simbolo completo: #{p} "
+					#puts "P1 ES: #{p1} "
 					if p=~ $simDobles
 						buscar(p)
+						sim = 0
+						p = ''
 					else
 						buscar(p1)
 						@columna += 1
 						@colInicio= @columna
-						buscar(simbolo)
+						p = simbolo
+						sim = 1
 						@columna += 1
 						@colInicio= @columna
+						#puts "AHORA SOY EL simbolo: #{p} "
 					end
 
-					p = ''
+					
 					p1= ''
 			elsif simbolo=~ TkId.basicTran && str == 0
 					#puts "entre en un ID #{simbolo}"

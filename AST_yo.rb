@@ -46,11 +46,12 @@ class Asignacion
 		@id = id
 		@expresion = expresion
 		@tipo = @expresion.tipo
-		@valor = nil
+		@valor = expresion
 		if @id.tipo != "variable"
 			puts "\n Para realizar un asignacion el identificador debe ser una variable definida"
 			exit
 		end
+
 	end
 
 	def to_s(tab)
@@ -100,6 +101,7 @@ class Print
 			puts "El argumento que desea imprimir no es valido"
 			exit	
 		end
+
 	end
 
 	def to_s(tab)
@@ -262,13 +264,13 @@ class Iteracion_DetStep
 			exit
 		end
 
-		if @start.tipo != "entero"
+		if @start.tipo != "entero" && @start.tipo != "variable" 
 			puts "\n El comienzo del ciclo debe ser una expresion numerica"
 			exit
-		elsif @final.tipo != "entero"
+		elsif @final.tipo != "entero" &&  @final.tipo != "variable"
 			puts "\n El final del ciclo debe ser una expresion numerica"
 			exit
-		elsif @step.tipo != "entero"
+		elsif @step.tipo != "entero" && @step.tipo != "variable"
 			puts "\n El paso del ciclo debe ser una expresion numerica"
 			exit
 		end
@@ -318,10 +320,10 @@ class Iteracion_Det
 			exit
 		end
 		
-		if @start.tipo != "entero"
+		if @start.tipo != "entero" && @start.tipo != "variable" 
 			puts "\n El comienzo del ciclo debe ser una expresion numerica"
 			exit
-		elsif @final.tipo != "entero"
+		elsif @final.tipo != "entero" &&  @final.tipo != "variable"
 			puts "\n El final del ciclo debe ser una expresion numerica"
 			exit
 		end
@@ -371,6 +373,7 @@ class Iteracion_Indet
 	def initialize(condicional, inst)
 		@condicional= condicional 
 		@inst = inst
+
 		if @condicional.tipo != "booleano" && @condicional.tipo != "variable"
 			puts "\n El condicional del while debe ser una expresion Booleana"
 			exit
@@ -457,7 +460,7 @@ class Argumento
 	# id: identificador del arreglo
 	# exp: expresion que se le asignara a la nueva variable
 	# arg: permite la definicion de los argumentos de varias variables
-	attr_accessor  :id,:exp, :arg, :tipo
+	attr_accessor  :id,:exp, :arg, :tipo, :valorR, :ini
 
 	def initialize(id,exp, arg)
 		@id = id
@@ -465,7 +468,12 @@ class Argumento
 		@arg= arg	
 		if exp != nil
 			@tipo = @exp.tipo
+			@ini = true
+		else
+			@ini = false
 		end
+
+		
 	end
 
 	def to_s(tab)
@@ -490,12 +498,13 @@ class ArgumentoId
 	# id: identificador del arreglo
 	# exp: expresion que se le asignara a la nueva variable
 	# arg: permite la definicion de los argumentos de varias variables
-	attr_accessor  :id,:exp, :arg
+	attr_accessor  :id,:exp, :arg, :ini
 
 	def initialize(id,exp, arg)
 		@id = id
 		@exp = exp
 		@arg= arg
+		@ini = false
 	end
 
 	def to_s(tab)
@@ -702,6 +711,7 @@ class Modulo < ExpresionDosOper
 
     def initialize(op1,op2)
         super(op1, op2,"Modulo")
+        @valorR = @op1.valorR.to_i % @op2.valorR.to_i
     end
 end
 
@@ -745,7 +755,12 @@ class Division < ExpresionDosOper
 
     def initialize(op1,op2)
         super(op1, op2,"Division")
-        @valorR = @op1.valorR.to_i / @op2.valorR.to_i
+        if @op2.valorR != 0
+        	@valorR = @op1.valorR.to_i / @op2.valorR.to_i
+        else
+        	puts "no puedes realizar divisiones entre 0 \n"
+        	exit
+        end
     end
 end
 

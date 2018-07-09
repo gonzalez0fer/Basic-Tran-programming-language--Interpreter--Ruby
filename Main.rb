@@ -10,6 +10,7 @@
 require_relative 'Lexer'
 require_relative 'Parser'
 require_relative 'Verificaciones'
+require_relative 'Valores'
 
 def main
     if ARGV.length != 1
@@ -34,6 +35,7 @@ def main
                 pars = Parser.new(lexer.listaTokens)
                 ast =  pars.parse
                 ast.verificacion()
+                #ast.valor()
                 puts ast.to_s()
                 rescue ErrorSintactico => e
                     puts e
